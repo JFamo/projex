@@ -19,7 +19,7 @@ if(isset($_POST['login-username']) and isset($_POST['login-password'])){
 
 	$username = $_POST['login-username'];
 	$password = $_POST['login-password'];
-	
+
 	$username = validate($username);
 	$password = validate($password);
 	
@@ -59,6 +59,46 @@ if(isset($_POST['login-username']) and isset($_POST['login-password'])){
 	else{
 
 		$fmsg = "Invalid Login Credentials";
+
+	}
+
+}
+
+if(isset($_POST['register-username']) and isset($_POST['register-password'])){
+
+	$username = $_POST['register-username'];
+	$password = $_POST['register-password'];
+
+	$username = validate($username);
+	$password = validate($password);
+
+	$password = password_hash($password, PASSWORD_DEFAULT);
+	
+	require('php/connect.php');
+	
+	$query= "SELECT id FROM users WHERE username='$username'";
+
+	$result = mysqli_query($link, $query);
+
+	if (!$result){
+		die('Error: ' . mysqli_error($link));
+	}
+
+	$count = mysqli_num_rows($result);
+
+	if($count == 0){
+
+		//fetch the rank of that user
+		$query2 = "INSERT INTO users (username, password, firstname, lastname) VALUES ('$username', '$password', '$firstname', '$lastname')";
+		$result2 = mysqli_query($link, $query2);
+		if (!$result2){
+			die('Error: ' . mysqli_error($link));
+		}
+
+	}
+	else{
+
+		$fmsg = "This Username is Taken!";
 
 	}
 
@@ -139,26 +179,26 @@ if(isset($_SESSION['username'])){
 						<center>
 							<h3 class="pt-4">Register</h3>
 						</center>
-						<form method="post" class="py-4">
+						<form method="POST" class="py-4">
 						  <div class="form-row">
 						    <div class="form-group col-md-6">
-						      <label for="reigster-username">Username</label>
-						      <input type="text" class="form-control" id="reigster-username" name="reigster-username" placeholder="Username">
+						      <label for="register-username">Username</label>
+						      <input type="text" class="form-control" id="register-username" name="register-username" placeholder="Username">
 						    </div>
 						  </div>
 						  <div class="form-row">
 						  	<div class="form-group col-md-6">
-						      <label for="reigster-password">Password</label>
-						      <input type="password" class="form-control" id="reigster-password" name="reigster-password" placeholder="Password">
+						      <label for="register-password">Password</label>
+						      <input type="password" class="form-control" id="register-password" name="register-password" placeholder="Password">
 						    </div>
 						    <div class="form-group col-md-6">
-						      <label for="reigster-confirm">Confirm Password</label>
-						      <input type="password" class="form-control" id="reigster-confirm" name="reigster-confirm" placeholder="Retype Password">
+						      <label for="register-confirm">Confirm Password</label>
+						      <input type="password" class="form-control" id="register-confirm" name="register-confirm" placeholder="Retype Password">
 						    </div>
 						  </div>
 						  <div class="form-group">
-						    <label for="reigster-email">Email</label>
-						    <input type="email" class="form-control" id="reigster-email" name="reigster-email" placeholder="1234 Main St">
+						    <label for="register-email">Email</label>
+						    <input type="email" class="form-control" id="register-email" name="register-email" placeholder="Email">
 						  </div>
 						  <button type="submit" class="btn btn-primary">Sign Up</button>
 						</form>
