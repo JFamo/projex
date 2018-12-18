@@ -220,7 +220,56 @@ if(isset($_SESSION['username'])){
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-sm-12">
-
+				<div class="row">
+					<div class="col-12">
+						<center>
+							<h3 class="pt-4">Login</h3>
+						</center>
+						<form class="pt-4">
+						  <div class="form-row">
+						    <div class="form-group col-md-6">
+						      <label for="login-username">Username</label>
+						      <input type="text" class="form-control" id="login-username" name="login-username" placeholder="Username">
+						    </div>
+						    <div class="form-group col-md-6">
+						      <label for="login-password">Password</label>
+						      <input type="password" class="form-control" id="login-password" placeholder="Password">
+						    </div>
+						  </div>
+						  <button type="submit" class="btn btn-primary">Log In</button>
+						</form>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<center>
+							<h3 class="pt-4">Register</h3>
+						</center>
+						<form class="py-4">
+						  <div class="form-row">
+						    <div class="form-group col-md-6">
+						      <label for="reigster-username">Username</label>
+						      <input type="text" class="form-control" id="reigster-username" name="reigster-username" placeholder="Username">
+						    </div>
+						  </div>
+						  <div class="form-row">
+						  	<div class="form-group col-md-6">
+						      <label for="reigster-password">Password</label>
+						      <input type="password" class="form-control" id="reigster-password" name="reigster-password" placeholder="Password">
+						    </div>
+						    <div class="form-group col-md-6">
+						      <label for="reigster-confirm">Confirm Password</label>
+						      <input type="password" class="form-control" id="reigster-confirm" name="reigster-confirm" placeholder="Retype Password">
+						    </div>
+						  </div>
+						  <div class="form-group">
+						    <label for="reigster-email">Email</label>
+						    <input type="email" class="form-control" id="reigster-email" name="reigster-email" placeholder="1234 Main St">
+						  </div>
+						  <button type="submit" class="btn btn-primary">Sign Up</button>
+						</form>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -228,12 +277,11 @@ if(isset($_SESSION['username'])){
 </body>
 
 <!--Less spooky stuff at the bottom-->
-	<footer class="text-white bg-primary py-3 h5"> 
-		<center><p class="bodyTextType2">
-			Team 2004-901 2018
-		</p></center>
-	</footer>
-</body>
+<footer class="text-white bg-primary py-3 h5"> 
+	<center><p class="bodyTextType2">
+		Team 2004-901 2018
+	</p></center>
+</footer>
 
 <script src="js/scripts.js" type="text/javascript"></script>
 
