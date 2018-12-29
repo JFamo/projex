@@ -1,0 +1,19 @@
+.nav-link{
+	font-size:1.25rem;
+	color:white;
+	border-right:2px solid white;
+	flex-basis:10%;
+	text-align: center;
+}
+.nav-link:hover{
+	color:#006ba6;
+}
+.navbar{
+	display:flex;
+	flex-direction:row;
+	flex-wrap:wrap;
+	justify-content: center;
+}
+.bg-primary{
+	background-color:#0496ff !important;
+}
