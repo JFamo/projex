@@ -48,10 +48,14 @@ if(!isset($_SESSION['username'])){
 <body>
 <!-- Navbar -->
 	<nav class="navbar navbar-dark bg-primary">
-	  <a class="h1 navbar-brand" href="#">
-	    <img src="" width="30" height="30" class="d-inline-block align-top" alt="" />
-	    ProjeX
-	  </a>
+	  	<a class="nav-link" href="#" style="flex-basis:20%;"><img src="../imgs/workspacePlaceholder.png" width="30" height="30" class="d-inline-block align-top" alt="" />ProjeX</a>
+	  	<a class="nav-link" href="#"><img src="../imgs/workspacePlaceholder.png" width="30" height="30" class="d-inline-block align-top" alt="" /></a>
+	    <a class="nav-link" href="metrics.php">Metrics</a>
+	    <a class="nav-link" href="metrics.php">Backlog</a>
+	    <a class="nav-link" href="metrics.php">Active</a>
+	    <a class="nav-link" href="metrics.php">Docs</a>
+	    <a class="nav-link" href="metrics.php">Messages</a>
+	    <a class="nav-link" href="../php/logout.php">Logout</a>
 	</nav>
 
 <!--Spooky stuff in the middle-->
@@ -65,12 +69,13 @@ if(!isset($_SESSION['username'])){
 
 </body>
 
-<!--Less spooky stuff at the bottom-->
+<!--Main has no footer
 <footer class="text-white bg-primary py-3 h5"> 
 	<center><p class="bodyTextType2">
 		Team 2004-901 2018
 	</p></center>
 </footer>
+-->
 
 <script src="../js/scripts.js" type="text/javascript"></script>
 
