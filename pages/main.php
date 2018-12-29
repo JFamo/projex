@@ -63,15 +63,15 @@ if(!isset($_SESSION['username'])){
 <!--Spooky stuff in the middle-->
 	<div class="container-fluid bodycontainer">
 		<div class="row">
-			<div class="col-sm-12">
+			<div class="col-sm-4">
 				<h1>Welcome, <?php echo $_SESSION['firstname']; ?></h1>
 				<p>Here's what your teams have been up to in the past week:</p>
 				<table class="table">
-					<thead class="bg-red thead-dark"><tr>
-						<th scope="col">Project</th>
-						<th scope="col">Member</th>
-						<th scope="col">Activity</th>
-						<th scope="col">Date</th>
+					<thead class="thead-dark"><tr>
+						<th class="bg-red" style="border-bottom:0px;" scope="col">Project</th>
+						<th class="bg-red" style="border-bottom:0px;" scope="col">Member</th>
+						<th class="bg-red" style="border-bottom:0px;" scope="col">Activity</th>
+						<th class="bg-red" style="border-bottom:0px;" scope="col">Date</th>
 					</tr></thead>
 					<tbody>
 					<tr>
@@ -80,8 +80,49 @@ if(!isset($_SESSION['username'])){
 						<td>Closed Issue TS-1233</td>
 						<td>12/29/2018</td>
 					</tr>
+					<tr>
+						<td>TSA Software Dev</td>
+						<td>Barry Sanders</td>
+						<td>Created Task TS-86</td>
+						<td>12/29/2018</td>
+					</tr>
+					<tr>
+						<td>TSA Software Dev</td>
+						<td>Lawrence Taylor</td>
+						<td>Completed Task TS-329</td>
+						<td>12/29/2018</td>
+					</tr>
 					</tbody>
 				</table>
+				<p>Here's what's assigned to you:</p>
+				<table class="table">
+					<thead class="thead-dark"><tr>
+						<th class="bg-yellow" style="border-bottom:0px;" scope="col">Project</th>
+						<th class="bg-yellow" style="border-bottom:0px;" scope="col">Task</th>
+						<th class="bg-yellow" style="border-bottom:0px;" scope="col">Deadline</th>
+					</tr></thead>
+					<tbody>
+					<tr>
+						<td>TSA Software Dev</td>
+						<td>Jim Marshall</td>
+						<td>Closed Issue TS-1233</td>
+					</tr>
+					<tr>
+						<td>TSA Software Dev</td>
+						<td>Barry Sanders</td>
+						<td>Created Task TS-86</td>
+					</tr>
+					<tr>
+						<td>TSA Software Dev</td>
+						<td>Lawrence Taylor</td>
+						<td>Completed Task TS-329</td>
+					</tr>
+					</tbody>
+				</table>
+				<a href="#">Manage My Account</a>
+			</div>
+			<div class="col-sm-8">
+
 			</div>
 		</div>
 	</div>
