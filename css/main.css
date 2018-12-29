@@ -1,3 +1,48 @@
+/*Color classes*/
+.bg-red{
+	background-color:#d81159;
+}
+.bg-yellow{
+	background-color:#ffbc42;
+}
+.bg-blue{
+	background-color:#0496ff;
+}
+.bg-dark{
+	background-color:#006ba6;
+}
+.bg-purple{
+	background-color:#661166;
+}
+.color-red{
+	color:#d81159;
+}
+.color-yellow{
+	color:#ffbc42;
+}
+.color-blue{
+	color:#0496ff;
+}
+.color-dark{
+	color:#006ba6;
+}
+.color-purple{
+	color:#661166;
+}
+
+.bodycontainer{
+	font-size:16px;
+	line-height:1.4;
+	margin:0 auto;
+	max-width:1200px;
+	padding-top:5rem;
+	padding-bottom:5rem;
+}
+@media only screen and (max-width: 1200px) {
+  	.bodycontainer{
+  		padding-left:2rem;
+	}
+}
 .nav-link{
 	font-size:1.25rem;
 	color:white;
@@ -9,10 +54,15 @@
 	color:#006ba6;
 }
 .navbar{
+	padding:0;
+}
+.navpadder{
 	display:flex;
 	flex-direction:row;
 	flex-wrap:wrap;
-	justify-content: center;
+	justify-content: flex-left;
+	max-width:1200px;
+	flex-grow:1;
 }
 .bg-primary{
 	background-color:#0496ff !important;

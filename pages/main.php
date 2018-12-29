@@ -48,21 +48,40 @@ if(!isset($_SESSION['username'])){
 <body>
 <!-- Navbar -->
 	<nav class="navbar navbar-dark bg-primary">
-	  	<a class="nav-link" href="#" style="flex-basis:20%;"><img src="../imgs/workspacePlaceholder.png" width="30" height="30" class="d-inline-block align-top" alt="" />ProjeX</a>
-	  	<a class="nav-link" href="#"><img src="../imgs/workspacePlaceholder.png" width="30" height="30" class="d-inline-block align-top" alt="" /></a>
-	    <a class="nav-link" href="metrics.php">Metrics</a>
-	    <a class="nav-link" href="metrics.php">Backlog</a>
-	    <a class="nav-link" href="metrics.php">Active</a>
-	    <a class="nav-link" href="metrics.php">Docs</a>
-	    <a class="nav-link" href="metrics.php">Messages</a>
-	    <a class="nav-link" href="../php/logout.php">Logout</a>
+		<div class="navpadder">
+		  	<a class="nav-link" href="#" style="flex-basis:20%;"><img src="" width="30" height="30" class="d-inline-block align-top" alt="" />ProjeX</a>
+		  	<a class="nav-link" href="#"><img src="../imgs/workspacePlaceholder.png" width="30" height="30" class="d-inline-block align-top" alt="" /></a>
+		    <a class="nav-link" href="metrics.php">Metrics</a>
+		    <a class="nav-link" href="metrics.php">Backlog</a>
+		    <a class="nav-link" href="metrics.php">Active</a>
+		    <a class="nav-link" href="metrics.php">Docs</a>
+		    <a class="nav-link" href="metrics.php">Messages</a>
+		    <a class="nav-link" href="../php/logout.php">Logout</a>
+	    </div>
 	</nav>
 
 <!--Spooky stuff in the middle-->
-	<div class="container-fluid">
+	<div class="container-fluid bodycontainer">
 		<div class="row">
 			<div class="col-sm-12">
-				
+				<h1>Welcome, <?php echo $_SESSION['firstname']; ?></h1>
+				<p>Here's what your teams have been up to in the past week:</p>
+				<table class="table">
+					<thead class="bg-red thead-dark"><tr>
+						<th scope="col">Project</th>
+						<th scope="col">Member</th>
+						<th scope="col">Activity</th>
+						<th scope="col">Date</th>
+					</tr></thead>
+					<tbody>
+					<tr>
+						<td>TSA Software Dev</td>
+						<td>Jim Marshall</td>
+						<td>Closed Issue TS-1233</td>
+						<td>12/29/2018</td>
+					</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
