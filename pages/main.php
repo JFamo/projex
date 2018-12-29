@@ -33,6 +33,7 @@ if(!isset($_SESSION['username'])){
     <script src="../js/jquery.min.js"></script>
     <script src="../js/popper.min.js"></script>
     <script src="../bootstrap-4.1.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
 
     <!-- Google Fonts - Changes to come -->
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
@@ -122,7 +123,54 @@ if(!isset($_SESSION['username'])){
 				<a href="#">Manage My Account</a>
 			</div>
 			<div class="col-sm-8">
-
+			<canvas id="myChart" class="dashchart"></canvas>
+				<script>
+				var ctx = document.getElementById("myChart");
+				var myChart = new Chart(ctx, {
+				    type: 'bar',
+				    data: {
+				        labels: ["Jim", "Paul", "Sean", "Barry", "Lawrence", "Matt"],
+				        datasets: [{
+				            label: 'Contributions',
+				            data: [12, 19, 3, 5, 2, 3],
+				            backgroundColor: [
+				                'rgba(216, 17, 89, 0.8)',
+				                'rgba(255, 188, 66, 0.8)',
+				                'rgba(4, 150, 255, 0.8)',
+				                'rgba(0, 107, 166, 0.8)',
+				                'rgba(102, 17, 102, 0.8)',
+				                'rgba(255, 159, 64, 0.8)'
+				            ],
+				            borderColor: [
+				                'rgba(216, 17, 89, 1)',
+				                'rgba(255, 188, 66, 1)',
+				                'rgba(4, 150, 255, 1)',
+				                'rgba(0, 107, 166, 1)',
+				                'rgba(102, 17, 102, 1)',
+				                'rgba(255, 159, 64, 1)'
+				            ],
+				            borderWidth: 1
+				        }]
+				    },
+				    options: {
+				        scales: {
+				            yAxes: [{
+				                ticks: {
+				                    beginAtZero:true
+				                }
+				            }]
+				        }
+				    }
+				});
+				</script>
+				<canvas id="myChart2" class="dashchart"></canvas>
+				<script>
+				var ctx = document.getElementById("myChart2");
+				var myDoughnutChart = new Chart(ctx, {
+				    type: 'doughnut',
+				    data: {"labels":["Red","Blue","Yellow"],"datasets":[{"label":"My First Dataset","data":[300,50,100],"backgroundColor":["rgb(216, 17, 89)","rgb(4, 150, 255)","rgb(255, 188, 66)"]}]}
+				});
+				</script>
 			</div>
 		</div>
 	</div>

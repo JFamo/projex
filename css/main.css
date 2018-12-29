@@ -14,6 +14,9 @@
 .bg-purple{
 	background-color:#661166 !important;
 }
+.bg-primary{
+	background-color:#0496ff !important;
+}
 .color-red{
 	color:#d81159;
 }
@@ -64,6 +67,8 @@
 	justify-content: center;
 	flex-grow:1;
 }
-.bg-primary{
-	background-color:#0496ff !important;
+.dashchart{
+	max-width:50%;
+	margin:0 auto;
+	margin-top:2rem;
 }
