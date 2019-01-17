@@ -1,0 +1,12 @@
+Copyright (C) 2018-19 Joshua Famous, Asher Hamrick, Divyesh Johri, Thomas Rohrbach, Marc Soda, and Tyler Hagmann. - All Rights Reserved
+
+Permission is hereby granted to any person obtaining a copy of this Software to view or fork this code at their own discretion, in accordance with the GitHub Terms of Service.
+No person is permitted to reproduce, distribute, or create derivative works from this work. 
+Those who have forked a copy of this work have not licensed any rights with the fork - all rights are still retained.
+
+Unauthorized commercial or private use of this Software is strictly prohibited.
+This Software cannot be copied / distributed without the permission of the creator(s).
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+Written by Joshua Famous, Asher Hamrick, Divyesh Johri, Thomas Rohrbach, Marc Soda, and Tyler Hagmann, 20178-19
