@@ -1,3 +1,56 @@
+/*Color classes*/
+.bg-red{
+	background-color:#d81159 !important;
+}
+.bg-yellow{
+	background-color:#ffbc42 !important;
+}
+.bg-blue{
+	background-color:#0496ff !important;
+}
+.bg-dark{
+	background-color:#006ba6 !important;
+}
+.bg-purple{
+	background-color:#661166 !important;
+}
+.bg-primary{
+	background-color:#0496ff !important;
+}
+.color-red{
+	color:#d81159;
+}
+.color-yellow{
+	color:#ffbc42;
+}
+.color-blue{
+	color:#0496ff;
+}
+.color-dark{
+	color:#006ba6;
+}
+.color-purple{
+	color:#661166;
+}
+
+.bodycontainer{
+	font-size:16px;
+	line-height:1.4;
+	margin:0 auto;
+	max-width:1800px;
+	padding-top:4rem;
+	padding-bottom:4rem;
+}
+@media only screen and (max-width: 1800px) {
+  	.bodycontainer{
+  		padding-left:4rem;
+	}
+}
+@media only screen and (max-width: 800px) {
+  	.bodycontainer{
+  		padding-left:1rem;
+	}
+}
 .nav-link{
 	font-size:1.25rem;
 	color:white;
@@ -6,14 +59,21 @@
 	text-align: center;
 }
 .nav-link:hover{
-	color:#006ba6;
+	background-color:#ffbc42;
+	color:#0496ff;
 }
 .navbar{
+	padding:0;
+}
+.navpadder{
 	display:flex;
 	flex-direction:row;
 	flex-wrap:wrap;
 	justify-content: center;
+	flex-grow:1;
 }
-.bg-primary{
-	background-color:#0496ff !important;
+.dashchart{
+	max-width:50%;
+	margin:0 auto;
+	margin-top:2rem;
 }
