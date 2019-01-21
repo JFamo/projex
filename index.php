@@ -17,7 +17,7 @@ function validate($data){
 session_start();
 
 //Make the default form appearance for user registration joining an existing organization
-if(!isset($_POST['organization-action'])){
+if(!isset($organizationAction)){
 	$organizationAction = "join";
 }
 
@@ -77,7 +77,8 @@ if(isset($_POST['organization-action'])){
 	$organizationAction = $_POST['organization-action'];
 
 }
-else if(isset($_POST['register-username']) and isset($_POST['register-password'])){
+
+if(isset($_POST['register-username']) and isset($_POST['register-password']) and (isset($_POST['organization-name']) or isset($_POST['organization-code']))){
 
 	$username = $_POST['register-username'];
 	$password = $_POST['register-password'];
@@ -219,9 +220,9 @@ if(isset($_SESSION['username'])){
 						  <div class="form-row">
 							<div class="form-group col-md-4">
 							  <label for="register-email">I Want To...</label>
-							  <select class="form-control" id="organization-action" name="organization-action" onchange="this.form.submit()" value="<?php echo isset($organizationAction) ? $organizationAction : '' ?>">
-							  	<option value="join">Join an Existing Organization</option>
-							  	<option value="create">Create a New Organization</option>
+							  <select class="form-control" id="organization-action" name="organization-action" onchange="this.form.submit()">
+							  	<option value="join" <?php if($organizationAction == "join") { echo "selected=true"; } ?> >Join an Existing Organization</option>
+							  	<option value="create" <?php if($organizationAction == "create") { echo "selected=true"; } ?>>Create a New Organization</option>
 							  </select>
 							</div>
 							<?php if($organizationAction == "join") { ?>
