@@ -1,5 +1,6 @@
 <?php
 
+//Basic function to sanitize input data
 function validate($data){
 	$data = trim($data);
   	$data = stripslashes($data);
@@ -15,6 +16,12 @@ function validate($data){
 
 session_start();
 
+//Make the default form appearance for user registration joining an existing organization
+if(!isset($_POST['organization-action'])){
+	$organizationAction = "join";
+}
+
+//Handle user login
 if(isset($_POST['login-username']) and isset($_POST['login-password'])){
 
 	$username = $_POST['login-username'];
@@ -64,7 +71,13 @@ if(isset($_POST['login-username']) and isset($_POST['login-password'])){
 
 }
 
-if(isset($_POST['register-username']) and isset($_POST['register-password'])){
+//Check if I am changing the registration type or if I am submitting user registration
+if(isset($_POST['organization-action'])){
+
+	$organizationAction = $_POST['organization-action'];
+
+}
+else if(isset($_POST['register-username']) and isset($_POST['register-password'])){
 
 	$username = $_POST['register-username'];
 	$password = $_POST['register-password'];
@@ -104,6 +117,7 @@ if(isset($_POST['register-username']) and isset($_POST['register-password'])){
 
 }
 
+//Authenticate session and force redirect on real session
 if(isset($_SESSION['username'])){
 
 	header('Location: pages/main.php');
@@ -183,22 +197,45 @@ if(isset($_SESSION['username'])){
 						  <div class="form-row">
 						    <div class="form-group col-md-6">
 						      <label for="register-username">Username</label>
-						      <input type="text" class="form-control" id="register-username" name="register-username" placeholder="Username">
+						      <input type="text" class="form-control" id="register-username" name="register-username" placeholder="Username" value="<?php echo isset($_POST['register-username']) ? $_POST['register-username'] : '' ?>">
 						    </div>
 						  </div>
 						  <div class="form-row">
 						  	<div class="form-group col-md-6">
 						      <label for="register-password">Password</label>
-						      <input type="password" class="form-control" id="register-password" name="register-password" placeholder="Password">
+						      <input type="password" class="form-control" id="register-password" name="register-password" placeholder="Password" value="<?php echo isset($_POST['register-password']) ? $_POST['register-password'] : '' ?>">
 						    </div>
 						    <div class="form-group col-md-6">
 						      <label for="register-confirm">Confirm Password</label>
-						      <input type="password" class="form-control" id="register-confirm" name="register-confirm" placeholder="Retype Password">
+						      <input type="password" class="form-control" id="register-confirm" name="register-confirm" placeholder="Retype Password" value="<?php echo isset($_POST['register-confirm']) ? $_POST['register-confirm'] : '' ?>">
 						    </div>
 						  </div>
-						  <div class="form-group">
-						    <label for="register-email">Email</label>
-						    <input type="email" class="form-control" id="register-email" name="register-email" placeholder="Email">
+						  <div class="form-row">
+							<div class="form-group col-md-12">
+							  <label for="register-email">Email</label>
+							  <input type="email" class="form-control" id="register-email" name="register-email" placeholder="Email" value="<?php echo isset($_POST['register-email']) ? $_POST['register-email'] : '' ?>">
+							</div>
+						  </div>
+						  <div class="form-row">
+							<div class="form-group col-md-4">
+							  <label for="register-email">I Want To...</label>
+							  <select class="form-control" id="organization-action" name="organization-action" onchange="this.form.submit()" value="<?php echo isset($organizationAction) ? $organizationAction : '' ?>">
+							  	<option value="join">Join an Existing Organization</option>
+							  	<option value="create">Create a New Organization</option>
+							  </select>
+							</div>
+							<?php if($organizationAction == "join") { ?>
+							<div class="form-group col-md-8">
+							  <label for="organization-code">Organization Code</label>
+							  <input type="text" class="form-control" id="organization-code" name="organization-code" placeholder="Code">
+							</div>
+							<?php } ?>
+							<?php if($organizationAction == "create") { ?>
+							<div class="form-group col-md-8">
+							  <label for="organization-name">Organization Name</label>
+							  <input type="text" class="form-control" id="organization-name" name="organization-name" placeholder="Name">
+							</div>
+							<?php } ?>
 						  </div>
 						  <button type="submit" class="btn btn-primary">Sign Up</button>
 						</form>
