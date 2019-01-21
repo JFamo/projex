@@ -220,23 +220,19 @@ if(isset($_SESSION['username'])){
 						  <div class="form-row">
 							<div class="form-group col-md-4">
 							  <label for="register-email">I Want To...</label>
-							  <select class="form-control" id="organization-action" name="organization-action" onchange="this.form.submit()">
-							  	<option value="join" <?php if($organizationAction == "join") { echo "selected=true"; } ?> >Join an Existing Organization</option>
-							  	<option value="create" <?php if($organizationAction == "create") { echo "selected=true"; } ?>>Create a New Organization</option>
+							  <select class="form-control" id="organization-action" name="organization-action" onchange="changeOrganizationAction();">
+							  	<option value="join">Join an Existing Organization</option>
+							  	<option value="create">Create a New Organization</option>
 							  </select>
 							</div>
-							<?php if($organizationAction == "join") { ?>
-							<div class="form-group col-md-8">
+							<div class="form-group col-md-8" id="organizationCodeForm">
 							  <label for="organization-code">Organization Code</label>
 							  <input type="text" class="form-control" id="organization-code" name="organization-code" placeholder="Code">
 							</div>
-							<?php } ?>
-							<?php if($organizationAction == "create") { ?>
-							<div class="form-group col-md-8">
+							<div class="form-group col-md-8" id="organizationNameForm" style="display:none;">
 							  <label for="organization-name">Organization Name</label>
 							  <input type="text" class="form-control" id="organization-name" name="organization-name" placeholder="Name">
 							</div>
-							<?php } ?>
 						  </div>
 						  <button type="submit" class="btn btn-primary">Sign Up</button>
 						</form>
