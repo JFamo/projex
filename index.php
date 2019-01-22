@@ -16,11 +16,6 @@ function validate($data){
 
 session_start();
 
-//Make the default form appearance for user registration joining an existing organization
-if(!isset($organizationAction)){
-	$organizationAction = "join";
-}
-
 //Handle user login
 if(isset($_POST['login-username']) and isset($_POST['login-password'])){
 
@@ -71,20 +66,18 @@ if(isset($_POST['login-username']) and isset($_POST['login-password'])){
 
 }
 
-//Check if I am changing the registration type or if I am submitting user registration
-if(isset($_POST['organization-action'])){
-
-	$organizationAction = $_POST['organization-action'];
-
-}
-
 if(isset($_POST['register-username']) and isset($_POST['register-password']) and (isset($_POST['organization-name']) or isset($_POST['organization-code']))){
 
 	$username = $_POST['register-username'];
 	$password = $_POST['register-password'];
+	$orgname = $_POST['organization-name'];
+	$orgcode = $_POST['organization-code'];
+	$orgaction = $_POST['organization-action'];
 
 	$username = validate($username);
 	$password = validate($password);
+	$orgname = validate($orgname);
+	$orgcode = validate($orgcode);
 
 	$password = password_hash($password, PASSWORD_DEFAULT);
 	
@@ -102,11 +95,56 @@ if(isset($_POST['register-username']) and isset($_POST['register-password']) and
 
 	if($count == 0){
 
-		//fetch the rank of that user
+		//User Creation
 		$query2 = "INSERT INTO users (username, password, firstname, lastname) VALUES ('$username', '$password', '$firstname', '$lastname')";
 		$result2 = mysqli_query($link, $query2);
+		$userid = mysql_insert_id($link);
 		if (!$result2){
 			die('Error: ' . mysqli_error($link));
+		}
+
+		//Organization Creation ~check
+		if($orgaction == "create"){
+			$query2 = "INSERT INTO organizations (name, code) VALUES ('$orgname', '$code')";
+			$result2 = mysqli_query($link, $query2);
+			$orgid = mysql_insert_id($link);
+			if (!$result2){
+				die('Error: ' . mysqli_error($link));
+			}
+		}
+
+		//Organization Join
+		if($orgaction == "create"){
+			//Join the organization I've just created
+			$query2 = "INSERT INTO user_organization_mapping (organization, user) VALUES ('$orgid', '$userid')";
+			$result2 = mysqli_query($link, $query2);
+			if (!$result2){
+				die('Error: ' . mysqli_error($link));
+			}
+		}
+		else if($orgaction == "join"){
+			//Join an existing organization after checking that it exists
+			$query= "SELECT id FROM organizations WHERE code='$orgcode'";
+			$result = mysqli_query($link, $query);
+			if (!$result){
+				die('Error: ' . mysqli_error($link));
+			}
+			list($orgid) = mysqli_fetch_array($result);
+			$count = mysqli_num_rows($result);
+
+			if($count == 1){
+				$query2 = "INSERT INTO user_organization_mapping (organization, user) VALUES ('$orgid', '$userid')";
+				$result2 = mysqli_query($link, $query2);
+				if (!$result2){
+					die('Error: ' . mysqli_error($link));
+				}
+			}
+			else{
+				$fmsg = "Invalid Organization Code!";
+			}
+		}
+		else{
+			$fmsg = "Invalid Organization!";
 		}
 
 	}
