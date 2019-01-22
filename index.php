@@ -93,59 +93,51 @@ if(isset($_POST['register-username']) and isset($_POST['register-password']) and
 
 	if($count == 0){
 
-		//User Creation
-		$query2 = "INSERT INTO users (username, password, firstname, lastname) VALUES ('$username', '$password', '$firstname', '$lastname')";
-		$result2 = mysqli_query($link, $query2);
-		$userid = mysqli_insert_id($link);
-		if (!$result2){
-			die('Error: ' . mysqli_error($link));
-		}
+		//Check that specified organization code exists if joining
+		$orgwithcodecount = 0;
 
-		echo "Got org action : " . $orgaction;
-
-		//Organization Creation ~check
-		if($orgaction == "create"){
-			$query2 = "INSERT INTO organizations (name, code) VALUES ('$orgname', '$code')";
-			$result2 = mysqli_query($link, $query2);
-			$orgid = mysqli_insert_id($link);
-			if (!$result2){
-				die('Error: ' . mysqli_error($link));
-			}
-		}
-
-		//Organization Join
-		if($orgaction == "create"){
-			//Join the organization I've just created
-			$query2 = "INSERT INTO user_organization_mapping (organization, user) VALUES ('$orgid', '$userid')";
-			$result2 = mysqli_query($link, $query2);
-			if (!$result2){
-				die('Error: ' . mysqli_error($link));
-			}
-		}
-		else if($orgaction == "join"){
-			//Join an existing organization after checking that it exists
+		if($orgaction == "join"){
 			$query= "SELECT id FROM organizations WHERE code='$orgcode'";
 			$result = mysqli_query($link, $query);
 			if (!$result){
 				die('Error: ' . mysqli_error($link));
 			}
 			list($orgid) = mysqli_fetch_array($result);
-			echo "Tried join with org ID " . $orgid . " and user ID " . $userid;
-			$count = mysqli_num_rows($result);
-			echo "Got count : " . $count;
-			if($count == 1){
-				$query2 = "INSERT INTO user_organization_mapping (organization, user) VALUES ('$orgid', '$userid')";
+			$orgwithcodecount = mysqli_num_rows($result);
+		}
+
+		if($orgwithcodecount == 1 || $orgaction == "create"){
+
+			//User Creation
+			$query2 = "INSERT INTO users (username, password, firstname, lastname) VALUES ('$username', '$password', '$firstname', '$lastname')";
+			$result2 = mysqli_query($link, $query2);
+			$userid = mysqli_insert_id($link);
+			if (!$result2){
+				die('Error: ' . mysqli_error($link));
+			}
+
+			//Organization Creation ~check
+			if($orgaction == "create"){
+				$query2 = "INSERT INTO organizations (name, code) VALUES ('$orgname', '$code')";
 				$result2 = mysqli_query($link, $query2);
+				$orgid = mysqli_insert_id($link);
 				if (!$result2){
 					die('Error: ' . mysqli_error($link));
 				}
 			}
-			else{
-				$fmsg = "Invalid Organization Code!";
+
+			//Organization Join
+			$query2 = "INSERT INTO user_organization_mapping (organization, user) VALUES ('$orgid', '$userid')";
+			$result2 = mysqli_query($link, $query2);
+			if (!$result2){
+				die('Error: ' . mysqli_error($link));
 			}
+
 		}
 		else{
-			$fmsg = "Invalid Organization!";
+
+			$fmsg = "Invalid Organization Code!";
+
 		}
 
 	}
