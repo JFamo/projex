@@ -97,6 +97,26 @@ if(isset($_POST['edit-lastname'])){
 
 }
 
+//Handle Password Editing
+if(isset($_POST['edit-password'])){
+
+	$password = $_POST['edit-password'];
+	$password = validate($password);
+	$password = password_hash($password, PASSWORD_DEFAULT);
+	$username = $_SESSION['username'];
+	
+	require('../php/connect.php');
+
+	$query = "UPDATE users SET password='$password' WHERE username='$username'";
+	$result = mysqli_query($link, $query);
+	if (!$result){
+		die('Error: ' . mysqli_error($link));
+	}
+
+	$fmsg = "Successfully Changed Password!";
+
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -183,6 +203,17 @@ if(!isset($_SESSION['username'])){
 				    <div class="form-group col-md-6">
 				      <label for="edit-username">Change Username</label>
 				      <input type="text" class="form-control" id="edit-username" name="edit-username" value="<?php echo $_SESSION['username']; ?>">
+				    </div>
+				  </div>
+				  <button type="submit" class="btn btn-primary">Change</button>
+				</form>
+				<form method="POST" class="pt-4">
+				  <div class="form-row">
+				    <div class="form-group col-md-6">
+				      <label for="edit-password">Change Password</label>
+				      <input type="password" class="form-control" id="edit-password" name="edit-password">
+				      <label for="repeat-password">Repeat Password</label>
+				      <input type="password" class="form-control" id="repeat-password" name="repeat-password">
 				    </div>
 				  </div>
 				  <button type="submit" class="btn btn-primary">Change</button>
