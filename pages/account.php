@@ -15,6 +15,46 @@ function validate($data){
 
 session_start();
 
+//Handle Username Editing
+if(isset($_POST['edit-username'])){
+
+	$username = $_POST['edit-username'];
+	$username = validate($username);
+	$currentusername = $_SESSION['username'];
+	
+	require('../php/connect.php');
+	
+	$query= "SELECT id FROM users WHERE username='$username'";
+
+	$result = mysqli_query($link, $query);
+
+	if (!$result){
+		die('Error: ' . mysqli_error($link));
+	}
+
+	$count = mysqli_num_rows($result);
+
+	if($count == 0){
+
+		$query2 = "UPDATE users SET username='$username' WHERE username='$currentusername'";
+		$result2 = mysqli_query($link, $query2);
+		if (!$result2){
+			die('Error: ' . mysqli_error($link));
+		}
+
+		$_SESSION['username'] = $username;
+
+		$fmsg = "Successfully Updated Username!";
+
+	}
+	else{
+
+		$fmsg = "Username Already Taken!";
+
+	}
+
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -67,6 +107,9 @@ if(!isset($_SESSION['username'])){
 
 <!--Spooky stuff in the middle-->
 	<div class="container-fluid bodycontainer">
+
+	<?php echo $fmsg ?>
+
 		<div class="row">
 			<div class="col-sm-12">
 				<h1>My Account</h1>

@@ -61,7 +61,6 @@ if(isset($_POST['login-username']) and isset($_POST['login-password'])){
 
 	if($count == 1){
 
-		//fetch the rank of that user
 		$query2 = "SELECT id, password, firstname, lastname FROM users WHERE username='$username'";
 		$result2 = mysqli_query($link, $query2);
 		if (!$result2){
