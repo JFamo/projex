@@ -14,6 +14,28 @@ function validate($data){
   	return $data;
 }
 
+//Function to randomly generate a unique organization code
+function createOrgCode(){
+	return substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyz", 5)), 0, 5);
+}
+
+//Function to check if organization code is unique
+function isCodeUnique($code){
+	require('php/connect.php');
+	$query= "SELECT id FROM organizations WHERE code='$code'";
+	$result = mysqli_query($link, $query);
+	if (!$result){
+		die('Error: ' . mysqli_error($link));
+	}
+	$count = mysqli_num_rows($result);
+	if($count == 0){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
 session_start();
 
 //Handle user login
@@ -116,9 +138,16 @@ if(isset($_POST['register-username']) and isset($_POST['register-password']) and
 				die('Error: ' . mysqli_error($link));
 			}
 
-			//Organization Creation ~check
+			//Organization Creation
 			if($orgaction == "create"){
-				$query2 = "INSERT INTO organizations (name, code) VALUES ('$orgname', '$code')";
+				//Generate organization code
+				$newOrgCode = createOrgCode();
+				while(!isCodeUnique($newOrgCode)){
+					$newOrgCode = createOrgCode();
+				}
+
+				//Actually perform creation query
+				$query2 = "INSERT INTO organizations (name, code) VALUES ('$orgname', '$newOrgCode')";
 				$result2 = mysqli_query($link, $query2);
 				$orgid = mysqli_insert_id($link);
 				if (!$result2){
@@ -132,6 +161,8 @@ if(isset($_POST['register-username']) and isset($_POST['register-password']) and
 			if (!$result2){
 				die('Error: ' . mysqli_error($link));
 			}
+
+			$fmsg = "Successfully Registered!";
 
 		}
 		else{
