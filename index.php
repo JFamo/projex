@@ -76,8 +76,6 @@ if(isset($_POST['register-username']) and isset($_POST['register-password']) and
 
 	$username = validate($username);
 	$password = validate($password);
-	$orgname = validate($orgname);
-	$orgcode = validate($orgcode);
 
 	$password = password_hash($password, PASSWORD_DEFAULT);
 	
@@ -98,16 +96,18 @@ if(isset($_POST['register-username']) and isset($_POST['register-password']) and
 		//User Creation
 		$query2 = "INSERT INTO users (username, password, firstname, lastname) VALUES ('$username', '$password', '$firstname', '$lastname')";
 		$result2 = mysqli_query($link, $query2);
-		$userid = mysql_insert_id($link);
+		$userid = mysqli_insert_id($link);
 		if (!$result2){
 			die('Error: ' . mysqli_error($link));
 		}
+
+		echo "Got org action : " . $orgaction;
 
 		//Organization Creation ~check
 		if($orgaction == "create"){
 			$query2 = "INSERT INTO organizations (name, code) VALUES ('$orgname', '$code')";
 			$result2 = mysqli_query($link, $query2);
-			$orgid = mysql_insert_id($link);
+			$orgid = mysqli_insert_id($link);
 			if (!$result2){
 				die('Error: ' . mysqli_error($link));
 			}
@@ -130,8 +130,9 @@ if(isset($_POST['register-username']) and isset($_POST['register-password']) and
 				die('Error: ' . mysqli_error($link));
 			}
 			list($orgid) = mysqli_fetch_array($result);
+			echo "Tried join with org ID " . $orgid . " and user ID " . $userid;
 			$count = mysqli_num_rows($result);
-
+			echo "Got count : " . $count;
 			if($count == 1){
 				$query2 = "INSERT INTO user_organization_mapping (organization, user) VALUES ('$orgid', '$userid')";
 				$result2 = mysqli_query($link, $query2);
