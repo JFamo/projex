@@ -55,6 +55,48 @@ if(isset($_POST['edit-username'])){
 
 }
 
+//Handle Firstname Editing
+if(isset($_POST['edit-firstname'])){
+
+	$firstname = $_POST['edit-firstname'];
+	$firstname = validate($firstname);
+	$currentfirstname = $_SESSION['firstname'];
+	
+	require('../php/connect.php');
+
+	$query = "UPDATE users SET firstname='$firstname' WHERE firstname='$currentfirstname'";
+	$result = mysqli_query($link, $query);
+	if (!$result){
+		die('Error: ' . mysqli_error($link));
+	}
+
+	$_SESSION['firstname'] = $firstname;
+
+	$fmsg = "Successfully Updated First Name!";
+
+}
+
+//Handle Lastname Editing
+if(isset($_POST['edit-lastname'])){
+
+	$lastname = $_POST['edit-lastname'];
+	$lastname = validate($lastname);
+	$currentlastname = $_SESSION['lastname'];
+	
+	require('../php/connect.php');
+
+	$query = "UPDATE users SET lastname='$lastname' WHERE lastname='$currentlastname'";
+	$result = mysqli_query($link, $query);
+	if (!$result){
+		die('Error: ' . mysqli_error($link));
+	}
+
+	$_SESSION['lastname'] = $lastname;
+
+	$fmsg = "Successfully Updated Last Name!";
+
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
