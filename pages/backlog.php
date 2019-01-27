@@ -117,7 +117,7 @@ if(!isset($_SESSION['username'])){
 
 
 <div class="dropdown">
-  <button onclick="myFunction()" class="dropdownbtn">Project Selector</button>
+  <button onclick="drop()" class="dropdownbtn">Project Selector</button>
   <div id="myDropdown" class="dropdown-content">
     <a href="#p1">Project 1</a>
     <a href="#p2">Project 2</a>
@@ -128,7 +128,7 @@ if(!isset($_SESSION['username'])){
 <script>
 /* When the user clicks on the button, 
 toggle between hiding and showing the dropdown content */
-function myFunction() {
+function drop() {
   document.getElementById("myDropdown").classList.toggle("show");
 }
 
