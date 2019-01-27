@@ -179,8 +179,8 @@ if(!isset($_SESSION['username'])){
 				<hr>
 				<b>Name : </b><?php 
 require('../php/connect.php');
-
-$query = "SELECT organizations.name FROM ((user_organization_mapping INNER JOIN organizations ON organizations.id = user_organization_mapping.organization) INNER JOIN users ON user_organization_mapping.user = users.id)";
+$username = $_SESSION['username'];
+$query = "SELECT organizations.name FROM ((user_organization_mapping INNER JOIN organizations ON organizations.id = user_organization_mapping.organization) INNER JOIN users ON user_organization_mapping.user = users.id) WHERE users.username = '$username'";
 $result = mysqli_query($link, $query);
 if (!$result){
 	die('Error: ' . mysqli_error($link));
@@ -188,9 +188,29 @@ if (!$result){
 list($name) = mysqli_fetch_array($result);
 echo $name;
 				 ?>		<br>
-				<b>ID : </b><?php echo $_SESSION['username']; ?>		<br>
+				<b>ID : </b><?php 
+require('../php/connect.php');
+$username = $_SESSION['username'];
+$query = "SELECT organizations.id FROM ((user_organization_mapping INNER JOIN organizations ON organizations.id = user_organization_mapping.organization) INNER JOIN users ON user_organization_mapping.user = users.id) WHERE users.username = '$username'";
+$result = mysqli_query($link, $query);
+if (!$result){
+	die('Error: ' . mysqli_error($link));
+}
+list($orgid) = mysqli_fetch_array($result);
+echo $orgid;
+				 ?>		<br>
 				<small>This is the unique identifier used by ProjeX to identify your organization</small><br>
-				<b>Join Code : </b><?php echo $_SESSION['firstname']; ?>	<br>
+				<b>Join Code : </b><?php 
+require('../php/connect.php');
+$username = $_SESSION['username'];
+$query = "SELECT organizations.code FROM ((user_organization_mapping INNER JOIN organizations ON organizations.id = user_organization_mapping.organization) INNER JOIN users ON user_organization_mapping.user = users.id) WHERE users.username = '$username'";
+$result = mysqli_query($link, $query);
+if (!$result){
+	die('Error: ' . mysqli_error($link));
+}
+list($orgcode) = mysqli_fetch_array($result);
+echo $orgcode;
+				 ?>	<br>
 				<small>This is the unique identifier other users will need to join your organization</small><br>
 				<form method="POST" class="pt-4">
 				  <div class="form-row">
