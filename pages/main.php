@@ -57,10 +57,10 @@ if(!isset($_SESSION['username'])){
 		  	<a class="nav-link" href="#" style="flex-basis:20%;"><img src="" width="30" height="30" class="d-inline-block align-top" alt="" />ProjeX</a>
 		  	<a class="nav-link" href="#"><img src="../imgs/workspacePlaceholder.png" width="30" height="30" class="d-inline-block align-top" alt="" /></a>
 		    <a class="nav-link" href="metrics.php">Metrics</a>
-		    <a class="nav-link" href="metrics.php">Backlog</a>
-		    <a class="nav-link" href="metrics.php">Active</a>
-		    <a class="nav-link" href="metrics.php">Docs</a>
-		    <a class="nav-link" href="metrics.php">Messages</a>
+		    <a class="nav-link" href="backlog.php">Backlog</a>
+		    <a class="nav-link" href="active.php">Active</a>
+		    <a class="nav-link" href="docs.php">Docs</a>
+		    <a class="nav-link" href="messages.php">Messages</a>
 		    <a class="nav-link" href="../php/logout.php">Logout</a>
 	    </div>
 	</nav>
