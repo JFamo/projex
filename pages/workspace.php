@@ -41,13 +41,22 @@ if(isset($_POST['workspace-name'])){
 	}
 	$wsid = mysqli_insert_id($link); //Save the AI workspace ID
 
-	//Finally add the creating user (the org owner) to the workspace
-	//~~JOSH~~
-	//Eventually we'll need to make this accept a list of user IDs
+	//Finally add the checked users to the workspace
+	//Force org owner into workspace
 	$query2 = "INSERT INTO user_workspace_mapping (workspace, user) VALUES ('$wsid', '$myid')";
 	$result2 = mysqli_query($link, $query2);
 	if (!$result2){
 		die('Error: ' . mysqli_error($link));
+	}
+	//Iterate other users
+	if(!empty($_POST['workspace-user'])){
+		foreach($_POST['workspace-user'] as $userID){
+			$query2 = "INSERT INTO user_workspace_mapping (workspace, user) VALUES ('$wsid', '$userID')";
+			$result2 = mysqli_query($link, $query2);
+			if (!$result2){
+				die('Error: ' . mysqli_error($link));
+			}
+		}
 	}
 
 	$fmsg = "Successfully Created Workspace!";
@@ -162,7 +171,7 @@ if($count == 1){
 
 			        	?>
 
-			          		<input type="checkbox" name="workspace-user" value="<?php echo $thisID; ?>" <?php if($thisID == $_SESSION['id']){ echo "checked='checked' onclick='return false;'"; } ?>> <?php echo $thisFirstname . " " . $thisLastname . " (" . $thisID . ")"; ?><br>
+			          		<input type="checkbox" <?php if($thisID != $_SESSION['id']){ echo "name='workspace-user[]'"; } ?> value="<?php echo $thisID; ?>" <?php if($thisID == $_SESSION['id']){ echo "checked='checked' onclick='return false;'"; } ?>> <?php echo $thisFirstname . " " . $thisLastname . " (" . $thisID . ")"; ?><br>
 
 			          <?php } ?>
 				    </div>
