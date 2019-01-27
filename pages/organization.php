@@ -149,7 +149,7 @@ if($count == 1){
 				<form method="POST" class="pt-4">
 				  <div class="form-row">
 				    <div class="form-group col-md-6">
-				      <label for="edit-name">Change Name</label>
+				      <label for="edit-name">Change Organization Name</label>
 				      <input type="text" class="form-control" id="edit-name" name="edit-name" placeholder="New Name...">
 				    </div>
 				  </div>
@@ -159,6 +159,52 @@ if($count == 1){
 }
 ?>
 				<br>
+				<h1>My Workspaces</h1>
+				<p>Edit the workspaces within this organization.</p>
+				<hr>
+				<?php
+
+	        	require('../php/connect.php');
+
+	        	$username = $_SESSION['username'];
+				$query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
+				$result = mysqli_query($link, $query);
+				if (!$result){
+					die('Error: ' . mysqli_error($link));
+				}
+				while($resultArray = mysqli_fetch_array($result)){
+				$workspaceName = $resultArray['name'];
+				$workspaceID = $resultArray['id'];
+
+	        	?>
+	        	<h4><?php echo $workspaceName ?> (ID#<?php echo $workspaceID ?>)</h4>
+	        	<div class="row">
+	        	<div class="col-sm-6">
+				<form method="POST" class="pt-2">
+				  <div class="form-row">
+				    <div class="form-group col-md-12">
+				      <label for="edit-name">Change Workspace Name</label>
+				      <input type="text" class="form-control" name="edit-name" placeholder="New Name...">
+				    </div>
+				  </div>
+				  <button type="submit" class="btn btn-primary">Change</button>
+				</form>
+				</div>
+				<div class="col-sm-6">
+				<form method="POST" class="pt-2">
+				  <div class="form-row">
+				    <div class="form-group col-md-12">
+				      <label for="edit-name">Change Workspace Name</label>
+				      <input type="hidden" name="workspace-id" value="<?php echo $workspaceID; ?>">
+				      <input type="text" class="form-control" name="workspace-name" value="<?php echo $workspaceName; ?>">
+				    </div>
+				  </div>
+				  <button type="submit" class="btn btn-primary">Change</button>
+				</form>
+				</div>
+				</div>
+				<br>
+				<?php } ?>
 				<a href="../index.php">Return to Dashboard</a>
 			</div>
 		</div>
