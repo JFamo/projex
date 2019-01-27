@@ -250,7 +250,7 @@ if($count == 1){
 							list($orgid) = mysqli_fetch_array($result2);
 
 							//Next grab firstname, lastname, and id of users in same organization
-							$query = "SELECT users.id, users.firstname, users.lastname FROM (user_organization_mapping INNER JOIN users ON user_organization_mapping.user = users.id) WHERE user_organization_mapping.organization = '$orgid'";
+							$query = "SELECT a.id, a.firstname, a.lastname FROM users a, user_organization_mapping b WHERE a.id = b.user AND b.organization = '$orgid' AND a.id NOT IN (SELECT user FROM user_workspace_mapping WHERE workspace = '$workspaceID')";
 							$result2 = mysqli_query($link, $query);
 							if (!$result2){
 								die('Error: ' . mysqli_error($link));
