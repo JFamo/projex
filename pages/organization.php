@@ -135,6 +135,17 @@ list($orgcode) = mysqli_fetch_array($result);
 echo $orgcode;
 				 ?>	<br>
 				<small>This is the unique identifier other users will need to join your organization</small><br>
+				<?php 
+require('../php/connect.php');
+$username = $_SESSION['username'];
+$query = "SELECT user_ranks.rank FROM (user_ranks INNER JOIN users ON user_ranks.user = users.id) WHERE user_ranks.rank = 'owner' AND users.username = '$username'";
+$result = mysqli_query($link, $query);
+if (!$result){
+	die('Error: ' . mysqli_error($link));
+}
+$count = mysqli_num_rows($result);
+if($count == 1){
+				 ?>
 				<form method="POST" class="pt-4">
 				  <div class="form-row">
 				    <div class="form-group col-md-6">
@@ -144,6 +155,9 @@ echo $orgcode;
 				  </div>
 				  <button type="submit" class="btn btn-primary">Change</button>
 				</form>
+<?php
+}
+?>
 				<br>
 				<a href="../index.php">Return to Dashboard</a>
 			</div>
