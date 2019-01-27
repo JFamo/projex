@@ -15,14 +15,17 @@ function validate($data){
 
 session_start();
 
-//Handle Organization Name Editing
-if(isset($_POST['edit-name'])){
+//Handle New Workspace Creation
+if(isset($_POST['workspace-name'])){
 
-	$newname = $_POST['edit-name'];
-	$newname = validate($newname);
+	$wsname = $_POST['workspace-name'];
+	$wsname = validate($wsname);
 	$username = $_SESSION['username'];
+	$myid = $_SESSION['id'];
 	
 	require('../php/connect.php');
+
+	//Start by getting organization ID of user
 	$query = "SELECT organizations.id FROM ((user_organization_mapping INNER JOIN organizations ON organizations.id = user_organization_mapping.organization) INNER JOIN users ON user_organization_mapping.user = users.id) WHERE users.username = '$username'";
 	$result = mysqli_query($link, $query);
 	if (!$result){
@@ -30,13 +33,24 @@ if(isset($_POST['edit-name'])){
 	}
 	list($orgid) = mysqli_fetch_array($result);
 
-	$query2 = "UPDATE organizations SET name = '$newname' WHERE id = '$orgid'";
+	//Next create the workspace itself
+	$query2 = "INSERT INTO workspaces (organization, name) VALUES ('$orgid', '$wsname')";
+	$result2 = mysqli_query($link, $query2);
+	if (!$result2){
+		die('Error: ' . mysqli_error($link));
+	}
+	$wsid = mysqli_insert_id($link); //Save the AI workspace ID
+
+	//Finally add the creating user (the org owner) to the workspace
+	//~~JOSH~~
+	//Eventually we'll need to make this accept a list of user IDs
+	$query2 = "INSERT INTO user_workspace_mapping (workspace, user) VALUES ('$wsid', '$myid')";
 	$result2 = mysqli_query($link, $query2);
 	if (!$result2){
 		die('Error: ' . mysqli_error($link));
 	}
 
-	$fmsg = "Successfully Updated Name!";
+	$fmsg = "Successfully Created Workspace!";
 
 }
 
@@ -111,14 +125,14 @@ if (!$result){
 $count = mysqli_num_rows($result);
 if($count == 1){
 				 ?>
-				<form method="POST" class="pt-4">
+				<form method="POST" class="pt-2">
 				  <div class="form-row">
 				    <div class="form-group col-md-6">
-				      <label for="edit-name">Change Name</label>
-				      <input type="text" class="form-control" id="edit-name" name="edit-name" placeholder="New Name...">
+				      <label for="edit-name">Workspace Name</label>
+				      <input type="text" class="form-control" id="workspace-name" name="workspace-name" placeholder="New Workspace Name...">
 				    </div>
 				  </div>
-				  <button type="submit" class="btn btn-primary">Change</button>
+				  <button type="submit" class="btn btn-primary">Create</button>
 				</form>
 <?php
 }
