@@ -55,7 +55,15 @@ if(!isset($_SESSION['username'])){
 	<nav class="navbar navbar-dark bg-primary">
 		<div class="navpadder">
 		  	<a class="nav-link" href="#" style="flex-basis:20%;"><img src="" width="30" height="30" class="d-inline-block align-top" alt="" />ProjeX</a>
-		  	<a class="nav-link" href="#"><img src="../imgs/workspacePlaceholder.png" width="30" height="30" class="d-inline-block align-top" alt="" /></a>
+		  	<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	          Workspaces
+	        </a>
+	        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+	          <form><input type="hidden" value="Aerospace" name="workspace-name"/><input class="dropdown-item" type="submit" value="Aerospace"></form>
+	          <form><input type="hidden" value="Engineering" name="workspace-name"/><input class="dropdown-item" type="submit" value="Engineering"></form>
+	          <div class="dropdown-divider"></div>
+	          <form><input type="hidden" value="new" name="workspace-new"/><input class="dropdown-item" type="submit" value="Create New"></form>
+	        </div>
 		    <a class="nav-link" href="metrics.php">Metrics</a>
 		    <a class="nav-link" href="metrics.php">Backlog</a>
 		    <a class="nav-link" href="metrics.php">Active</a>
