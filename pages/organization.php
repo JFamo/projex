@@ -64,6 +64,54 @@ if(isset($_POST['workspace-name'])){
 
 }
 
+//Handle Removing Users from Workspaces
+if(isset($_POST['workspace-userid'])){
+
+	$userid = $_POST['workspace-userid'];
+	$wsid = $_POST['workspace-id'];
+	$userid = validate($userid);
+	$wsid = validate($wsid);
+	$username = $_SESSION['username'];
+	
+	//~~JOSH~~
+	//Need checking that the user really has this workspace
+	//Prevents client-side editing of wsid to access those of other orgs
+	//@Tom
+	require('../php/connect.php');
+	$query = "DELETE FROM user_workspace_mapping WHERE user='$userid' AND workspace='$wsid'";
+	$result = mysqli_query($link, $query);
+	if (!$result){
+		die('Error: ' . mysqli_error($link));
+	}
+
+	$fmsg = "Successfully Removed User from Workspace!";
+
+}
+
+//Handle Adding Users to Workspaces
+if(isset($_POST['workspace-adduser'])){
+
+	$userid = $_POST['workspace-adduser'];
+	$wsid = $_POST['workspace-id'];
+	$userid = validate($userid);
+	$wsid = validate($wsid);
+	$username = $_SESSION['username'];
+	
+	//~~JOSH~~
+	//Need checking that the user really has this workspace
+	//Prevents client-side editing of wsid to access those of other orgs
+	//@Tom
+	require('../php/connect.php');
+	$query = "INSERT INTO user_workspace_mapping (workspace, user) VALUES ('$wsid', '$userid')";
+	$result = mysqli_query($link, $query);
+	if (!$result){
+		die('Error: ' . mysqli_error($link));
+	}
+
+	$fmsg = "Successfully Added User to Workspace!";
+
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -224,9 +272,12 @@ if($count == 1){
 					    <div class="form-group col-md-8" style="margin-bottom:0;">
 					      	<label><?php echo $thisFirstname . " " . $thisLastname . " (#" . $thisID . ")"; ?></label>
 					      	<input type="hidden" name="workspace-userid" value="<?php echo $thisID; ?>">
+					      	<input type="hidden" name="workspace-id" value="<?php echo $workspaceID; ?>">
 					    </div>
 					    <div class="form-group col-md-4" style="margin-bottom:0;">
+					    	<?php if($thisID != $_SESSION['id']){ ?>
 					    	<button style="padding-top:0;" type="submit" class="btn btn-link text-danger">Remove</button>
+					    	<?php } ?>
 					    </div>
 					  </div>
 					</form>
@@ -234,7 +285,8 @@ if($count == 1){
 				<form method="POST" class="pt-1">
 				  <div class="form-row">
 				    <div class="form-group col-md-8" style="margin-bottom:0;">
-				      	<select class="form-control">
+				      	<input type="hidden" name="workspace-id" value="<?php echo $workspaceID; ?>">
+				      	<select name="workspace-adduser" class="form-control">
 						  <?php
 
 				        	require('../php/connect.php');
