@@ -75,6 +75,7 @@ if(isset($_POST['login-username']) and isset($_POST['login-password'])){
 			$_SESSION['username'] = $username;
 			$_SESSION['firstname'] = $firstnameValue;
 			$_SESSION['lastname'] = $lastnameValue;
+			$_SESSION['workspace'] = null;
 
 		}
 
