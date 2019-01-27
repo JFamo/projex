@@ -60,11 +60,11 @@ if(isset($_POST['edit-firstname'])){
 
 	$firstname = $_POST['edit-firstname'];
 	$firstname = validate($firstname);
-	$currentfirstname = $_SESSION['firstname'];
+	$user = $_SESSION['username'];
 	
 	require('../php/connect.php');
 
-	$query = "UPDATE users SET firstname='$firstname' WHERE firstname='$currentfirstname'";
+	$query = "UPDATE users SET firstname='$firstname' WHERE username='$user'";
 	$result = mysqli_query($link, $query);
 	if (!$result){
 		die('Error: ' . mysqli_error($link));
@@ -81,11 +81,11 @@ if(isset($_POST['edit-lastname'])){
 
 	$lastname = $_POST['edit-lastname'];
 	$lastname = validate($lastname);
-	$currentlastname = $_SESSION['lastname'];
+	$user = $_SESSION['username'];
 	
 	require('../php/connect.php');
 
-	$query = "UPDATE users SET lastname='$lastname' WHERE lastname='$currentlastname'";
+	$query = "UPDATE users SET lastname='$lastname' WHERE username='$user'";
 	$result = mysqli_query($link, $query);
 	if (!$result){
 		die('Error: ' . mysqli_error($link));
@@ -218,6 +218,8 @@ if(!isset($_SESSION['username'])){
 				  </div>
 				  <button type="submit" class="btn btn-primary">Change</button>
 				</form>
+				<br>
+				<a href="../index.php">Return to Dashboard</a>
 			</div>
 		</div>
 	</div>

@@ -124,7 +124,8 @@ if(!isset($_SESSION['username'])){
 					</tr>
 					</tbody>
 				</table>
-				<a href="account.php">Manage My Account</a>
+				<a href="account.php">Manage My Account</a><br>
+				<a href="organization.php">Manage My Organization</a>
 			</div>
 			<div class="col-sm-8">
 			<canvas id="myChart" class="dashchart"></canvas>
