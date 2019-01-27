@@ -204,15 +204,34 @@ if($count == 1){
 	        	<h4><?php echo $workspaceName ?> (ID#<?php echo $workspaceID ?>)</h4>
 	        	<div class="row">
 	        	<div class="col-sm-6">
-				<form method="POST" class="pt-2">
-				  <div class="form-row">
-				    <div class="form-group col-md-12">
-				      <label for="edit-name">Change Workspace Name</label>
-				      <input type="text" class="form-control" name="edit-name" placeholder="New Name...">
-				    </div>
-				  </div>
-				  <button type="submit" class="btn btn-primary">Change</button>
-				</form>
+	        	<b>Users</b>
+		        	<?php
+
+		        	require('../php/connect.php');
+
+					$query = "SELECT users.firstname, users.lastname, users.id FROM (user_workspace_mapping INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE user_workspace_mapping.workspace = '$workspaceID'";
+					$result2 = mysqli_query($link, $query);
+					if (!$result2){
+						die('Error: ' . mysqli_error($link));
+					}
+					while($userArray = mysqli_fetch_array($result2)){
+					$thisFirstname = $userArray['firstname'];
+					$thisLastname = $userArray['lastname'];
+					$thisID = $userArray['id'];
+
+		        	?>
+					<form method="POST" class="pt-1">
+					  <div class="form-row">
+					    <div class="form-group col-md-8" style="margin-bottom:0;">
+					      	<label><?php echo $thisFirstname . " " . $thisLastname; ?></label>
+					      	<input type="hidden" name="workspace-userid" value="<?php echo $thisID; ?>">
+					    </div>
+					    <div class="form-group col-md-4" style="margin-bottom:0;">
+					    	<button style="padding-top:0;" type="submit" class="btn btn-link text-danger">Remove</button>
+					    </div>
+					  </div>
+					</form>
+					<?php } ?>
 				</div>
 				<div class="col-sm-6">
 				<form method="POST" class="pt-2">
