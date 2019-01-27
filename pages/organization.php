@@ -112,6 +112,40 @@ if(isset($_POST['workspace-adduser'])){
 
 }
 
+//Handle Workspace Deletion
+if(isset($_POST['workspace-delete'])){
+
+	if($_POST['workspace-delete'] == 'yes'){
+
+		$wsid = $_POST['workspace-id'];
+		$wsid = validate($wsid);
+		$username = $_SESSION['username'];
+		
+		//~~JOSH~~
+		//Need checking that the user really has this workspace
+		//Prevents client-side editing of wsid to access those of other orgs
+		//@Tom
+		require('../php/connect.php');
+		$query = "DELETE FROM workspaces WHERE id = '$wsid'";
+		$result = mysqli_query($link, $query);
+		if (!$result){
+			die('Error: ' . mysqli_error($link));
+		}
+		$query = "DELETE FROM user_workspace_mapping WHERE workspace = '$wsid'";
+		$result = mysqli_query($link, $query);
+		if (!$result){
+			die('Error: ' . mysqli_error($link));
+		}
+
+		$fmsg = "Successfully Deleted Workspace!";
+
+	}
+	else{
+		$fmsg = "Failed to Confirm Workspace Deletion!";
+	}
+
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -249,9 +283,9 @@ if($count == 1){
 				$workspaceID = $resultArray['id'];
 
 	        	?>
-	        	<h4><?php echo $workspaceName ?> (ID#<?php echo $workspaceID ?>)</h4>
 	        	<div class="row">
 	        	<div class="col-sm-6">
+	        	<h4><?php echo $workspaceName ?> (ID#<?php echo $workspaceID ?>)</h4>
 	        	<b>Users</b>
 		        	<?php
 
@@ -326,17 +360,38 @@ if($count == 1){
 				<div class="col-sm-6">
 				<form method="POST" class="pt-2">
 				  <div class="form-row">
-				    <div class="form-group col-md-12">
-				      <label for="edit-name">Change Workspace Name</label>
+				  	<div class="col-12">
+				  	<label for="edit-name">Change Workspace Name</label>
+				  	</div>
+				    <div class="form-group col-md-9">
 				      <input type="hidden" name="workspace-id" value="<?php echo $workspaceID; ?>">
 				      <input type="text" class="form-control" name="workspace-name" value="<?php echo $workspaceName; ?>">
 				    </div>
+				    <div class="form-group col-md-3">
+				      <button type="submit" class="btn btn-link">Change</button>
+				    </div>
 				  </div>
-				  <button type="submit" class="btn btn-primary">Change</button>
+				</form>
+				<form method="POST" class="pt-2">
+				  <div class="form-row">
+				  	<div class="col-12">
+				  	<label>Delete Workspace</label>
+				  	</div>
+				    <div class="form-group col-md-9">
+				      <input type="hidden" name="workspace-id" value="<?php echo $workspaceID; ?>">
+				      <select class="form-control" name="workspace-delete">
+				      	<option value="no">No</option>
+				      	<option value="yes">Yes</option>
+				      </select>
+				    </div>
+				    <div class="form-group col-md-3">
+				      <button type="submit" class="btn btn-link text-danger">Delete</button>
+				    </div>
+				  </div>
 				</form>
 				</div>
 				</div>
-				<br>
+				<hr><br>
 				<?php } ?>
 				<a href="../index.php">Return to Dashboard</a>
 			</div>
