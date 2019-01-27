@@ -15,105 +15,28 @@ function validate($data){
 
 session_start();
 
-//Handle Username Editing
-if(isset($_POST['edit-username'])){
+//Handle Organization Name Editing
+if(isset($_POST['edit-name'])){
 
-	$username = $_POST['edit-username'];
-	$username = validate($username);
-	$currentusername = $_SESSION['username'];
-	
-	require('../php/connect.php');
-	
-	$query= "SELECT id FROM users WHERE username='$username'";
-
-	$result = mysqli_query($link, $query);
-
-	if (!$result){
-		die('Error: ' . mysqli_error($link));
-	}
-
-	$count = mysqli_num_rows($result);
-
-	if($count == 0){
-
-		$query2 = "UPDATE users SET username='$username' WHERE username='$currentusername'";
-		$result2 = mysqli_query($link, $query2);
-		if (!$result2){
-			die('Error: ' . mysqli_error($link));
-		}
-
-		$_SESSION['username'] = $username;
-
-		$fmsg = "Successfully Updated Username!";
-
-	}
-	else{
-
-		$fmsg = "Username Already Taken!";
-
-	}
-
-}
-
-//Handle Firstname Editing
-if(isset($_POST['edit-firstname'])){
-
-	$firstname = $_POST['edit-firstname'];
-	$firstname = validate($firstname);
-	$currentfirstname = $_SESSION['firstname'];
-	
-	require('../php/connect.php');
-
-	$query = "UPDATE users SET firstname='$firstname' WHERE firstname='$currentfirstname'";
-	$result = mysqli_query($link, $query);
-	if (!$result){
-		die('Error: ' . mysqli_error($link));
-	}
-
-	$_SESSION['firstname'] = $firstname;
-
-	$fmsg = "Successfully Updated First Name!";
-
-}
-
-//Handle Lastname Editing
-if(isset($_POST['edit-lastname'])){
-
-	$lastname = $_POST['edit-lastname'];
-	$lastname = validate($lastname);
-	$currentlastname = $_SESSION['lastname'];
-	
-	require('../php/connect.php');
-
-	$query = "UPDATE users SET lastname='$lastname' WHERE lastname='$currentlastname'";
-	$result = mysqli_query($link, $query);
-	if (!$result){
-		die('Error: ' . mysqli_error($link));
-	}
-
-	$_SESSION['lastname'] = $lastname;
-
-	$fmsg = "Successfully Updated Last Name!";
-
-}
-
-//Handle Password Editing
-if(isset($_POST['edit-password'])){
-
-	$password = $_POST['edit-password'];
-	$password = validate($password);
-	$password = password_hash($password, PASSWORD_DEFAULT);
+	$newname = $_POST['edit-name'];
+	$newname = validate($newname);
 	$username = $_SESSION['username'];
 	
 	require('../php/connect.php');
-
-	$query = "UPDATE users SET password='$password' WHERE username='$username'";
+	$query = "SELECT organizations.id FROM ((user_organization_mapping INNER JOIN organizations ON organizations.id = user_organization_mapping.organization) INNER JOIN users ON user_organization_mapping.user = users.id) WHERE users.username = '$username'";
 	$result = mysqli_query($link, $query);
 	if (!$result){
 		die('Error: ' . mysqli_error($link));
 	}
+	list($orgid) = mysqli_fetch_array($result);
 
-	$fmsg = "Successfully Changed Password!";
+	$query2 = "UPDATE organizations SET name = '$newname' WHERE id = '$orgid'";
+	$result2 = mysqli_query($link, $query2);
+	if (!$result2){
+		die('Error: ' . mysqli_error($link));
+	}
+
+	$fmsg = "Successfully Updated Name!";
 
 }
 
@@ -215,37 +138,8 @@ echo $orgcode;
 				<form method="POST" class="pt-4">
 				  <div class="form-row">
 				    <div class="form-group col-md-6">
-				      <label for="edit-firstname">Change First Name</label>
-				      <input type="text" class="form-control" id="edit-firstname" name="edit-firstname" value="<?php echo $_SESSION['firstname']; ?>">
-				    </div>
-				  </div>
-				  <button type="submit" class="btn btn-primary">Change</button>
-				</form>
-				<form method="POST" class="pt-4">
-				  <div class="form-row">
-				    <div class="form-group col-md-6">
-				      <label for="edit-lastname">Change Last Name</label>
-				      <input type="text" class="form-control" id="edit-lastname" name="edit-lastname" value="<?php echo $_SESSION['lastname']; ?>">
-				    </div>
-				  </div>
-				  <button type="submit" class="btn btn-primary">Change</button>
-				</form>
-				<form method="POST" class="pt-4">
-				  <div class="form-row">
-				    <div class="form-group col-md-6">
-				      <label for="edit-username">Change Username</label>
-				      <input type="text" class="form-control" id="edit-username" name="edit-username" value="<?php echo $_SESSION['username']; ?>">
-				    </div>
-				  </div>
-				  <button type="submit" class="btn btn-primary">Change</button>
-				</form>
-				<form method="POST" class="pt-4">
-				  <div class="form-row">
-				    <div class="form-group col-md-6">
-				      <label for="edit-password">Change Password</label>
-				      <input type="password" class="form-control" id="edit-password" name="edit-password">
-				      <label for="repeat-password">Repeat Password</label>
-				      <input type="password" class="form-control" id="repeat-password" name="repeat-password">
+				      <label for="edit-name">Change Name</label>
+				      <input type="text" class="form-control" id="edit-name" name="edit-name" placeholder="New Name...">
 				    </div>
 				  </div>
 				  <button type="submit" class="btn btn-primary">Change</button>
