@@ -180,12 +180,13 @@ if(!isset($_SESSION['username'])){
 				<b>Name : </b><?php 
 require('../php/connect.php');
 
-$query = "UPDATE users SET firstname='$firstname' WHERE firstname='$currentfirstname'";
+$query = "SELECT organizations.name FROM ((user_organization_mapping INNER JOIN organizations ON organizations.id = user_organization_mapping.organization) INNER JOIN users ON user_organization_mapping.user = users.id)";
 $result = mysqli_query($link, $query);
 if (!$result){
 	die('Error: ' . mysqli_error($link));
 }
-list($)
+list($name) = mysqli_fetch_array($result);
+echo $name;
 				 ?>		<br>
 				<b>ID : </b><?php echo $_SESSION['username']; ?>		<br>
 				<small>This is the unique identifier used by ProjeX to identify your organization</small><br>
