@@ -174,12 +174,23 @@ if(!isset($_SESSION['username'])){
 
 		<div class="row">
 			<div class="col-sm-12">
-				<h1>My Account</h1>
-				<p>This is a placeholder page for your account management page.</p>
+				<h1>My Organization</h1>
+				<p>This is a placeholder page for your organization management page.</p>
 				<hr>
-				<b>Username : </b><?php echo $_SESSION['username']; ?>		<br>
-				<b>First Name : </b><?php echo $_SESSION['firstname']; ?>	<br>
-				<b>Last Name : </b><?php echo $_SESSION['lastname']; ?>		<br>
+				<b>Name : </b><?php 
+require('../php/connect.php');
+
+$query = "UPDATE users SET firstname='$firstname' WHERE firstname='$currentfirstname'";
+$result = mysqli_query($link, $query);
+if (!$result){
+	die('Error: ' . mysqli_error($link));
+}
+list($)
+				 ?>		<br>
+				<b>ID : </b><?php echo $_SESSION['username']; ?>		<br>
+				<small>This is the unique identifier used by ProjeX to identify your organization</small><br>
+				<b>Join Code : </b><?php echo $_SESSION['firstname']; ?>	<br>
+				<small>This is the unique identifier other users will need to join your organization</small><br>
 				<form method="POST" class="pt-4">
 				  <div class="form-row">
 				    <div class="form-group col-md-6">
