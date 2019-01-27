@@ -132,6 +132,41 @@ if($count == 1){
 				      <input type="text" class="form-control" id="workspace-name" name="workspace-name" placeholder="New Workspace Name...">
 				    </div>
 				  </div>
+				  <div class="form-row">
+				  	<div class="form-group col-md-6">
+				      <label for="edit-name">Add Users to Workspace</label><br>
+				      <?php
+
+			        	require('../php/connect.php');
+
+			        	$username = $_SESSION['username'];
+
+			        	//Start by getting organization ID of user
+						$query = "SELECT organizations.id FROM ((user_organization_mapping INNER JOIN organizations ON organizations.id = user_organization_mapping.organization) INNER JOIN users ON user_organization_mapping.user = users.id) WHERE users.username = '$username'";
+						$result = mysqli_query($link, $query);
+						if (!$result){
+							die('Error: ' . mysqli_error($link));
+						}
+						list($orgid) = mysqli_fetch_array($result);
+
+						//Next grab firstname, lastname, and id of users in same organization
+						$query = "SELECT users.id, users.firstname, users.lastname FROM (user_organization_mapping INNER JOIN users ON user_organization_mapping.user = users.id) WHERE user_organization_mapping.organization = '$orgid'";
+						$result = mysqli_query($link, $query);
+						if (!$result){
+							die('Error: ' . mysqli_error($link));
+						}
+						while($resultArray = mysqli_fetch_array($result)){
+						$thisFirstname = $resultArray['firstname'];
+						$thisLastname = $resultArray['lastname'];
+						$thisID = $resultArray['id'];
+
+			        	?>
+
+			          		<input type="checkbox" name="workspace-user" value="<?php echo $thisID; ?>" <?php if($thisID == $_SESSION['id']){ echo "checked='checked' onclick='return false;'"; } ?>> <?php echo $thisFirstname . " " . $thisLastname . " (" . $thisID . ")"; ?><br>
+
+			          <?php } ?>
+				    </div>
+				  </div>
 				  <button type="submit" class="btn btn-primary">Create</button>
 				</form>
 <?php
