@@ -40,6 +40,30 @@ if(isset($_POST['edit-name'])){
 
 }
 
+//Handle Workspace Name Editing
+if(isset($_POST['workspace-name'])){
+
+	$newname = $_POST['workspace-name'];
+	$wsid = $_POST['workspace-id'];
+	$newname = validate($newname);
+	$wsid = validate($wsid);
+	$username = $_SESSION['username'];
+	
+	//~~JOSH~~
+	//Need checking that the user really has this workspace
+	//Prevents client-side editing of wsid to access those of other orgs
+	//@Tom
+	require('../php/connect.php');
+	$query = "UPDATE workspaces SET name='$newname' WHERE id='$wsid'";
+	$result = mysqli_query($link, $query);
+	if (!$result){
+		die('Error: ' . mysqli_error($link));
+	}
+
+	$fmsg = "Successfully Updated Name!";
+
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
