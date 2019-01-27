@@ -59,8 +59,24 @@ if(!isset($_SESSION['username'])){
 	          Workspaces
 	        </a>
 	        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-	          <form><input type="hidden" value="Aerospace" name="workspace-name"/><input class="dropdown-item" type="submit" value="Aerospace"></form>
-	          <form><input type="hidden" value="Engineering" name="workspace-name"/><input class="dropdown-item" type="submit" value="Engineering"></form>
+
+	        	<?php
+
+	        	require('../php/connect.php');
+
+	        	$username = $_SESSION['username'];
+				$query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
+				$result = mysqli_query($link, $query);
+				if (!$result){
+					die('Error: ' . mysqli_error($link));
+				}
+				while($resultArray = mysqli_fetch_array($result)){
+				$workspaceName = $resultArray['name'];
+				$workspaceID = $resultArray['id'];
+
+	        	?>
+	          <form><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item" type="submit" value="<?php echo $workspaceName; ?>"></form>
+	          <?php } ?>
 	          <div class="dropdown-divider"></div>
 	          <form><input type="hidden" value="new" name="workspace-new"/><input class="dropdown-item" type="submit" value="Create New"></form>
 	        </div>
