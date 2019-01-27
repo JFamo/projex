@@ -15,6 +15,20 @@ function validate($data){
 
 session_start();
 
+//Handle Changing Workspaces
+if(isset($_POST['workspace-id'])){
+
+	$newworkspace = $_POST['workspace-id'];
+	//~~JOSH~~
+	//Need checking that the user really has this workspace here
+	//Prevents client-side editing of workspace value to access those of other orgs
+	//@Tom
+	
+	$_SESSION['workspace'] = $newworkspace;
+	header("Location:workspace.php");
+
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -75,10 +89,10 @@ if(!isset($_SESSION['username'])){
 				$workspaceID = $resultArray['id'];
 
 	        	?>
-	          <form><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item" type="submit" value="<?php echo $workspaceName; ?>"></form>
+	          <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item" type="submit" value="<?php echo $workspaceName; ?>"></form>
 	          <?php } ?>
 	          <div class="dropdown-divider"></div>
-	          <form><input type="hidden" value="new" name="workspace-new"/><input class="dropdown-item" type="submit" value="Create New"></form>
+	          <a class="dropdown-item" href="workspace.php">Create New</a>
 	        </div>
 		    <a class="nav-link" href="metrics.php">Metrics</a>
 		    <a class="nav-link" href="metrics.php">Backlog</a>
