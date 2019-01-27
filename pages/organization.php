@@ -218,12 +218,11 @@ if($count == 1){
 					$thisFirstname = $userArray['firstname'];
 					$thisLastname = $userArray['lastname'];
 					$thisID = $userArray['id'];
-
 		        	?>
 					<form method="POST" class="pt-1">
 					  <div class="form-row">
 					    <div class="form-group col-md-8" style="margin-bottom:0;">
-					      	<label><?php echo $thisFirstname . " " . $thisLastname; ?></label>
+					      	<label><?php echo $thisFirstname . " " . $thisLastname . " (#" . $thisID . ")"; ?></label>
 					      	<input type="hidden" name="workspace-userid" value="<?php echo $thisID; ?>">
 					    </div>
 					    <div class="form-group col-md-4" style="margin-bottom:0;">
@@ -232,6 +231,45 @@ if($count == 1){
 					  </div>
 					</form>
 					<?php } ?>
+				<form method="POST" class="pt-1">
+				  <div class="form-row">
+				    <div class="form-group col-md-8" style="margin-bottom:0;">
+				      	<select class="form-control">
+						  <?php
+
+				        	require('../php/connect.php');
+
+				        	$username = $_SESSION['username'];
+
+				        	//Start by getting organization ID of user
+							$query = "SELECT organizations.id FROM ((user_organization_mapping INNER JOIN organizations ON organizations.id = user_organization_mapping.organization) INNER JOIN users ON user_organization_mapping.user = users.id) WHERE users.username = '$username'";
+							$result2 = mysqli_query($link, $query);
+							if (!$result2){
+								die('Error: ' . mysqli_error($link));
+							}
+							list($orgid) = mysqli_fetch_array($result2);
+
+							//Next grab firstname, lastname, and id of users in same organization
+							$query = "SELECT users.id, users.firstname, users.lastname FROM (user_organization_mapping INNER JOIN users ON user_organization_mapping.user = users.id) WHERE user_organization_mapping.organization = '$orgid'";
+							$result2 = mysqli_query($link, $query);
+							if (!$result2){
+								die('Error: ' . mysqli_error($link));
+							}
+							while($userArray = mysqli_fetch_array($result2)){
+							$thisFirstname = $userArray['firstname'];
+							$thisLastname = $userArray['lastname'];
+							$thisID = $userArray['id'];
+
+				        	?>
+				        	<option value="<?php echo $thisID; ?>"><?php echo $thisFirstname . " " . $thisLastname . " (#" . $thisID . ")"; ?></option>
+				        	<?php } ?>
+						</select>
+				    </div>
+				    <div class="form-group col-md-4" style="margin-bottom:0;">
+				    	<button type="submit" class="btn btn-link">Add</button>
+				    </div>
+				  </div>
+				</form>
 				</div>
 				<div class="col-sm-6">
 				<form method="POST" class="pt-2">
