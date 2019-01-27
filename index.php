@@ -161,6 +161,16 @@ if(isset($_POST['register-username']) and isset($_POST['register-password']) and
 				die('Error: ' . mysqli_error($link));
 			}
 
+			//Add Rank for Owner
+			if($orgaction == "create"){
+				//Actually perform creation query
+				$query2 = "INSERT INTO user_ranks (user, scope, rank) VALUES ('$userid', 'organization', 'owner')";
+				$result2 = mysqli_query($link, $query2);
+				if (!$result2){
+					die('Error: ' . mysqli_error($link));
+				}
+			}
+
 			$fmsg = "Successfully Registered!";
 
 		}
