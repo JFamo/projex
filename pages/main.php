@@ -15,6 +15,20 @@ function validate($data){
 
 session_start();
 
+//Handle Changing Workspaces
+if(isset($_POST['workspace-id'])){
+
+	$newworkspace = $_POST['workspace-id'];
+	//~~JOSH~~
+	//Need checking that the user really has this workspace here
+	//Prevents client-side editing of workspace value to access those of other orgs
+	//@Tom
+	
+	$_SESSION['workspace'] = $newworkspace;
+	header("Location:workspace.php");
+
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -55,7 +69,31 @@ if(!isset($_SESSION['username'])){
 	<nav class="navbar navbar-dark bg-primary">
 		<div class="navpadder">
 		  	<a class="nav-link" href="#" style="flex-basis:20%;"><img src="" width="30" height="30" class="d-inline-block align-top" alt="" />ProjeX</a>
-		  	<a class="nav-link" href="#"><img src="../imgs/workspacePlaceholder.png" width="30" height="30" class="d-inline-block align-top" alt="" /></a>
+		  	<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	          Workspaces
+	        </a>
+	        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+	        	<?php
+
+	        	require('../php/connect.php');
+
+	        	$username = $_SESSION['username'];
+				$query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
+				$result = mysqli_query($link, $query);
+				if (!$result){
+					die('Error: ' . mysqli_error($link));
+				}
+				while($resultArray = mysqli_fetch_array($result)){
+				$workspaceName = $resultArray['name'];
+				$workspaceID = $resultArray['id'];
+
+	        	?>
+	          <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item" type="submit" value="<?php echo $workspaceName; ?>"></form>
+	          <?php } ?>
+	          <div class="dropdown-divider"></div>
+	          <a class="dropdown-item" href="workspace.php">Create New</a>
+	        </div>
 		    <a class="nav-link" href="metrics.php">Metrics</a>
 		    <a class="nav-link" href="metrics.php">Backlog</a>
 		    <a class="nav-link" href="metrics.php">Active</a>
@@ -124,7 +162,8 @@ if(!isset($_SESSION['username'])){
 					</tr>
 					</tbody>
 				</table>
-				<a href="#">Manage My Account</a>
+				<a href="account.php">Manage My Account</a><br>
+				<a href="organization.php">Manage My Organization</a>
 			</div>
 			<div class="col-sm-8">
 			<canvas id="myChart" class="dashchart"></canvas>
