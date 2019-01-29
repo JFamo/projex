@@ -97,11 +97,11 @@ if(!isset($_SESSION['username'])){
 		<div class="navpadder">
 		  	<a class="nav-link" href="#" style="flex-basis:20%;"><img src="" width="30" height="30" class="d-inline-block align-top" alt="" />ProjeX</a>
 		  	<a class="nav-link" href="#"><img src="../imgs/workspacePlaceholder.png" width="30" height="30" class="d-inline-block align-top" alt="" /></a>
-		    <a class="nav-link" href="metrics.php">Metrics</a>
-		    <a class="nav-link" href="metrics.php">Backlog</a>
-		    <a class="nav-link" href="metrics.php">Active</a>
-		    <a class="nav-link" href="metrics.php">Docs</a>
-		    <a class="nav-link" href="metrics.php">Messages</a>
+		    <a class="nav-link" href="../php/pages/metrics.php">Metrics</a>
+		    <a class="nav-link" href="../php/pages/metrics.php">Backlog</a>
+		    <a class="nav-link" href="../php/pages/metrics.php">Active</a>
+		    <a class="nav-link" href="../php/pages/metrics.php">Docs</a>
+		    <a class="nav-link" href="../php/pages/metrics.php">Messages</a>
 		    <a class="nav-link" href="../php/logout.php">Logout</a>
 	    </div>
 	</nav>
@@ -110,10 +110,10 @@ if(!isset($_SESSION['username'])){
 
 	<div id="mySidenav" class="sidenav">
 	  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-	  <a href="#">Velocity Chart</a>
-	  <a href="/projex/pages/graphs/relativeContribution.php">Relative Contribution</a>
-	  <a href="/projex/pages/graphs/sprintReport.php">Sprint Report</a>
-	  <a href="/projex/pages/graphs/bounceRateChart.php">Bounce Rate Chart</a>
+	  <a href="../php/pages/metrics.php">Velocity Chart</a>
+	  <a href="relativeContribution.php">Relative Contribution</a>
+	  <a href="#">Sprint Report</a>
+	  <a href="bounceRateChart.php">Bounce Rate Chart</a>
 	</div>
 
 	<h2>Animated Sidenav Example</h2>
@@ -188,32 +188,6 @@ if(!isset($_SESSION['username'])){
 		</div>
 	</div>
 		<div>
-			<!--Lets do this chart thing somewhere 
-			<canvas id="Velocity"> </canvas>
-		</div>
-		<script>
-			var ctx = document.getElementById("Velocity").getContext("2d");
-
-			var VelocityChart = new Chart(ctx, {
-				type: 'bar',
-				data: {
-					labels: ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4'],
-					datasets: [{
-						label: 'Commitment',
-						data: [37,21,23,54],
-						},
-						{
-						label: 'Delivered',
-						data: [36,12,19,50]
-						
-					}]
-				},
-				options: {
-
-				}
-			})
-		</script>
-		-->
 </body>
 
 
