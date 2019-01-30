@@ -110,12 +110,12 @@ if(!isset($_SESSION['username'])){
 
 	<div id="mySidenav" class="sidenav">
 	  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-	  <a href="#">Velocity Chart</a>
+	  <a href="/projex/pages/metrics.php">Velocity Chart</a>
 	  <a href="/projex/pages/relativeContribution.php">Relative Contribution</a>
-	  <a href="/projex/pages/sprintReport.php">Sprint Report</a>
+	  <a href="#">Sprint Report</a>
 	</div>
 
-	<h2>Velocity Graph</h2>
+	<h2>Sprint Report</h2>
 	<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Charts</span>
 
 	<script>
@@ -132,32 +132,84 @@ if(!isset($_SESSION['username'])){
 	<div class="container-fluid bodycontainer">
 		<div class="row">
 			<div class="col-sm-8">
-			<canvas id="veloChart" class="dashchart"></canvas>
+			<canvas id="myChart" class="dashchart"></canvas>
 				<script>
-				var ctx = document.getElementById("veloChart");
-				var veloChart = new Chart(ctx, {
-				    type: 'bar',
+				var ctx = document.getElementById("myChart");
+				var myChart = new Chart(ctx, {
+				    type: 'line',
 				    data: {
-				        labels: ["Sprint 1", "Sprint 2", "Sprint 3"],
-				        datasets: [{
-				            label: 'Commitment',
-				            data: [12, 19, 3],
-				            backgroundColor: [
-				                'rgba(216, 17, 89, 0.8)',
-				                'rgba(216, 17, 89, 0.8)',
-				                'rgba(216, 17, 89, 0.8)',
-				            ],
-				        },
-				        {
-				            label: 'Delivered',
-				            data: [10, 15, 8],
-				            backgroundColor: [
-				                'rgba(4, 150, 255, 0.8)',
-				                'rgba(4, 150, 255, 0.8)',
-				                'rgba(4, 150, 255, 0.8)',
-				            ],
-				        }]
-				    },
+				labels: ["Day 0", "Day 3","Day 5","Day 7", "Day 9", "Day 11","Day 14"],
+				datasets: [{
+					label: 'Ideal',
+					backgroundColor: 'rgba(216, 17, 89, 0.8)',
+					borderColor: 'rgba(216, 17, 89, 0.8)',
+					data: [
+						{
+							x:0,
+							y:14
+						},
+						{
+							x:3,
+							y:14
+						},
+						{
+							x:5,
+							y:14
+						},
+						{
+							x:7,
+							y:14
+						},
+						{
+							x:9,
+							y:14
+						},
+						{
+							x:11,
+							y:14
+						},
+						{
+							x:14,
+							y:0
+						}
+					],
+					fill: false,
+				}, {
+					label: 'Real',
+					fill: false,
+					backgroundColor: 'rgba(4, 150, 255, 0.8)',
+					borderColor: 'rgba(4, 150, 255, 0.8)',
+					data: [{
+							x:0,
+							y:14
+						},
+						{
+							x:3,
+							y:11
+						},
+						{
+							x:5,
+							y:9
+						},
+						{
+							x:7,
+							y:8
+						},
+						{
+							x:9,
+							y:5
+						},
+						{
+							x:11,
+							y:3
+						},
+						{
+							x:14,
+							y:1
+						}
+					],
+				}]
+			},
 				    options: {
 				    	layout: {
 				            padding: {
@@ -169,7 +221,7 @@ if(!isset($_SESSION['username'])){
 				        },
 				    	title: {
 				    		display: true,
-            				text: 'Velocity Chart'
+            				text: 'Sprint Burndown'
 				    	},
 				        scales: {
 				            yAxes: [{
@@ -179,39 +231,13 @@ if(!isset($_SESSION['username'])){
 				            }]
 				        }
 				    }
-				});
+				})
 				</script>
 				
 			</div>
 		</div>
 	</div>
 		<div>
-			<!--Lets do this chart thing somewhere 
-			<canvas id="Velocity"> </canvas>
-		</div>
-		<script>
-			var ctx = document.getElementById("Velocity").getContext("2d");
-
-			var VelocityChart = new Chart(ctx, {
-				type: 'bar',
-				data: {
-					labels: ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4'],
-					datasets: [{
-						label: 'Commitment',
-						data: [37,21,23,54],
-						},
-						{
-						label: 'Delivered',
-						data: [36,12,19,50]
-						
-					}]
-				},
-				options: {
-
-				}
-			})
-		</script>
-		-->
 </body>
 
 

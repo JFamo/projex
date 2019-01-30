@@ -51,7 +51,7 @@ if(!isset($_SESSION['username'])){
 
     <!-- Stuff for sidebar -->
 	    <style>
-	    	.sidenav {
+    	.sidenav {
 		  height: 100%;
 		  width: 0;
 		  position: fixed;
@@ -97,11 +97,11 @@ if(!isset($_SESSION['username'])){
 		<div class="navpadder">
 		  	<a class="nav-link" href="#" style="flex-basis:20%;"><img src="" width="30" height="30" class="d-inline-block align-top" alt="" />ProjeX</a>
 		  	<a class="nav-link" href="#"><img src="../imgs/workspacePlaceholder.png" width="30" height="30" class="d-inline-block align-top" alt="" /></a>
-		    <a class="nav-link" href="../php/pages/metrics.php">Metrics</a>
-		    <a class="nav-link" href="../php/pages/metrics.php">Backlog</a>
-		    <a class="nav-link" href="../php/pages/metrics.php">Active</a>
-		    <a class="nav-link" href="../php/pages/metrics.php">Docs</a>
-		    <a class="nav-link" href="../php/pages/metrics.php">Messages</a>
+		    <a class="nav-link" href="metrics.php">Metrics</a>
+		    <a class="nav-link" href="metrics.php">Backlog</a>
+		    <a class="nav-link" href="metrics.php">Active</a>
+		    <a class="nav-link" href="metrics.php">Docs</a>
+		    <a class="nav-link" href="metrics.php">Messages</a>
 		    <a class="nav-link" href="../php/logout.php">Logout</a>
 	    </div>
 	</nav>
@@ -110,14 +110,12 @@ if(!isset($_SESSION['username'])){
 
 	<div id="mySidenav" class="sidenav">
 	  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-	  <a href="../php/pages/metrics.php">Velocity Chart</a>
-	  <a href="relativeContribution.php">Relative Contribution</a>
-	  <a href="#">Sprint Report</a>
-	  <a href="bounceRateChart.php">Bounce Rate Chart</a>
+	  <a href="/projex/pages/metrics.php">Velocity Chart</a>
+	  <a href="#">Relative Contribution</a>
+	  <a href="/projex/pages/sprintReport.php">Sprint Report</a>
 	</div>
 
-	<h2>Animated Sidenav Example</h2>
-	<p>Click on the element below to open the side navigation menu.</p>
+	<h2>Relative Contribution</h2>
 	<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Charts</span>
 
 	<script>
@@ -134,54 +132,13 @@ if(!isset($_SESSION['username'])){
 	<div class="container-fluid bodycontainer">
 		<div class="row">
 			<div class="col-sm-8">
-			<canvas id="veloChart" class="dashchart"></canvas>
+			<canvas id="myChart" class="dashchart"></canvas>
 				<script>
-				var ctx = document.getElementById("veloChart");
-				var veloChart = new Chart(ctx, {
-				    type: 'bar',
-				    data: {
-				        labels: ["Sprint 1", "Sprint 2", "Sprint 3"],
-				        datasets: [{
-				            label: 'Commitment',
-				            data: [12, 19, 3],
-				            backgroundColor: [
-				                'rgba(216, 17, 89, 0.8)',
-				                'rgba(216, 17, 89, 0.8)',
-				                'rgba(216, 17, 89, 0.8)',
-				            ],
-				        },
-				        {
-				            label: 'Delivered',
-				            data: [10, 15, 8],
-				            backgroundColor: [
-				                'rgba(4, 150, 255, 0.8)',
-				                'rgba(4, 150, 255, 0.8)',
-				                'rgba(4, 150, 255, 0.8)',
-				            ],
-				        }]
-				    },
-				    options: {
-				    	layout: {
-				            padding: {
-				                left: 50,
-				                right: 0,
-				                top: 0,
-				                bottom: 0
-				            }
-				        },
-				    	title: {
-				    		display: true,
-            				text: 'Velocity Chart'
-				    	},
-				        scales: {
-				            yAxes: [{
-				                ticks: {
-				                    beginAtZero:true
-				                }
-				            }]
-				        }
-				    }
-				});
+				var ctx = document.getElementById("myChart");
+				var myChart = new Chart(ctx, {
+				    type: 'doughnut',
+				    data: {"labels":["Jim Marshall", "Barry Sanders","Lawrence Taylor"],"datasets":[{"label":"My First Dataset","data":[30,5,10],"backgroundColor":["rgb(216, 17, 89)","rgb(4, 150, 255)","rgb(255, 188, 66)"]}]}
+				})
 				</script>
 				
 			</div>
