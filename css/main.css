@@ -18,7 +18,19 @@
 	background-color:#661166 !important;
 }
 .bg-primary{
-	background-color:#0496ff !important;
+	background-color:#d65b35 !important;
+}
+.bg-dark{
+	background-color:#282828 !important;
+}
+.bg-grey{
+	background-color:#444444 !important;
+}
+.pb_bottom{
+	border-bottom:4px solid #d65b35;
+}
+.color-primary{
+	color:#d65b35;
 }
 .color-red{
 	color:#d81159;
@@ -35,14 +47,14 @@
 .color-purple{
 	color:#661166;
 }
+.color-white{
+	color:#f9f9f9;
+}
 #pageBody{
 	background-color:#EDF5F8;
 	transition: margin-left .5s;
 	width:100%;
-	padding-right:0%; 
-	padding-left:0%; 
-	padding-top:15px; 
-	padding-bottom:15px;
+	padding:4rem 4rem 4rem 4rem;
 	margin-left:250px;
 	min-height:100vh;
 }
@@ -57,9 +69,15 @@
     z-index: 10;
     overflow-x: hidden;
     transition: 0.5s;
-    position: absolute;
+    position: fixed;
     top: 0;
     left:0;
     font-size: 36px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 2px 4px 0 rgba(214, 91, 53, 0.2), 0 6px 20px 0 rgba(214, 91, 53, 0.19);
+}
+.nav-link{
+	color:rgba(255,255,255,0.5);
+}
+.nav-link:hover{
+	color:rgba(255,255,255,1);
 }

@@ -67,52 +67,49 @@ if(!isset($_SESSION['username'])){
 
 <body>
 <!-- Navbar -->
-	<nav class="navbar navbar-dark bg-primary">
-	  	<a class="nav-link" href="#" style="flex-basis:20%;"><img src="" width="30" height="30" class="d-inline-block align-top" alt="" />ProjeX</a>
-	  	<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Workspaces
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-        	<?php
-
-        	require('../php/connect.php');
-
-        	$username = $_SESSION['username'];
-			$query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
-			$result = mysqli_query($link, $query);
-			if (!$result){
-				die('Error: ' . mysqli_error($link));
-			}
-			while($resultArray = mysqli_fetch_array($result)){
-			$workspaceName = $resultArray['name'];
-			$workspaceID = $resultArray['id'];
-
-        	?>
-          <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item" type="submit" value="<?php echo $workspaceName; ?>"></form>
-          <?php } ?>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="workspace.php">Create New</a>
-        </div>
-        <span id="openNavButton" style="font-size:30px;cursor:pointer;color:white;padding-right:30px;" onclick="toggleNav()">&#9776;</span>
-	    <a class="nav-link" href="metrics.php">Metrics</a>
-	    <a class="nav-link" href="metrics.php">Backlog</a>
-	    <a class="nav-link" href="metrics.php">Active</a>
-	    <a class="nav-link" href="metrics.php">Docs</a>
-	    <a class="nav-link" href="metrics.php">Messages</a>
+	<nav class="navbar navbar-dark bg-grey pb_bottom">
+	  	<span id="openNavButton" style="font-size:30px;cursor:pointer;color:white;padding-right:30px;" onclick="toggleNav()">&#9776;</span>
 	    <a class="nav-link" href="../php/logout.php">Logout</a>
 	</nav>
 
 <!--Spooky stuff in the middle-->
 	<div class="container-fluid">
 		<div class="row">
-			<div id="mySidenav" style="padding-right:0; padding-left:0;" class="sidenav darknav bg-primary">
-				<nav style="width:100%;" class="navbar navbar-dark darknav">
+			<div id="mySidenav" style="padding-right:0; padding-left:0;" class="sidenav bg-grey">
+				<nav style="width:100%;" class="navbar navbar-dark">
 				  <div class="container" style="padding-left:0px;">
 				  <ul class="nav navbar-nav align-top">
 				   <a class="navbar-brand icon" href="#"><img src="../imgs/workspacePlaceholder.png" alt="icon" width="60" height="60">Projex</a>
-				   <li class="nav-item active"><a class="nav-link" href="#">Dashboard</a></li>
-				   <li class="nav-item"><a class="nav-link" href="users.php">My Chapter</a></li>
+				   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			          Workspaces
+			        </a>
+			        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+			        	<?php
+
+			        	require('../php/connect.php');
+
+			        	$username = $_SESSION['username'];
+						$query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
+						$result = mysqli_query($link, $query);
+						if (!$result){
+							die('Error: ' . mysqli_error($link));
+						}
+						while($resultArray = mysqli_fetch_array($result)){
+						$workspaceName = $resultArray['name'];
+						$workspaceID = $resultArray['id'];
+
+			        	?>
+			          <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item" type="submit" value="<?php echo $workspaceName; ?>"></form>
+			          <?php } ?>
+			          <div class="dropdown-divider"></div>
+			          <a class="dropdown-item" href="workspace.php">Create New</a>
+			        </div>
+				    <a class="nav-link" href="metrics.php">Metrics</a>
+				    <a class="nav-link" href="metrics.php">Backlog</a>
+				    <a class="nav-link" href="metrics.php">Active</a>
+				    <a class="nav-link" href="metrics.php">Docs</a>
+				    <a class="nav-link" href="metrics.php">Messages</a>
 				  </ul>
 				  </div>
 				</nav>
