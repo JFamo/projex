@@ -109,16 +109,20 @@ if(!isset($_SESSION['username'])){
 				  <div class="form-row">
 				    <div class="form-group col-md-6">
 				      <label for="task-name">Task Name</label>
-				      <input type="text" class="form-control" id="task-name" name="task-name" placeholder=Enter a task name
+				      <input type="text" class="form-control" id="task-name" name="task-name" placeholder="Enter a task name">
 				    </div>
+				  </div>
+				  <div class="form-row">
+				    <div class="form-group col-md-6">
+				      <label for="task-desc">Task Description</label>
+				      <textarea type="text" class="form-control" id="task-desc" name="task-desc" placeholder="Enter the task's description">
+				      </textarea>
+				  </div>
 				  </div>
 				  <button type="submit" class="btn btn-primary">Change</button>
 				</form>
-        		</div>
         	</div>
-        </form>
-      </div>
-    </div>
+        </div>
     </div>
     <footer class="bg-grey color-white pb_top">
       <center><p>
