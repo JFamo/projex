@@ -104,6 +104,9 @@ if(!isset($_SESSION['username'])){
       </div>
       <div id="pageBody">
       <div class="row">
+      	<div class="col-md-8">
+      		<h1>Backlog</h1>	
+      	</div>
         <div class="col-12">
         	<form method="POST" class="pt-4">
 				  <div class="form-row">
@@ -118,7 +121,22 @@ if(!isset($_SESSION['username'])){
 				      <textarea maxlength="450" type="text" class="form-control" id="task-desc" name="task-desc" placeholder="Enter the task's description"></textarea>
 				  </div>
 				  </div>
-				  <button type="submit" class="btn btn-primary">Change</button>
+				  <button type="submit" class="btn btn-primary">Submit</button>
+				</form>
+				<form method="POST" class="pt-4">
+				  <div class="form-row">
+				    <div class="form-group col-md-6">
+				      <label for="goal-name">Goal Name</label>
+				      <input type="text" maxlength="90" class="form-control" id="goal-name" name="goal-name" placeholder="Enter a goal name">
+				    </div>
+				  </div>
+				  <div class="form-row">
+				    <div class="form-group col-md-6">
+				      <label for="goal-desc">Goal Description</label>
+				      <textarea maxlength="450" type="text" class="form-control" id="goal-desc" name="goal-desc" placeholder="Enter the goal's description"></textarea>
+				  </div>
+				  </div>
+				  <button type="submit" class="btn btn-primary">Submit</button>
 				</form>
         	</div>
         </div>
