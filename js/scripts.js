@@ -13,3 +13,29 @@ function changeOrganizationAction(){
 		orgNameForm.style.display = "block";
 	}
 }
+
+function openNav() {
+    document.getElementById("mySidenav").style.width = "250px";
+    document.getElementById("pageBody").style.marginLeft = "250px";
+    document.getElementById("openNavButton").style.paddingLeft = "250px";
+}
+
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0px";
+    document.getElementById("pageBody").style.marginLeft = "0";
+    document.getElementById("openNavButton").style.paddingLeft = "0";
+}
+
+function toggleNav(){
+  if(document.getElementById("mySidenav").style.width == "0px"){
+    openNav();
+  }
+  else{
+    closeNav();
+  }
+}
+
+//enable popovers
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover({container: 'body'});   
+});

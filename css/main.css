@@ -1,3 +1,6 @@
+*{
+	font-family: 'Lato', sans-serif;
+}
 /*Color classes*/
 .bg-red{
 	background-color:#d81159 !important;
@@ -15,7 +18,22 @@
 	background-color:#661166 !important;
 }
 .bg-primary{
-	background-color:#0496ff !important;
+	background-color:#d65b35 !important;
+}
+.bg-dark{
+	background-color:#282828 !important;
+}
+.bg-grey{
+	background-color:#444444 !important;
+}
+.pb_bottom{
+	border-bottom:4px solid #d65b35;
+}
+.pb_top{
+	border-top:4px solid #d65b35;
+}
+.color-primary{
+	color:#d65b35;
 }
 .color-red{
 	color:#d81159;
@@ -32,48 +50,67 @@
 .color-purple{
 	color:#661166;
 }
+.color-white{
+	color:#f9f9f9;
+}
+#pageBody{
+	background-color:#F1f1f1;
+	transition: margin-left .5s;
+	width:100%;
+	padding:4rem 4rem 4rem 4rem;
+	margin-left:250px;
+	min-height:100vh;
+}
 
-.bodycontainer{
-	font-size:16px;
-	line-height:1.4;
-	margin:0 auto;
-	max-width:1800px;
-	padding-top:4rem;
-	padding-bottom:4rem;
+#openNavButton{
+	transition: padding-left .5s;
+	padding-left:250px;
 }
-@media only screen and (max-width: 1800px) {
-  	.bodycontainer{
-  		padding-left:4rem;
-	}
-}
-@media only screen and (max-width: 800px) {
-  	.bodycontainer{
-  		padding-left:1rem;
-	}
+.sidenav {
+    height: 100%;
+    width: 250px;
+    z-index: 10;
+    overflow-x: hidden;
+    transition: 0.5s;
+    position: fixed;
+    top: 0;
+    left:0;
+    font-size: 1rem;
+    box-shadow: 0 2px 4px 0 rgba(214, 91, 53, 0.2), 0 6px 20px 0 rgba(214, 91, 53, 0.19);
 }
 .nav-link{
-	font-size:1.25rem;
-	color:white;
-	border-right:2px solid white;
-	flex-basis:10%;
-	text-align: center;
+	color:rgba(255,255,255,0.5);
 }
 .nav-link:hover{
-	background-color:#ffbc42;
-	color:#0496ff;
+	color:rgba(255,255,255,1);
 }
-.navbar{
-	padding:0;
+footer{
+	width:100%;
+	padding:1rem 1rem 1rem 1rem;
 }
-.navpadder{
-	display:flex;
-	flex-direction:row;
-	flex-wrap:wrap;
-	justify-content: center;
-	flex-grow:1;
+.card{
+	margin: 1rem;
+  	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  	border-radius:0.1rem;
+  	border-left: 5px solid #d65b35;
+  	transition: all 0.2s;
+  	overflow-x:hidden;
+  	padding: 1.5rem 1.5rem 1.5rem 1.5rem;
 }
-.dashchart{
-	max-width:50%;
-	margin:0 auto;
-	margin-top:2rem;
+.card p{
+	margin-bottom: 0;
+	display: inline;
+	float:left;
+}
+.card img{
+	border-radius:50%;
+	opacity: 0.8;
+	width:100%;
+	object-fit:cover;
+	height:auto;
+}
+.sidenavHR{
+	color:rgba(255,255,255,1);
+	width:100%;
+	border-top-color:rgba(255,255,255,1) !important;
 }
