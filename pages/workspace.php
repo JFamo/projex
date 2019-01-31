@@ -15,6 +15,7 @@ function validate($data){
 
 session_start();
 
+$fmsg = "";
 //Handle New Workspace Creation
 if(isset($_POST['workspace-name'])){
 
@@ -138,7 +139,7 @@ if($count == 1){
 				  <div class="form-row">
 				    <div class="form-group col-md-6">
 				      <label for="edit-name">Workspace Name</label>
-				      <input type="text" class="form-control" id="workspace-name" name="workspace-name" placeholder="New Workspace Name...">
+				      <input type="text" pattern="[a-zA-Z0-9 ]+" class="form-control" id="workspace-name" name="workspace-name" placeholder="New Workspace Name...">
 				    </div>
 				  </div>
 				  <div class="form-row">

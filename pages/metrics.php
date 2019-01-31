@@ -186,34 +186,7 @@ if(!isset($_SESSION['username'])){
 		</div>
 	</div>
 		<div>
-			<!--Lets do this chart thing somewhere 
-			<canvas id="Velocity"> </canvas>
-		</div>
-		<script>
-			var ctx = document.getElementById("Velocity").getContext("2d");
-
-			var VelocityChart = new Chart(ctx, {
-				type: 'bar',
-				data: {
-					labels: ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4'],
-					datasets: [{
-						label: 'Commitment',
-						data: [37,21,23,54],
-						},
-						{
-						label: 'Delivered',
-						data: [36,12,19,50]
-						
-					}]
-				},
-				options: {
-
-				}
-			})
-		</script>
-		-->
 </body>
-
 
 <footer class="text-white bg-primary py-3 h5"> 
 	<center><p class="bodyTextType2">
