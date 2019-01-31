@@ -34,9 +34,7 @@ if(!isset($_SESSION['username'])){
     <script src="../js/popper.min.js"></script>
     <script src="../bootstrap-4.1.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
-
-    <!-- Google Fonts - Changes to come -->
-    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i" rel="stylesheet">
 	
 	<title>
 		ProjeX
@@ -91,9 +89,9 @@ if(!isset($_SESSION['username'])){
                 <a class="dropdown-item" href="workspace.php">Create New</a>
               </div>
               <hr class="sidenavHR">
-              <a class="nav-link active" href="main.php">Dashboard</a>
+              <a class="nav-link" href="main.php">Dashboard</a>
             <a class="nav-link" href="metrics.php">Metrics</a>
-            <a class="nav-link" href="backlog.php">Backlog</a>
+            <a class="nav-link active" href="backlog.php">Backlog</a>
             <a class="nav-link" href="active.php">Active</a>
             <a class="nav-link" href="docs.php">Docs</a>
             <a class="nav-link" href="messages.php">Messages</a>
