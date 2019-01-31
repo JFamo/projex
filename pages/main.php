@@ -105,18 +105,23 @@ if(!isset($_SESSION['username'])){
 			          <div class="dropdown-divider"></div>
 			          <a class="dropdown-item" href="workspace.php">Create New</a>
 			        </div>
+			        <hr class="sidenavHR">
+			        <a class="nav-link active" href="main.php">Dashboard</a>
 				    <a class="nav-link" href="metrics.php">Metrics</a>
-				    <a class="nav-link" href="metrics.php">Backlog</a>
-				    <a class="nav-link" href="metrics.php">Active</a>
-				    <a class="nav-link" href="metrics.php">Docs</a>
-				    <a class="nav-link" href="metrics.php">Messages</a>
+				    <a class="nav-link" href="backlog.php">Backlog</a>
+				    <a class="nav-link" href="active.php">Active</a>
+				    <a class="nav-link" href="docs.php">Docs</a>
+				    <a class="nav-link" href="messages.php">Messages</a>
+				    <hr class="sidenavHR">
+				    <a class="nav-link" href="account.php">My Account</a>
+				    <a class="nav-link" href="organization.php">My Organization</a>
 				  </ul>
 				  </div>
 				</nav>
 			</div>
 			<div id="pageBody">
 			<div class="row">
-				<div class="col-sm-4">
+				<div class="col-md-8">
 					<h1>Welcome, <?php echo $_SESSION['firstname']; ?></h1>
 					<p>Here's what your teams have been up to in the past week:</p>
 					<table class="table">
@@ -175,55 +180,23 @@ if(!isset($_SESSION['username'])){
 					<a href="account.php">Manage My Account</a><br>
 					<a href="organization.php">Manage My Organization</a>
 				</div>
-				<div class="col-sm-8">
-				<canvas id="myChart" class="dashchart"></canvas>
-					<script>
-					var ctx = document.getElementById("myChart");
-					var myChart = new Chart(ctx, {
-					    type: 'bar',
-					    data: {
-					        labels: ["Jim", "Paul", "Sean", "Barry", "Lawrence", "Matt"],
-					        datasets: [{
-					            label: 'Contributions',
-					            data: [12, 19, 3, 5, 2, 3],
-					            backgroundColor: [
-					                'rgba(216, 17, 89, 0.8)',
-					                'rgba(255, 188, 66, 0.8)',
-					                'rgba(4, 150, 255, 0.8)',
-					                'rgba(0, 107, 166, 0.8)',
-					                'rgba(102, 17, 102, 0.8)',
-					                'rgba(255, 159, 64, 0.8)'
-					            ],
-					            borderColor: [
-					                'rgba(216, 17, 89, 1)',
-					                'rgba(255, 188, 66, 1)',
-					                'rgba(4, 150, 255, 1)',
-					                'rgba(0, 107, 166, 1)',
-					                'rgba(102, 17, 102, 1)',
-					                'rgba(255, 159, 64, 1)'
-					            ],
-					            borderWidth: 1
-					        }]
-					    },
-					    options: {
-					        scales: {
-					            yAxes: [{
-					                ticks: {
-					                    beginAtZero:true
-					                }
-					            }]
-					        }
-					    }
-					});
-					</script>
-					<canvas id="myChart2" class="dashchart"></canvas>
-					<script>
-					var ctx = document.getElementById("myChart2");
-					var myDoughnutChart = new Chart(ctx, {
-					    type: 'doughnut',
-					    data: {"labels":["Red","Blue","Yellow"],"datasets":[{"label":"My First Dataset","data":[300,50,100],"backgroundColor":["rgb(216, 17, 89)","rgb(4, 150, 255)","rgb(255, 188, 66)"]}]}
-					});
-					</script>
+				<div class="col-md-4">
+					<div class="card">
+						<p>This is an example of a <b>card</b>. It's pretty neat, isn't it?</p>
+					</div>
+					<div class="card">
+						<p>When cards are built to be dynamic and <b>responsive</b>, they can do all sorts of neat things.</p>
+					</div>
+					<div class="card">
+						<div class="row">
+							<div class="col-4">
+								<img src="https://pixel.nymag.com/imgs/daily/intelligencer/2018/08/24/24-donald-trump-2.w700.h700.jpg" alt="Trump" />
+							</div>
+							<div class="col-8">
+								<p>I could even built a card so well that it can hold an <b>image</b>.</p>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
