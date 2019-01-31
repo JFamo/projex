@@ -15,6 +15,19 @@ function validate($data){
 
 session_start();
 
+//Handle Changing Projects
+if(isset($_POST['project-id'])){
+
+  $newproject = $_POST['project-id'];
+  //~~JOSH~~
+  //Need checking that the user really has this project here
+  //Prevents client-side editing of project value to access those of other orgs
+  //@Tom
+  
+  $_SESSION['project'] = $newproject;
+
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -109,10 +122,27 @@ if(!isset($_SESSION['username'])){
         <div class="row">
           <div class="col-12">
             <div class="dropdown">
-              <button class="btn btn-secondary dropdown-toggle" type="button" id="projectDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Project
-              </button>
-              <div class="dropdown-menu" aria-labelledby="projectDropdownButton">
+              <div class="btn-group">
+                <button type="button" class="btn btn-secondary"><?php 
+                  require('../php/connect.php');
+                  $project = $_SESSION['project'];
+                  $query = "SELECT name FROM projects WHERE id='$project'";
+                  $result = mysqli_query($link, $query);
+                  if (!$result){
+                    die('Error: ' . mysqli_error($link));
+                  }
+                  list($name) = mysqli_fetch_array($result);
+                  if($_SESSION['project'] == null || $_SESSION['workspace'] == null){
+                    echo "Select a Project";
+                  }
+                  else{
+                    echo $name;
+                  }
+                ?></button>
+                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+              <div class="dropdown-menu">
 
                 <?php
 
@@ -130,11 +160,12 @@ if(!isset($_SESSION['username'])){
                 $projectID = $resultArray['id'];
 
                 ?>
-                <form method="POST"><input type="hidden" value="<?php echo $projectID; ?>" name="project-id"/><input class="dropdown-item" type="submit" value="<?php echo $projectName; ?>"></form>
+                <form method="POST"><input type="hidden" value="<?php echo $projectID; ?>" name="project-id"/><input class="dropdown-item <?php if($_SESSION['project'] == $projectID){ echo 'active'; } ?>" type="submit" value="<?php echo $projectName; ?>"></form>
                 <?php } ?>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="project.php">Create New</a>
               </div>
+            </div>
             </div>
           </div>
         </div>
