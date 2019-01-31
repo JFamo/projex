@@ -29,6 +29,9 @@
 .pb_bottom{
 	border-bottom:4px solid #d65b35;
 }
+.pb_top{
+	border-top:4px solid #d65b35;
+}
 .color-primary{
 	color:#d65b35;
 }
@@ -72,7 +75,7 @@
     position: fixed;
     top: 0;
     left:0;
-    font-size: 36px;
+    font-size: 1rem;
     box-shadow: 0 2px 4px 0 rgba(214, 91, 53, 0.2), 0 6px 20px 0 rgba(214, 91, 53, 0.19);
 }
 .nav-link{
@@ -80,4 +83,8 @@
 }
 .nav-link:hover{
 	color:rgba(255,255,255,1);
+}
+footer{
+	width:100%;
+	padding:1rem 1rem 1rem 1rem;
 }
