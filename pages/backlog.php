@@ -107,18 +107,15 @@ if(!isset($_SESSION['username'])){
       <div id="pageBody">
       <div class="row">
         <div class="col-12">
-        	<form method="get" class="backlog-form">
-        		<div class="backlog-form">
-        			<label for="task">Enter the task:</label>
-        			<input type="text" task="task" id="task" required>
-        		</div>
-        		<div class="backlog-form">
-        			<label for="task-desc">Enter the task's description:</label>
-        			<input type="task-desc" task="task-desc" id="task-desc" required>
-        		</div>
-        		<div class="backlog-form">
-        			<input type="submit"
-        			value="Submit">
+        	<form method="POST" class="pt-4">
+				  <div class="form-row">
+				    <div class="form-group col-md-6">
+				      <label for="task-name">Task Name</label>
+				      <input type="text" class="form-control" id="task-name" name="task-name" placeholder=Enter a task name
+				    </div>
+				  </div>
+				  <button type="submit" class="btn btn-primary">Change</button>
+				</form>
         		</div>
         	</div>
         </form>
