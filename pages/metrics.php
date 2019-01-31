@@ -188,12 +188,33 @@ if(!isset($_SESSION['username'])){
 		<div>
 </body>
 
+
+<!--
+<style>
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  color: white;
+  text-align: center;
+}
+</style>
+
+<div class="footer">
 <footer class="text-white bg-primary py-3 h5"> 
 	<center><p class="bodyTextType2">
 		Team 2004-901 2018
 	</p></center>
 </footer>
+</div>
+-->
 
+<footer class="text-white bg-primary py-3 h5"> 
+	<center><p class="bodyTextType2">
+		Team 2004-901 2018
+	</p></center>
+</footer>
 
 <script src="../js/scripts.js" type="text/javascript"></script>
 

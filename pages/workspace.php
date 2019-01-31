@@ -52,10 +52,15 @@ if(isset($_POST['workspace-name'])){
 	//Iterate other users
 	if(!empty($_POST['workspace-user'])){
 		foreach($_POST['workspace-user'] as $userID){
-			$query2 = "INSERT INTO user_workspace_mapping (workspace, user) VALUES ('$wsid', '$userID')";
-			$result2 = mysqli_query($link, $query2);
-			if (!$result2){
-				die('Error: ' . mysqli_error($link));
+			$orgID = "SELECT organizations.id FROM ((user_organization_mapping INNER JOIN organizations ON organizations.id = user_organization_mapping.organization) INNER JOIN users ON user_organization_mapping.user = users.id) WHERE users.id = '$userID'";
+			if($orgID == $query){
+				$query2 = "INSERT INTO user_workspace_mapping (workspace, user) VALUES ('$wsid', '$userID')";
+				$result2 = mysqli_query($link, $query2);
+				if (!$result2){
+					die('Error: ' . mysqli_error($link));
+				}
+			}else{
+				$fmsg = "Some Users Not Allowed!";
 			}
 		}
 	}
@@ -125,15 +130,15 @@ if(!isset($_SESSION['username'])){
 				<p>This is a placeholder page to create a new workspace.</p>
 				<hr>
 				<?php 
-require('../php/connect.php');
-$username = $_SESSION['username'];
-$query = "SELECT user_ranks.rank FROM (user_ranks INNER JOIN users ON user_ranks.user = users.id) WHERE user_ranks.rank = 'owner' AND users.username = '$username'";
-$result = mysqli_query($link, $query);
-if (!$result){
-	die('Error: ' . mysqli_error($link));
-}
-$count = mysqli_num_rows($result);
-if($count == 1){
+				require('../php/connect.php');
+				$username = $_SESSION['username'];
+				$query = "SELECT user_ranks.rank FROM (user_ranks INNER JOIN users ON user_ranks.user = users.id) WHERE user_ranks.rank = 'owner' AND users.username = '$username'";
+				$result = mysqli_query($link, $query);
+				if (!$result){
+					die('Error: ' . mysqli_error($link));
+				}
+				$count = mysqli_num_rows($result);
+				if($count == 1){
 				 ?>
 				<form method="POST" class="pt-2">
 				  <div class="form-row">
