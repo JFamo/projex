@@ -39,7 +39,7 @@ if(!isset($_SESSION['username'])){
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 	
 	<title>
-		ProjeX
+		ProjeX Backlog
 	</title>
 
 	<!-- Import our CSS -->
@@ -64,104 +64,31 @@ if(!isset($_SESSION['username'])){
 		    <a class="nav-link" href="../php/logout.php">Logout</a>
 	    </div>
 	</nav>
-
-<!--Spooky stuff in the middle-->
-	<div class="container-fluid bodycontainer">
-		<div class="row">
-			<div class="col-sm-4">
-				<h1>Backlog</h1>
-				<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-.dropdownbtn {
-  background-color: #3498DB;
-  color: white;
-  padding: 20px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-}
-
-.dropdownbtn:hover, .dropdownbtn:focus {
-  background-color: #2980B9;
-}
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  overflow: auto;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown a:hover {background-color: #ddd;}
-
-.show {display: block;}
-</style>
-</head>
-<body>
-
-
-<div class="dropdown">
-  <button onclick="drop()" class="dropdownbtn">Project Selector</button>
-  <div id="myDropdown" class="dropdown-content">
-    <a href="#p1">Project 1</a>
-    <a href="#p2">Project 2</a>
-    <a href="#p3">Project 3</a>
-  </div>
-</div>
-
-<script>
-/* When the user clicks on the button, 
-toggle between hiding and showing the dropdown content */
-function drop() {
-  document.getElementById("myDropdown").classList.toggle("show");
-}
-
-// Close the dropdown if the user clicks outside of it
-window.onclick = function(event) {
-  if (!event.target.matches('.dropdownbtn')) {
-    var dropdowns = document.getElementsByClassName("dropdown-content");
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
-    }
-  }
-}
-</script>
-
-</body>
-				
-			</div>
+	<form method="get" class="backlog-form">
+		<div class="backlog-form">
+			<label for="task">Enter the task:</label>
+			<input type="text" task="task" id="task" required>
+		</div>
+		<div class="backlog-form">
+			<label for="task-desc">Enter the task's description:</label>
+			<input type="task-desc" task="task-desc" id="task-desc" required>
+		</div>
+		<div class="backlog-form">
+			<input type="submit"
+			value="Submit">
 		</div>
 	</div>
 
+</form>
 </body>
 
-<!--Main has no footer
+
 <footer class="text-white bg-primary py-3 h5"> 
 	<center><p class="bodyTextType2">
 		Team 2004-901 2018
 	</p></center>
 </footer>
--->
+
 
 <script src="../js/scripts.js" type="text/javascript"></script>
 
