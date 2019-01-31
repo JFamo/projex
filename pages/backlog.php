@@ -115,8 +115,7 @@ if(!isset($_SESSION['username'])){
 				  <div class="form-row">
 				    <div class="form-group col-md-6">
 				      <label for="task-desc">Task Description</label>
-				      <textarea type="text" class="form-control" id="task-desc" name="task-desc" placeholder="Enter the task's description">
-				      </textarea>
+				      <textarea type="text" class="form-control" id="task-desc" name="task-desc" placeholder="Enter the task's description"></textarea>
 				  </div>
 				  </div>
 				  <button type="submit" class="btn btn-primary">Change</button>
