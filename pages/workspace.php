@@ -100,26 +100,62 @@ if(!isset($_SESSION['username'])){
 
 <body>
 <!-- Navbar -->
-	<nav class="navbar navbar-dark bg-primary">
-		<div class="navpadder">
-		  	<a class="nav-link" href="main.php" style="flex-basis:20%;"><img src="" width="30" height="30" class="d-inline-block align-top" alt="" />ProjeX</a>
-		  	<a class="nav-link" href="#"><img src="../imgs/workspacePlaceholder.png" width="30" height="30" class="d-inline-block align-top" alt="" /></a>
-		    <a class="nav-link" href="metrics.php">Metrics</a>
-		    <a class="nav-link" href="metrics.php">Backlog</a>
-		    <a class="nav-link" href="metrics.php">Active</a>
-		    <a class="nav-link" href="metrics.php">Docs</a>
-		    <a class="nav-link" href="metrics.php">Messages</a>
-		    <a class="nav-link" href="../php/logout.php">Logout</a>
-	    </div>
+	<nav class="navbar navbar-dark bg-grey pb_bottom">
+	  	<span id="openNavButton" style="font-size:30px;cursor:pointer;color:white;padding-right:30px;" onclick="toggleNav()">&#9776;</span>
+	    <a class="nav-link" href="../php/logout.php">Logout</a>
 	</nav>
 
 <!--Spooky stuff in the middle-->
-	<div class="container-fluid bodycontainer">
-
-	<?php echo $fmsg ?>
-
+	<div class="container-fluid">
 		<div class="row">
+			<div id="mySidenav" style="padding-right:0; padding-left:0;" class="sidenav bg-grey">
+				<nav style="width:100%;" class="navbar navbar-dark">
+				  <div class="container" style="padding-left:0px;">
+				  <ul class="nav navbar-nav align-top">
+				   <a class="navbar-brand icon" href="#"><img src="../imgs/workspacePlaceholder.png" alt="icon" width="60" height="60">Projex</a>
+				   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			          Workspaces
+			        </a>
+			        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+			        	<?php
+
+			        	require('../php/connect.php');
+
+			        	$username = $_SESSION['username'];
+						$query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
+						$result = mysqli_query($link, $query);
+						if (!$result){
+							die('Error: ' . mysqli_error($link));
+						}
+						while($resultArray = mysqli_fetch_array($result)){
+						$workspaceName = $resultArray['name'];
+						$workspaceID = $resultArray['id'];
+
+			        	?>
+			          <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item" type="submit" value="<?php echo $workspaceName; ?>"></form>
+			          <?php } ?>
+			          <div class="dropdown-divider"></div>
+			          <a class="dropdown-item" href="workspace.php">Create New</a>
+			        </div>
+			        <hr class="sidenavHR">
+			        <a class="nav-link active" href="main.php">Dashboard</a>
+				    <a class="nav-link" href="metrics.php">Metrics</a>
+				    <a class="nav-link" href="backlog.php">Backlog</a>
+				    <a class="nav-link" href="active.php">Active</a>
+				    <a class="nav-link" href="docs.php">Docs</a>
+				    <a class="nav-link" href="messages.php">Messages</a>
+				    <hr class="sidenavHR">
+				    <a class="nav-link" href="account.php">My Account</a>
+				    <a class="nav-link" href="organization.php">My Organization</a>
+				  </ul>
+				  </div>
+				</nav>
+			</div>
+			<div id="pageBody">
+			<div class="row">
 			<div class="col-sm-12">
+				<?php if(isset($fmsg)){ echo "<div class='card'><p>" . $fmsg . "</p></div>"; } ?>
 				<h1>Create Workspace</h1>
 				<p>This is a placeholder page to create a new workspace.</p>
 				<hr>
@@ -185,6 +221,13 @@ if($count == 1){
 				<a href="../index.php">Return to Dashboard</a>
 			</div>
 		</div>
+	</div>
+	<footer class="bg-grey color-white pb_top">
+			<center><p>
+				Team 2004-901, 2019, All Rights Reserved
+			</p></center>
+		</footer>
+	</div>
 	</div>
 
 </body>
