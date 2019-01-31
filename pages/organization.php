@@ -165,9 +165,7 @@ if(!isset($_SESSION['username'])){
     <script src="../js/popper.min.js"></script>
     <script src="../bootstrap-4.1.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
-
-    <!-- Google Fonts - Changes to come -->
-    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i" rel="stylesheet">
 	
 	<title>
 		ProjeX
