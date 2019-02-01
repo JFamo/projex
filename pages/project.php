@@ -29,6 +29,55 @@ if(isset($_POST['workspace-id'])){
 
 }
 
+//Handle New Project Creation
+if(isset($_POST['project-name'])){
+
+	$wsname = $_POST['project-name'];
+	$wsname = validate($wsname);
+	$username = $_SESSION['username'];
+	$myid = $_SESSION['id'];
+	$workspace = $_SESSION['workspace'];
+	
+	require('../php/connect.php');
+
+	//Start by getting organization ID of user
+	$query = "SELECT organizations.id FROM ((user_organization_mapping INNER JOIN organizations ON organizations.id = user_organization_mapping.organization) INNER JOIN users ON user_organization_mapping.user = users.id) WHERE users.username = '$username'";
+	$result = mysqli_query($link, $query);
+	if (!$result){
+		die('Error: ' . mysqli_error($link));
+	}
+	list($orgid) = mysqli_fetch_array($result);
+
+	//Next create the project itself
+	$query2 = "INSERT INTO projects (workspace, name) VALUES ('$workspace', '$wsname')";
+	$result2 = mysqli_query($link, $query2);
+	if (!$result2){
+		die('Error: ' . mysqli_error($link));
+	}
+	$wsid = mysqli_insert_id($link); //Save the AI project ID
+
+	//Finally add the checked users to the project
+	//Force org owner into project
+	$query2 = "INSERT INTO user_project_mapping (project, user) VALUES ('$wsid', '$myid')";
+	$result2 = mysqli_query($link, $query2);
+	if (!$result2){
+		die('Error: ' . mysqli_error($link));
+	}
+	//Iterate other users
+	if(!empty($_POST['project-user'])){
+		foreach($_POST['project-user'] as $userID){
+			$query2 = "INSERT INTO user_project_mapping (project, user) VALUES ('$wsid', '$userID')";
+			$result2 = mysqli_query($link, $query2);
+			if (!$result2){
+				die('Error: ' . mysqli_error($link));
+			}
+		}
+	}
+
+	$fmsg = "Successfully Created Project!";
+
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -123,7 +172,7 @@ if(!isset($_SESSION['username'])){
             </div>
             </div>
 			        <hr class="sidenavHR">
-			        <a class="nav-link active" href="main.php">Dashboard</a>
+			        <a class="nav-link" href="main.php">Dashboard</a>
 				    <a class="nav-link" href="metrics.php">Metrics</a>
 				    <a class="nav-link" href="backlog.php">Backlog</a>
 				    <a class="nav-link" href="active.php">Active</a>
@@ -139,125 +188,85 @@ if(!isset($_SESSION['username'])){
 			</div>
 			<div id="pageBody">
 			<div class="row">
-				<div class="col-md-8">
-					<h1>Welcome, <?php echo $_SESSION['firstname']; ?></h1>
-					<p>Here are some useful links to effectively navigate <b class="color-primary">Projex</b></p>
-					<div class="card">
-						<p>Projex is a comprehensive suite of tools designed to provide project-management utility to all areas of industry. It is based on the principles of Agile software development and implements artifacts of many popular project management frameworks. For detailed help using Projex, refer to the documentation linked below.</p>
-						<br>
-						<a href="http://agilemanifesto.org/">The Agile Manifesto</a>
-						<a href="#">More About Projex</a>
-					</div>
-					<div class="card">
-					<h5>You are a member of organization <b><?php 
-						require('../php/connect.php');
-						$myid = $_SESSION['id'];
-						$query = "SELECT name FROM organizations WHERE id IN (SELECT organization FROM user_organization_mapping WHERE user='$myid')";
-					        $result2 = mysqli_query($link, $query);
-					        if (!$result2){
-					            die('Error: ' . mysqli_error($link));
-					        }
-					        while(list($taskname) = mysqli_fetch_array($result2)){
-					        	echo $taskname;
-					        }
-					?></b></h5>
-					<p>Your organization has 
-						<?php 
-						require('../php/connect.php');
-						$myid = $_SESSION['id'];
-						$query = "SELECT * FROM user_organization_mapping WHERE organization IN (SELECT organization FROM user_organization_mapping WHERE user='$myid')";
-					        $result2 = mysqli_query($link, $query);
-					        if (!$result2){
-					            die('Error: ' . mysqli_error($link));
-					        }
-					        echo mysqli_num_rows($result2);
-					?>
-					members</p>
-					<p>Your organization's join code is  
-						<?php 
-						require('../php/connect.php');
-						$myid = $_SESSION['id'];
-						$query = "SELECT code FROM organizations WHERE id IN (SELECT organization FROM user_organization_mapping WHERE user='$myid')";
-					        $result2 = mysqli_query($link, $query);
-					        if (!$result2){
-					            die('Error: ' . mysqli_error($link));
-					        }
-					       	list($orgcode) = mysqli_fetch_array($result2);
-					       	echo $orgcode;
-					?></p>
-					<br>
-					<a href="organization.php">Manage My Organization</a>
-					</div>
-					<div class="card">
-					<h5>Your username is <b><?php echo $_SESSION['username']; ?></b></h5>
-					<p>Your full name is <?php echo $_SESSION['firstname'] . " " . $_SESSION['lastname']; ?></p>
-					<br>
-					<a href="account.php">Manage My Account</a>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="card">
-						<h4>My Tasks</h4>
-						<a href="active.php">Active Tasks</a>
-						<hr>
-						<?php
-						require('../php/connect.php');
-						$myid = $_SESSION['id'];
-						$query = "SELECT name FROM tasks WHERE id IN (SELECT task FROM user_task_mapping WHERE user='$myid')";
-					        $result2 = mysqli_query($link, $query);
-					        if (!$result2){
-					            die('Error: ' . mysqli_error($link));
-					        }
-					        while(list($taskname) = mysqli_fetch_array($result2)){
-					        	echo "<p>" . $taskname . "</p>";
-					        }
+			<div class="col-sm-12">
+				<?php if(isset($fmsg)){ echo "<div class='card'><p>" . $fmsg . "</p></div>"; } ?>
+				<h1>Create Project</h1>
+				<p>Create a new project in the current workspace.</p>
+				<hr>
+				<?php 
+require('../php/connect.php');
+$username = $_SESSION['username'];
+$query = "SELECT user_ranks.rank FROM (user_ranks INNER JOIN users ON user_ranks.user = users.id) WHERE user_ranks.rank = 'owner' AND users.username = '$username'";
+$result = mysqli_query($link, $query);
+if (!$result){
+	die('Error: ' . mysqli_error($link));
+}
+$count = mysqli_num_rows($result);
+if($count == 1){
+				 ?>
+				<form method="POST" class="pt-2">
+				  <div class="form-row">
+				    <div class="form-group col-md-6">
+				      <label for="edit-name">Project Name</label>
+				      <input type="text" class="form-control" id="project-name" name="project-name" placeholder="New Project Name...">
+				    </div>
+				  </div>
+				  <div class="form-row">
+				  	<div class="form-group col-md-6">
+				      <label for="edit-name">Add Users to Project</label><br>
+				      <?php
 
-					    ?>
-					</div>
-					<div class="card">
-						<h4>My Workspaces</h4>
-						<hr>
-						<?php
-						require('../php/connect.php');
-						$myid = $_SESSION['id'];
-						$query = "SELECT name FROM workspaces WHERE id IN (SELECT workspace FROM user_workspace_mapping WHERE user='$myid')";
-					        $result2 = mysqli_query($link, $query);
-					        if (!$result2){
-					            die('Error: ' . mysqli_error($link));
-					        }
-					        while(list($taskname) = mysqli_fetch_array($result2)){
-					        	echo "<p>" . $taskname . "</p>";
-					        }
+			        	require('../php/connect.php');
 
-					    ?>
-					</div>
-					<div class="card">
-						<h4>My Projects</h4>
-						<hr>
-						<?php
-						require('../php/connect.php');
-						$myid = $_SESSION['id'];
-						$query = "SELECT name FROM projects WHERE id IN (SELECT project FROM user_project_mapping WHERE user='$myid')";
-					        $result2 = mysqli_query($link, $query);
-					        if (!$result2){
-					            die('Error: ' . mysqli_error($link));
-					        }
-					        while(list($taskname) = mysqli_fetch_array($result2)){
-					        	echo "<p>" . $taskname . "</p>";
-					        }
+			        	$username = $_SESSION['username'];
 
-					    ?>
-					</div>
-				</div>
+			        	//Start by getting organization ID of user
+						$query = "SELECT organizations.id FROM ((user_organization_mapping INNER JOIN organizations ON organizations.id = user_organization_mapping.organization) INNER JOIN users ON user_organization_mapping.user = users.id) WHERE users.username = '$username'";
+						$result = mysqli_query($link, $query);
+						if (!$result){
+							die('Error: ' . mysqli_error($link));
+						}
+						list($orgid) = mysqli_fetch_array($result);
+
+						//Next grab firstname, lastname, and id of users in same organization
+						$query = "SELECT users.id, users.firstname, users.lastname FROM (user_organization_mapping INNER JOIN users ON user_organization_mapping.user = users.id) WHERE user_organization_mapping.organization = '$orgid'";
+						$result = mysqli_query($link, $query);
+						if (!$result){
+							die('Error: ' . mysqli_error($link));
+						}
+						while($resultArray = mysqli_fetch_array($result)){
+						$thisFirstname = $resultArray['firstname'];
+						$thisLastname = $resultArray['lastname'];
+						$thisID = $resultArray['id'];
+
+			        	?>
+
+			          		<input type="checkbox" <?php if($thisID != $_SESSION['id']){ echo "name='project-user[]'"; } ?> value="<?php echo $thisID; ?>" <?php if($thisID == $_SESSION['id']){ echo "checked='checked' onclick='return false;'"; } ?>> <?php echo $thisFirstname . " " . $thisLastname . " (" . $thisID . ")"; ?><br>
+
+			          <?php } ?>
+				    </div>
+				  </div>
+				  <button type="submit" class="btn btn-primary">Create</button>
+				</form>
+<?php
+}
+else{
+	echo "<p>You must be the organization owner to create a workspace!</p>";
+}
+?>
+				<br>
+				<a href="../index.php">Return to Dashboard</a>
 			</div>
 		</div>
-		<footer class="bg-grey color-white pb_top">
+	</div>
+	<footer class="bg-grey color-white pb_top">
 			<center><p>
 				Team 2004-901, 2019, All Rights Reserved
 			</p></center>
 		</footer>
-		</div>
 	</div>
+	</div>
+
 </body>
 
 <script src="../js/scripts.js" type="text/javascript"></script>
