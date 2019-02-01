@@ -160,7 +160,7 @@ if(!isset($_SESSION['username'])){
                 $projectID = $resultArray['id'];
 
                 ?>
-                <form method="POST"><input type="hidden" value="<?php echo $projectID; ?>" name="project-id"/><input class="dropdown-item <?php if($_SESSION['project'] == $projectID){ echo 'active'; } ?>" type="submit" value="<?php echo $projectName; ?>"></form>
+                <form method="POST"><input type="hidden" value="<?php echo $projectID; ?>" name="project-id"/><input class="dropdown-item <?php if($_SESSION['project'] == $projectID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $projectName; ?>"></form>
                 <?php } ?>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="project.php">Create New</a>

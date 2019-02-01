@@ -120,6 +120,11 @@ footer{
 	border-bottom: 4px solid #d65b35;
 	width:100%;
 	min-height: 2.5rem;
+}
 .active{
 	background-color:#282828 !important;
+}
+.active-dropdown{
+	background-color:#d65b35 !important;
+	color:white !important;
 }

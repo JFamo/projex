@@ -46,10 +46,17 @@ if(isset($_POST['task-name'])){
 
   $taskname = validate($_POST['task-name']);
   $taskdesc = validate($_POST['task-desc']);
+  $taskgoal = $_POST['task-goal'];
   $thisuser = $_SESSION['id'];
 
   require('../php/connect.php');
   $query = "INSERT INTO tasks (name, description, creator, date) VALUES ('$taskname','$taskdesc','$thisuser',now())";
+  $result = mysqli_query($link,$query);
+  $taskid = mysqli_insert_id($link);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  $query = "INSERT INTO goal_task_mapping (task, goal) VALUES ('$taskid','$taskgoal')";
   $result = mysqli_query($link,$query);
   if (!$result){
       die('Error: ' . mysqli_error($link));
@@ -212,7 +219,7 @@ if(!isset($_SESSION['username'])){
                 $projectID = $resultArray['id'];
 
                 ?>
-                <form method="POST"><input type="hidden" value="<?php echo $projectID; ?>" name="project-id"/><input class="dropdown-item <?php if($_SESSION['project'] == $projectID){ echo 'active'; } ?>" type="submit" value="<?php echo $projectName; ?>"></form>
+                <form method="POST"><input type="hidden" value="<?php echo $projectID; ?>" name="project-id"/><input class="dropdown-item <?php if($_SESSION['project'] == $projectID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $projectName; ?>"></form>
                 <?php } ?>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="project.php">Create New</a>
@@ -221,7 +228,46 @@ if(!isset($_SESSION['username'])){
             </div>
         <div class="card">
         <h3>Backlog Overview</h3>
+          <p>Number of Goals : <?php
+            require('../php/connect.php');
 
+            $activeProject = $_SESSION['project'];
+
+            $query = "SELECT goals.id FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
+            $result = mysqli_query($link, $query);
+            if (!$result){
+              die('Error: ' . mysqli_error($link));
+            }
+            echo mysqli_num_rows($result);
+          ?>
+          </p>
+          <p>Number of Tasks : <?php
+            require('../php/connect.php');
+
+            $activeProject = $_SESSION['project'];
+
+            $query = "SELECT tasks.id FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal IN (SELECT goals.id FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'))";
+            $result = mysqli_query($link, $query);
+            if (!$result){
+              die('Error: ' . mysqli_error($link));
+            }
+            echo mysqli_num_rows($result);
+          ?>
+          </p>
+          <p>Total Value : <?php
+            require('../php/connect.php');
+
+            $activeProject = $_SESSION['project'];
+
+            $query = "SELECT SUM(value) FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
+            $result = mysqli_query($link, $query);
+            if (!$result){
+              die('Error: ' . mysqli_error($link));
+            }
+            list($valuesum) = mysqli_fetch_array($result);
+            echo $valuesum;
+          ?>
+          </p>
         </div>
         <div class="card">
         <h3>Create A Task</h3>
@@ -238,6 +284,27 @@ if(!isset($_SESSION['username'])){
 				      <textarea maxlength="450" type="text" class="form-control" id="task-desc" name="task-desc" placeholder="Enter the task's description"></textarea>
 				  </div>
 				  </div>
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label for="task-goal">Add to Goal</label>
+              <select class="form-control" id="task-goal" name="task-goal">
+              <?php
+              require('../php/connect.php');
+
+              $activeProject = $_SESSION['project'];
+
+              $query = "SELECT goals.id, goals.name FROM goals WHERE goals.project = '$activeProject'";
+              $result = mysqli_query($link, $query);
+              if (!$result){
+                die('Error: ' . mysqli_error($link));
+              }
+              while(list($goalID,$goalName) = mysqli_fetch_array($result)){
+                echo '<option value="' . $goalID . '">'. $goalName . "</option>";
+              }
+              ?>
+              </select>
+          </div>
+          </div>
 				  <button type="submit" class="btn btn-primary">Submit</button>
 				</form>
         </div>
