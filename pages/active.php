@@ -62,6 +62,21 @@ if(isset($_POST['goal-id'])){
   $fmsg = "Moved Goal to Backlog!";
 }
 
+if(isset($_POST['task-id'])){
+
+  $taskid = $_POST['task-id'];
+
+  require('../php/connect.php');
+  $query = "UPDATE tasks SET status='complete' WHERE id='$taskid'";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  mysqli_close($link);
+
+  $fmsg = "Completed Task!";
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -260,7 +275,7 @@ if(!isset($_SESSION['username'])){
             $username = $_SESSION['username'];
             $activeProject = $_SESSION['project'];
 
-            $query = "SELECT tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') AND tasks.status='active'";
+            $query = "SELECT tasks.id, tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') AND tasks.status='active'";
             $result2 = mysqli_query($link, $query);
             if (!$result2){
               die('Error: ' . mysqli_error($link));
@@ -277,6 +292,11 @@ if(!isset($_SESSION['username'])){
             <h4><?php echo $taskName; ?></h4>
             <hr>
             <p><?php echo $taskDesc; ?></p>
+            <br>
+            <form method="post">
+              <input type="hidden" value="<?php echo $taskID; ?>" name="task-id" />
+              <input type="submit" class="btn btn-link" value="Complete">
+            </form>
             <br>
             <small>Created By : <?php
               require('../php/connect.php');
