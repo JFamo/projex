@@ -42,6 +42,26 @@ if(isset($_POST['project-id'])){
 
 }
 
+if(isset($_POST['goal-id'])){
+
+  $goalid = $_POST['goal-id'];
+
+  require('../php/connect.php');
+  $query = "UPDATE goals SET status='backlog' WHERE id='$goalid'";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  $query = "UPDATE tasks SET status='backlog' WHERE id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalid')";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  mysqli_close($link);
+
+  $fmsg = "Moved Goal to Backlog!";
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -156,7 +176,7 @@ if(!isset($_SESSION['username'])){
         <div class="row">
           <div class="col-12">
             <?php if(isset($fmsg)){ echo "<div class='card'><p>" . $fmsg . "</p></div>"; } ?>
-            <h1>Backlog</h1>  
+            <h1>Active</h1>  
           </div>
           <div class="col-12">
             <div class="dropdown">
@@ -204,7 +224,77 @@ if(!isset($_SESSION['username'])){
                 <a class="dropdown-item" href="project.php">Create New</a>
               </div>
             </div>
-            </div>
+          </div>
+          <br>
+          <hr>
+          <br>
+          <?php
+
+            require('../php/connect.php');
+
+            $username = $_SESSION['username'];
+            $activeProject = $_SESSION['project'];
+
+            $query = "SELECT goals.name, goals.id, goals.value FROM goals WHERE goals.project = '$activeProject' AND goals.status='active'";
+            $result = mysqli_query($link, $query);
+            if (!$result){
+              die('Error: ' . mysqli_error($link));
+            }
+            while($resultArray = mysqli_fetch_array($result)){
+            $goalName = $resultArray['name'];
+            $goalID = $resultArray['id'];
+            $goalValue = $resultArray['value'];
+
+          ?>
+          <div class="head">
+            <h4 style=" float:left;"><?php echo $goalName; ?></h4><h4 style="float:right;"><?php echo $goalValue; ?></h4>
+          </div>
+          <form method="post">
+            <input type="hidden" value="<?php echo $goalID; ?>" name="goal-id" />
+            <input type="submit" class="btn btn-link" value="Move to Backlog">
+          </form>
+            <?php
+
+            require('../php/connect.php');
+
+            $username = $_SESSION['username'];
+            $activeProject = $_SESSION['project'];
+
+            $query = "SELECT tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') AND tasks.status='active'";
+            $result2 = mysqli_query($link, $query);
+            if (!$result2){
+              die('Error: ' . mysqli_error($link));
+            }
+            while($taskArray = mysqli_fetch_array($result2)){
+            $taskName = $taskArray['name'];
+            $taskID = $taskArray['id'];
+            $taskDesc = $taskArray['description'];
+            $taskCreator = $taskArray['creator'];
+            $taskDate = $taskArray['date'];
+
+          ?>
+          <div class="card">
+            <h4><?php echo $taskName; ?></h4>
+            <hr>
+            <p><?php echo $taskDesc; ?></p>
+            <br>
+            <small>Created By : <?php
+              require('../php/connect.php');
+              $query = "SELECT firstname, lastname FROM users WHERE id = '$taskCreator'";
+              $result3 = mysqli_query($link, $query);
+              if (!$result3){
+                die('Error: ' . mysqli_error($link));
+              }
+              list($firstname, $lastname) = mysqli_fetch_array($result3);
+              echo $firstname . " " . $lastname;
+            ?> on <?php echo $taskDate; ?></small>
+          </div>
+          <?php
+          }
+          ?>
+          <?php
+          }
+          ?>
           </div>
         </div>
       </div>
