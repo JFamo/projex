@@ -47,69 +47,19 @@ if(isset($_POST['goal-id'])){
   $goalid = $_POST['goal-id'];
 
   require('../php/connect.php');
-  $query = "UPDATE goals SET status='backlog' WHERE id='$goalid'";
+  $query = "UPDATE goals SET status='active' WHERE id='$goalid'";
   $result = mysqli_query($link,$query);
   if (!$result){
       die('Error: ' . mysqli_error($link));
   }
-  $query = "UPDATE tasks SET status='backlog' WHERE id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalid')";
-  $result = mysqli_query($link,$query);
-  if (!$result){
-      die('Error: ' . mysqli_error($link));
-  }
-  mysqli_close($link);
-
-  $fmsg = "Moved Goal to Backlog!";
-}
-
-if(isset($_POST['task-id'])){
-
-  $taskid = $_POST['task-id'];
-
-  require('../php/connect.php');
-  $query = "UPDATE tasks SET status='complete' WHERE id='$taskid'";
-  $result = mysqli_query($link,$query);
-  if (!$result){
-      die('Error: ' . mysqli_error($link));
-  }
-  $query = "SELECT tasks.status FROM tasks WHERE id IN (SELECT task FROM goal_task_mapping WHERE goal IN (SELECT goal FROM goal_task_mapping WHERE task='$taskid'))";
-  $result = mysqli_query($link,$query);
-  if (!$result){
-      die('Error: ' . mysqli_error($link));
-  }
-  $hasIncompleteTask = false;
-  while(list($taskstatus) = mysqli_fetch_array($result)){
-    if($taskstatus == 'active' || $taskstatus == 'backlog'){
-      $hasIncompleteTask = true;
-    }
-  }
-  if($hasIncompleteTask == false){
-    $query = "UPDATE goals SET status='complete' WHERE id IN (SELECT goal FROM goal_task_mapping WHERE task='$taskid')";
-    $result = mysqli_query($link,$query);
-    if (!$result){
-        die('Error: ' . mysqli_error($link));
-    }
-  }
-  mysqli_close($link);
-
-  $fmsg = "Completed Task!";
-}
-
-if(isset($_POST['taskuser-id'])){
-
-  $taskid = $_POST['taskuser-id'];
-  $username = $_SESSION['id'];
-
-  require('../php/connect.php');
-  $query = "INSERT INTO user_task_mapping (user, task) VALUES ('$username', '$taskid') ON DUPLICATE KEY UPDATE user=VALUES(user)";
+  $query = "UPDATE tasks SET status='active' WHERE id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalid')";
   $result = mysqli_query($link,$query);
   if (!$result){
       die('Error: ' . mysqli_error($link));
   }
   mysqli_close($link);
 
-  $fmsg = "Assigned Yourself to Task";
-
+  $fmsg = "Moved Goal to Active!";
 }
 
 if(!isset($_SESSION['username'])){
@@ -227,7 +177,7 @@ if(!isset($_SESSION['username'])){
         <div class="row">
           <div class="col-12">
             <?php if(isset($fmsg)){ echo "<div class='card'><p>" . $fmsg . "</p></div>"; } ?>
-            <h1>Active</h1>  
+            <h1>Complete</h1>  
           </div>
           <div class="col-12">
             <div class="dropdown">
@@ -286,7 +236,7 @@ if(!isset($_SESSION['username'])){
             $username = $_SESSION['username'];
             $activeProject = $_SESSION['project'];
 
-            $query = "SELECT goals.name, goals.id, goals.value FROM goals WHERE goals.project = '$activeProject' AND goals.status='active'";
+            $query = "SELECT goals.name, goals.id, goals.value FROM goals WHERE goals.project = '$activeProject' AND goals.status='complete'";
             $result = mysqli_query($link, $query);
             if (!$result){
               die('Error: ' . mysqli_error($link));
@@ -302,7 +252,7 @@ if(!isset($_SESSION['username'])){
           </div>
           <form method="post">
             <input type="hidden" value="<?php echo $goalID; ?>" name="goal-id" />
-            <input type="submit" class="btn btn-link" value="Move to Backlog">
+            <input type="submit" class="btn btn-link" value="Return to Active">
           </form>
             <?php
 
@@ -311,7 +261,7 @@ if(!isset($_SESSION['username'])){
             $username = $_SESSION['username'];
             $activeProject = $_SESSION['project'];
 
-            $query = "SELECT tasks.id, tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') AND tasks.status='active'";
+            $query = "SELECT tasks.id, tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') AND tasks.status='complete'";
             $result2 = mysqli_query($link, $query);
             if (!$result2){
               die('Error: ' . mysqli_error($link));
@@ -343,15 +293,6 @@ if(!isset($_SESSION['username'])){
              ?></h4>
             <hr>
             <p><?php echo $taskDesc; ?></p>
-            <br>
-            <form method="post">
-              <input type="hidden" value="<?php echo $taskID; ?>" name="taskuser-id" />
-              <input type="submit" class="btn btn-link" value="Claim this Task">
-            </form>
-            <form method="post">
-              <input type="hidden" value="<?php echo $taskID; ?>" name="task-id" />
-              <input type="submit" class="btn btn-link" value="Complete">
-            </form>
             <br>
             <small>Created By : <?php
               require('../php/connect.php');
