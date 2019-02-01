@@ -250,6 +250,9 @@ if($count == 1){
 				</form>
 <?php
 }
+else{
+	echo "<p>You must be the organization owner to create a workspace!</p>";
+}
 ?>
 				<br>
 				<a href="../index.php">Return to Dashboard</a>
