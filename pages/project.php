@@ -29,105 +29,52 @@ if(isset($_POST['workspace-id'])){
 
 }
 
-//Handle Username Editing
-if(isset($_POST['edit-username'])){
+//Handle New Project Creation
+if(isset($_POST['project-name'])){
 
-	$username = $_POST['edit-username'];
-	$username = validate($username);
-	$currentusername = $_SESSION['username'];
-	
-	require('../php/connect.php');
-	
-	$query= "SELECT id FROM users WHERE username='$username'";
-
-	$result = mysqli_query($link, $query);
-
-	if (!$result){
-		die('Error: ' . mysqli_error($link));
-	}
-
-	$count = mysqli_num_rows($result);
-
-	if($count == 0){
-
-		$query2 = "UPDATE users SET username='$username' WHERE username='$currentusername'";
-		$result2 = mysqli_query($link, $query2);
-		if (!$result2){
-			die('Error: ' . mysqli_error($link));
-		}
-
-		$_SESSION['username'] = $username;
-
-		$fmsg = "Successfully Updated Username!";
-
-	}
-	else{
-
-		$fmsg = "Username Already Taken!";
-
-	}
-
-}
-
-//Handle Firstname Editing
-if(isset($_POST['edit-firstname'])){
-
-	$firstname = $_POST['edit-firstname'];
-	$firstname = validate($firstname);
-	$user = $_SESSION['username'];
-	
-	require('../php/connect.php');
-
-	$query = "UPDATE users SET firstname='$firstname' WHERE username='$user'";
-	$result = mysqli_query($link, $query);
-	if (!$result){
-		die('Error: ' . mysqli_error($link));
-	}
-
-	$_SESSION['firstname'] = $firstname;
-
-	$fmsg = "Successfully Updated First Name!";
-
-}
-
-//Handle Lastname Editing
-if(isset($_POST['edit-lastname'])){
-
-	$lastname = $_POST['edit-lastname'];
-	$lastname = validate($lastname);
-	$user = $_SESSION['username'];
-	
-	require('../php/connect.php');
-
-	$query = "UPDATE users SET lastname='$lastname' WHERE username='$user'";
-	$result = mysqli_query($link, $query);
-	if (!$result){
-		die('Error: ' . mysqli_error($link));
-	}
-
-	$_SESSION['lastname'] = $lastname;
-
-	$fmsg = "Successfully Updated Last Name!";
-
-}
-
-//Handle Password Editing
-if(isset($_POST['edit-password'])){
-
-	$password = $_POST['edit-password'];
-	$password = validate($password);
-	$password = password_hash($password, PASSWORD_DEFAULT);
+	$wsname = $_POST['project-name'];
+	$wsname = validate($wsname);
 	$username = $_SESSION['username'];
+	$myid = $_SESSION['id'];
+	$workspace = $_SESSION['workspace'];
 	
 	require('../php/connect.php');
 
-	$query = "UPDATE users SET password='$password' WHERE username='$username'";
+	//Start by getting organization ID of user
+	$query = "SELECT organizations.id FROM ((user_organization_mapping INNER JOIN organizations ON organizations.id = user_organization_mapping.organization) INNER JOIN users ON user_organization_mapping.user = users.id) WHERE users.username = '$username'";
 	$result = mysqli_query($link, $query);
 	if (!$result){
 		die('Error: ' . mysqli_error($link));
 	}
+	list($orgid) = mysqli_fetch_array($result);
 
-	$fmsg = "Successfully Changed Password!";
+	//Next create the project itself
+	$query2 = "INSERT INTO projects (workspace, name) VALUES ('$workspace', '$wsname')";
+	$result2 = mysqli_query($link, $query2);
+	if (!$result2){
+		die('Error: ' . mysqli_error($link));
+	}
+	$wsid = mysqli_insert_id($link); //Save the AI project ID
+
+	//Finally add the checked users to the project
+	//Force org owner into project
+	$query2 = "INSERT INTO user_project_mapping (project, user) VALUES ('$wsid', '$myid')";
+	$result2 = mysqli_query($link, $query2);
+	if (!$result2){
+		die('Error: ' . mysqli_error($link));
+	}
+	//Iterate other users
+	if(!empty($_POST['project-user'])){
+		foreach($_POST['project-user'] as $userID){
+			$query2 = "INSERT INTO user_project_mapping (project, user) VALUES ('$wsid', '$userID')";
+			$result2 = mysqli_query($link, $query2);
+			if (!$result2){
+				die('Error: ' . mysqli_error($link));
+			}
+		}
+	}
+
+	$fmsg = "Successfully Created Project!";
 
 }
 
@@ -150,8 +97,6 @@ if(!isset($_SESSION['username'])){
     <script src="../js/popper.min.js"></script>
     <script src="../bootstrap-4.1.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
-
-    <!-- Google Fonts - Changes to come -->
     <link href="https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i" rel="stylesheet">
 	
 	<title>
@@ -234,7 +179,7 @@ if(!isset($_SESSION['username'])){
 				    <a class="nav-link" href="docs.php">Docs</a>
 				    <a class="nav-link" href="messages.php">Messages</a>
 				    <hr class="sidenavHR">
-				    <a class="nav-link active" href="account.php">My Account</a>
+				    <a class="nav-link" href="account.php">My Account</a>
 				    <a class="nav-link" href="organization.php">My Organization</a>
 				  </ul>
 				  </div>
@@ -244,50 +189,67 @@ if(!isset($_SESSION['username'])){
 			<div class="row">
 			<div class="col-sm-12">
 				<?php if(isset($fmsg)){ echo "<div class='card'><p>" . $fmsg . "</p></div>"; } ?>
-				<h1>My Account</h1>
-				<p>This is a placeholder page for your account management page.</p>
+				<h1>Create Project</h1>
+				<p>Create a new project in the current workspace.</p>
 				<hr>
-				<b>Username : </b><?php echo $_SESSION['username']; ?>		<br>
-				<b>First Name : </b><?php echo $_SESSION['firstname']; ?>	<br>
-				<b>Last Name : </b><?php echo $_SESSION['lastname']; ?>		<br>
-				<form method="POST" class="pt-4">
+				<?php 
+require('../php/connect.php');
+$username = $_SESSION['username'];
+$query = "SELECT user_ranks.rank FROM (user_ranks INNER JOIN users ON user_ranks.user = users.id) WHERE user_ranks.rank = 'owner' AND users.username = '$username'";
+$result = mysqli_query($link, $query);
+if (!$result){
+	die('Error: ' . mysqli_error($link));
+}
+$count = mysqli_num_rows($result);
+if($count == 1){
+				 ?>
+				<form method="POST" class="pt-2">
 				  <div class="form-row">
 				    <div class="form-group col-md-6">
-				      <label for="edit-firstname">Change First Name</label>
-				      <input type="text" class="form-control" id="edit-firstname" name="edit-firstname" value="<?php echo $_SESSION['firstname']; ?>">
+				      <label for="edit-name">Project Name</label>
+				      <input type="text" class="form-control" id="project-name" name="project-name" placeholder="New Project Name...">
 				    </div>
 				  </div>
-				  <button type="submit" class="btn btn-primary">Change</button>
-				</form>
-				<form method="POST" class="pt-4">
 				  <div class="form-row">
-				    <div class="form-group col-md-6">
-				      <label for="edit-lastname">Change Last Name</label>
-				      <input type="text" class="form-control" id="edit-lastname" name="edit-lastname" value="<?php echo $_SESSION['lastname']; ?>">
+				  	<div class="form-group col-md-6">
+				      <label for="edit-name">Add Users to Project</label><br>
+				      <?php
+
+			        	require('../php/connect.php');
+
+			        	$username = $_SESSION['username'];
+
+			        	//Start by getting organization ID of user
+						$query = "SELECT organizations.id FROM ((user_organization_mapping INNER JOIN organizations ON organizations.id = user_organization_mapping.organization) INNER JOIN users ON user_organization_mapping.user = users.id) WHERE users.username = '$username'";
+						$result = mysqli_query($link, $query);
+						if (!$result){
+							die('Error: ' . mysqli_error($link));
+						}
+						list($orgid) = mysqli_fetch_array($result);
+
+						//Next grab firstname, lastname, and id of users in same organization
+						$query = "SELECT users.id, users.firstname, users.lastname FROM (user_organization_mapping INNER JOIN users ON user_organization_mapping.user = users.id) WHERE user_organization_mapping.organization = '$orgid'";
+						$result = mysqli_query($link, $query);
+						if (!$result){
+							die('Error: ' . mysqli_error($link));
+						}
+						while($resultArray = mysqli_fetch_array($result)){
+						$thisFirstname = $resultArray['firstname'];
+						$thisLastname = $resultArray['lastname'];
+						$thisID = $resultArray['id'];
+
+			        	?>
+
+			          		<input type="checkbox" <?php if($thisID != $_SESSION['id']){ echo "name='project-user[]'"; } ?> value="<?php echo $thisID; ?>" <?php if($thisID == $_SESSION['id']){ echo "checked='checked' onclick='return false;'"; } ?>> <?php echo $thisFirstname . " " . $thisLastname . " (" . $thisID . ")"; ?><br>
+
+			          <?php } ?>
 				    </div>
 				  </div>
-				  <button type="submit" class="btn btn-primary">Change</button>
+				  <button type="submit" class="btn btn-primary">Create</button>
 				</form>
-				<form method="POST" class="pt-4">
-				  <div class="form-row">
-				    <div class="form-group col-md-6">
-				      <label for="edit-username">Change Username</label>
-				      <input type="text" class="form-control" id="edit-username" name="edit-username" value="<?php echo $_SESSION['username']; ?>">
-				    </div>
-				  </div>
-				  <button type="submit" class="btn btn-primary">Change</button>
-				</form>
-				<form method="POST" class="pt-4">
-				  <div class="form-row">
-				    <div class="form-group col-md-6">
-				      <label for="edit-password">Change Password</label>
-				      <input type="password" class="form-control" id="edit-password" name="edit-password">
-				      <label for="repeat-password">Repeat Password</label>
-				      <input type="password" class="form-control" id="repeat-password" name="repeat-password">
-				    </div>
-				  </div>
-				  <button type="submit" class="btn btn-primary">Change</button>
-				</form>
+<?php
+}
+?>
 				<br>
 				<a href="../index.php">Return to Dashboard</a>
 			</div>
@@ -302,14 +264,6 @@ if(!isset($_SESSION['username'])){
 	</div>
 
 </body>
-
-<!--Main has no footer
-<footer class="text-white bg-primary py-3 h5"> 
-	<center><p class="bodyTextType2">
-		Team 2004-901 2018
-	</p></center>
-</footer>
--->
 
 <script src="../js/scripts.js" type="text/javascript"></script>
 
