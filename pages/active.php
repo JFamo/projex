@@ -72,6 +72,24 @@ if(isset($_POST['task-id'])){
   if (!$result){
       die('Error: ' . mysqli_error($link));
   }
+  $query = "SELECT tasks.status FROM tasks WHERE id IN (SELECT task FROM goal_task_mapping WHERE goal IN (SELECT goal FROM goal_task_mapping WHERE task='$taskid'))";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  $hasIncompleteTask = false;
+  while(list($taskstatus) = mysqli_fetch_array($result)){
+    if($taskstatus == 'active' || $taskstatus == 'backlog'){
+      $hasIncompleteTask = true;
+    }
+  }
+  if($hasIncompleteTask == false){
+    $query = "UPDATE goals SET status='complete' WHERE id IN (SELECT goal FROM goal_task_mapping WHERE task='$taskid')";
+    $result = mysqli_query($link,$query);
+    if (!$result){
+        die('Error: ' . mysqli_error($link));
+    }
+  }
   mysqli_close($link);
 
   $fmsg = "Completed Task!";
