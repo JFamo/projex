@@ -271,23 +271,23 @@ if(isset($_SESSION['username'])){
 						  <div class="form-row">
 						    <div class="form-group col-md-6">
 						      <label for="register-username">Username</label>
-						      <input type="text" class="form-control" id="register-username" name="register-username" placeholder="Username" value="<?php echo isset($_POST['register-username']) ? $_POST['register-username'] : '' ?>">
+						      <input type="text" pattern="[a-zA-Z0-9]+" required="required" class="form-control" id="register-username" name="register-username" placeholder="Username" value="<?php echo isset($_POST['register-username']) ? $_POST['register-username'] : '' ?>">
 						    </div>
 						  </div>
 						  <div class="form-row">
 						  	<div class="form-group col-md-6">
 						      <label for="register-password">Password</label>
-						      <input type="password" class="form-control" id="register-password" name="register-password" placeholder="Password" value="<?php echo isset($_POST['register-password']) ? $_POST['register-password'] : '' ?>">
+						      <input type="password" required="required" class="form-control" id="register-password" name="register-password" placeholder="Password" value="<?php echo isset($_POST['register-password']) ? $_POST['register-password'] : '' ?>">
 						    </div>
 						    <div class="form-group col-md-6">
 						      <label for="register-confirm">Confirm Password</label>
-						      <input type="password" class="form-control" id="register-confirm" name="register-confirm" placeholder="Retype Password" value="<?php echo isset($_POST['register-confirm']) ? $_POST['register-confirm'] : '' ?>">
+						      <input type="password" required="required" class="form-control" id="register-confirm" name="register-confirm" placeholder="Retype Password" value="<?php echo isset($_POST['register-confirm']) ? $_POST['register-confirm'] : '' ?>">
 						    </div>
 						  </div>
 						  <div class="form-row">
 							<div class="form-group col-md-12">
 							  <label for="register-email">Email</label>
-							  <input type="email" class="form-control" id="register-email" name="register-email" placeholder="Email" value="<?php echo isset($_POST['register-email']) ? $_POST['register-email'] : '' ?>">
+							  <input type="email" required="required" class="form-control" id="register-email" name="register-email" placeholder="Email" value="<?php echo isset($_POST['register-email']) ? $_POST['register-email'] : '' ?>">
 							</div>
 						  </div>
 						  <div class="form-row">
