@@ -332,7 +332,7 @@ if(!isset($_SESSION['username'])){
 				</script>
 
 
-				<center><h3>Contribution Breakdown</h3><small>Shows value point distribution by user</small>
+				<center><h3>Contribution Breakdown</h3><small>Shows task distribution by user</small>
 <div class="dropdown">
               <div class="btn-group">
                 <button type="button" class="btn btn-secondary"><?php 
@@ -387,39 +387,32 @@ if(!isset($_SESSION['username'])){
 						//Give each user as a label
 						require('../php/connect.php');
 						$activeProject = $_SESSION['project'];
-						$query = "SELECT IFNULL(SUM(value),0) FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
+						$query = "SELECT user FROM user_project_mapping WHERE project='$activeProject'";
 				        $result = mysqli_query($link, $query);
 				        if (!$result){
 				            die('Error: ' . mysqli_error($link));
 				        }
-				        list($valuesum) = mysqli_fetch_array($result);
-				        echo $valuesum . ", ";
+				        while(list($userid) = mysqli_fetch_array($result)){
+				        	echo '"' . fullnameFromID($userid) . '", ';
+				    	}
 					?>
 					],"datasets":[{"label":"Breakdown Values","data":[
 					<?php
-					require('../php/connect.php');
 					$activeProject = $_SESSION['project'];
-					$query = "SELECT IFNULL(SUM(value),0) FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
-				            $result = mysqli_query($link, $query);
-				            if (!$result){
-				              die('Error: ' . mysqli_error($link));
-				            }
-				            list($valuesum) = mysqli_fetch_array($result);
-				            echo $valuesum . ", ";
-				    $query = "SELECT IFNULL(SUM(value),0) FROM goals WHERE goals.project = '$activeProject' AND goals.status='active'";
-				            $result = mysqli_query($link, $query);
-				            if (!$result){
-				              die('Error: ' . mysqli_error($link));
-				            }
-				            list($valuesum) = mysqli_fetch_array($result);
-				            echo $valuesum . ", ";
-				    $query = "SELECT IFNULL(SUM(value),0) FROM goals WHERE goals.project = '$activeProject' AND goals.status='complete'";
-				            $result = mysqli_query($link, $query);
-				            if (!$result){
-				              die('Error: ' . mysqli_error($link));
-				            }
-				            list($valuesum) = mysqli_fetch_array($result);
-				            echo $valuesum . ", ";
+						//Iterate each user to look for their goals
+						$query = "SELECT user FROM user_project_mapping WHERE project='$activeProject'";
+				        $result = mysqli_query($link, $query);
+				        if (!$result){
+				            die('Error: ' . mysqli_error($link));
+				        }
+				        while(list($userid) = mysqli_fetch_array($result)){
+				        	$query = "SELECT * FROM user_task_mapping WHERE user='$userid'";
+					        $result2 = mysqli_query($link, $query);
+					        if (!$result2){
+					            die('Error: ' . mysqli_error($link));
+					        }
+					        echo mysqli_num_rows($result2) . ", ";
+				        }
 					?>
 					],"backgroundColor":["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"]}]}});
 				</script>
