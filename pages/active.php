@@ -28,57 +28,6 @@ if(isset($_POST['project-id'])){
 
 }
 
-//Handle Changing Workspaces
-if(isset($_POST['workspace-id'])){
-
-  $newworkspace = $_POST['workspace-id'];
-  //~~JOSH~~
-  //Need checking that the user really has this workspace here
-  //Prevents client-side editing of workspace value to access those of other orgs
-  //@Tom
-  
-  $_SESSION['workspace'] = $newworkspace;
-  $_SESSION['project'] = null;
-
-}
-
-if(isset($_POST['task-name'])){
-
-  $taskname = validate($_POST['task-name']);
-  $taskdesc = validate($_POST['task-desc']);
-  $thisuser = $_SESSION['id'];
-
-  require('../php/connect.php');
-  $query = "INSERT INTO tasks (name, description, creator, date) VALUES ('$taskname','$taskdesc','$thisuser',now())";
-  $result = mysqli_query($link,$query);
-  if (!$result){
-      die('Error: ' . mysqli_error($link));
-  }
-  mysqli_close($link);
-
-  $fmsg = "Successfully Created Task!";
-
-}
-
-if(isset($_POST['goal-name'])){
-
-  $goalname = validate($_POST['goal-name']);
-  $goalvalue = validate($_POST['goal-value']);
-  $thisproject = $_SESSION['project'];
-  $thisuser = $_SESSION['id'];
-
-  require('../php/connect.php');
-  $query = "INSERT INTO goals (name, creator, date, project, value) VALUES ('$goalname','$thisuser',now(),'$thisproject','$goalvalue')";
-  $result = mysqli_query($link,$query);
-  if (!$result){
-      die('Error: ' . mysqli_error($link));
-  }
-  mysqli_close($link);
-
-  $fmsg = "Successfully Created Goal!";
-
-}
-
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -99,6 +48,9 @@ if(!isset($_SESSION['username'])){
     <script src="../bootstrap-4.1.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i" rel="stylesheet">
+
+    <!-- Google Fonts - Changes to come -->
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 	
 	<title>
 		ProjeX
@@ -155,8 +107,8 @@ if(!isset($_SESSION['username'])){
               <hr class="sidenavHR">
               <a class="nav-link" href="main.php">Dashboard</a>
             <a class="nav-link" href="metrics.php">Metrics</a>
-            <a class="nav-link active" href="backlog.php">Backlog</a>
-            <a class="nav-link" href="active.php">Active</a>
+            <a class="nav-link" href="backlog.php">Backlog</a>
+            <a class="nav-link active" href="active.php">Active</a>
             <a class="nav-link" href="docs.php">Docs</a>
             <a class="nav-link" href="messages.php">Messages</a>
             <hr class="sidenavHR">
@@ -167,13 +119,9 @@ if(!isset($_SESSION['username'])){
         </nav>
       </div>
       <div id="pageBody">
-      <div class="row">
-      	<div class="col-12">
-          <?php if(isset($fmsg)){ echo "<div class='card'><p>" . $fmsg . "</p></div>"; } ?>
-      		<h1>Backlog</h1>	
-      	</div>
-        <div class="col-sm-6">
-          <div class="dropdown">
+        <div class="row">
+          <div class="col-12">
+            <div class="dropdown">
               <div class="btn-group">
                 <button type="button" class="btn btn-secondary"><?php 
                   require('../php/connect.php');
@@ -219,124 +167,16 @@ if(!isset($_SESSION['username'])){
               </div>
             </div>
             </div>
-        <div class="card">
-        <h3>Backlog Overview</h3>
-
-        </div>
-        <div class="card">
-        <h3>Create A Task</h3>
-        <form method="POST" class="">
-				  <div class="form-row">
-				    <div class="form-group col-md-12">
-				      <label for="task-name">Task Name</label>
-				      <input type="text" maxlength="90" class="form-control" id="task-name" name="task-name" placeholder="Enter a task name">
-				    </div>
-				  </div>
-				  <div class="form-row">
-				    <div class="form-group col-md-12">
-				      <label for="task-desc">Task Description</label>
-				      <textarea maxlength="450" type="text" class="form-control" id="task-desc" name="task-desc" placeholder="Enter the task's description"></textarea>
-				  </div>
-				  </div>
-				  <button type="submit" class="btn btn-primary">Submit</button>
-				</form>
-        </div>
-        <div class="card">
-        <h3>Create A Goal</h3>
-				<form method="POST" class="pt-4">
-				  <div class="form-row">
-				    <div class="form-group col-md-12">
-				      <label for="goal-name">Goal Name</label>
-				      <input type="text" maxlength="90" class="form-control" id="goal-name" name="goal-name" placeholder="Enter a goal name">
-				    </div>
-				  </div>
-				  <div class="form-row">
-				    <div class="form-group col-md-12">
-				      <label for="goal-value">Goal Value</label>
-				      <br>
-              <small>An integer representing the team's relative weighted value of completing this goal.</small>
-              <br>
-              <input type="number" class="form-control" name="goal-value" id="goal-value" value="1" />
-				  </div>
-				  </div>
-				  <button type="submit" class="btn btn-primary">Submit</button>
-				</form>
-        </div>
-        </div>
-        <div class="col-sm-6">
-          <?php
-
-            require('../php/connect.php');
-
-            $username = $_SESSION['username'];
-            $activeProject = $_SESSION['project'];
-
-            $query = "SELECT goals.name, goals.id, goals.value FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
-            $result = mysqli_query($link, $query);
-            if (!$result){
-              die('Error: ' . mysqli_error($link));
-            }
-            while($resultArray = mysqli_fetch_array($result)){
-            $goalName = $resultArray['name'];
-            $goalID = $resultArray['id'];
-            $goalValue = $resultArray['value'];
-
-          ?>
-          <div class="head">
-            <h4 style=" float:left;"><?php echo $goalName; ?></h4><h4 style="float:right;"><?php echo $goalValue; ?></h4>
           </div>
-            <?php
-
-            require('../php/connect.php');
-
-            $username = $_SESSION['username'];
-            $activeProject = $_SESSION['project'];
-
-            $query = "SELECT tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') AND tasks.status='backlog'";
-            $result2 = mysqli_query($link, $query);
-            if (!$result2){
-              die('Error: ' . mysqli_error($link));
-            }
-            while($taskArray = mysqli_fetch_array($result2)){
-            $taskName = $taskArray['name'];
-            $taskID = $taskArray['id'];
-            $taskDesc = $taskArray['description'];
-            $taskCreator = $taskArray['creator'];
-            $taskDate = $taskArray['date'];
-
-          ?>
-          <div class="card">
-            <h4><?php echo $taskName; ?></h4>
-            <hr>
-            <p><?php echo $taskDesc; ?></p>
-            <br>
-            <small>Created By : <?php
-              require('../php/connect.php');
-              $query = "SELECT firstname, lastname FROM users WHERE id = '$taskCreator'";
-              $result3 = mysqli_query($link, $query);
-              if (!$result3){
-                die('Error: ' . mysqli_error($link));
-              }
-              list($firstname, $lastname) = mysqli_fetch_array($result3);
-              echo $firstname . " " . $lastname;
-            ?> on <?php echo $taskDate; ?></small>
-          </div>
-          <?php
-          }
-          ?>
-          <?php
-          }
-          ?>
         </div>
-        </div>
+      </div>
+      <footer class="bg-grey color-white pb_top">
+        <center><p>
+          Team 2004-901, 2019, All Rights Reserved
+        </p></center>
+      </footer>
     </div>
-    <footer class="bg-grey color-white pb_top">
-      <center><p>
-        Team 2004-901, 2019, All Rights Reserved
-      </p></center>
-    </footer>
-    </div>
-    </div>
+  </div>
 </body>
 
 <script src="../js/scripts.js" type="text/javascript"></script>
