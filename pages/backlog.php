@@ -46,10 +46,17 @@ if(isset($_POST['task-name'])){
 
   $taskname = validate($_POST['task-name']);
   $taskdesc = validate($_POST['task-desc']);
+  $taskgoal = $_POST['task-goal'];
   $thisuser = $_SESSION['id'];
 
   require('../php/connect.php');
   $query = "INSERT INTO tasks (name, description, creator, date) VALUES ('$taskname','$taskdesc','$thisuser',now())";
+  $result = mysqli_query($link,$query);
+  $taskid = mysqli_insert_id($link);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  $query = "INSERT INTO goal_task_mapping (task, goal) VALUES ('$taskid','$taskgoal')";
   $result = mysqli_query($link,$query);
   if (!$result){
       die('Error: ' . mysqli_error($link));
@@ -77,6 +84,26 @@ if(isset($_POST['goal-name'])){
 
   $fmsg = "Successfully Created Goal!";
 
+}
+
+if(isset($_POST['goal-id'])){
+
+  $goalid = $_POST['goal-id'];
+
+  require('../php/connect.php');
+  $query = "UPDATE goals SET status='active' WHERE id='$goalid'";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  $query = "UPDATE tasks SET status='active' WHERE id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalid')";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  mysqli_close($link);
+
+  $fmsg = "Moved Goal to Active!";
 }
 
 if(!isset($_SESSION['username'])){
@@ -127,31 +154,51 @@ if(!isset($_SESSION['username'])){
           <div class="container" style="padding-left:0px;">
           <ul class="nav navbar-nav align-top">
            <a class="navbar-brand icon" href="#"><img src="../imgs/workspacePlaceholder.png" alt="icon" width="60" height="60">Projex</a>
-           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Workspaces
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+           <div class="dropdown">
+              <div class="btn-group dropright">
+                <button type="button" class="btn btn-secondary"><?php 
+                  require('../php/connect.php');
+                  $workspace = $_SESSION['workspace'];
+                  $query = "SELECT name FROM workspaces WHERE id='$workspace'";
+                  $result = mysqli_query($link, $query);
+                  if (!$result){
+                    die('Error: ' . mysqli_error($link));
+                  }
+                  list($name) = mysqli_fetch_array($result);
+                  if($_SESSION['workspace'] == null || $_SESSION['workspace'] == null){
+                    echo "Select a Workspace";
+                  }
+                  else{
+                    echo $name;
+                  }
+                ?></button>
+                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+              <div class="dropdown-menu dropdown-menu-right">
 
                 <?php
 
                 require('../php/connect.php');
 
                 $username = $_SESSION['username'];
-            $query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
-            $result = mysqli_query($link, $query);
-            if (!$result){
-              die('Error: ' . mysqli_error($link));
-            }
-            while($resultArray = mysqli_fetch_array($result)){
-            $workspaceName = $resultArray['name'];
-            $workspaceID = $resultArray['id'];
+                $query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
+                $result = mysqli_query($link, $query);
+                if (!$result){
+                  die('Error: ' . mysqli_error($link));
+                }
+                while($resultArray = mysqli_fetch_array($result)){
+                $workspaceName = $resultArray['name'];
+                $workspaceID = $resultArray['id'];
 
                 ?>
-                <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item" type="submit" value="<?php echo $workspaceName; ?>"></form>
+                <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item <?php if($_SESSION['workspace'] == $workspaceID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $workspaceName; ?>"></form>
                 <?php } ?>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="workspace.php">Create New</a>
               </div>
+            </div>
+            </div>
               <hr class="sidenavHR">
               <a class="nav-link" href="main.php">Dashboard</a>
             <a class="nav-link" href="metrics.php">Metrics</a>
@@ -194,7 +241,7 @@ if(!isset($_SESSION['username'])){
                 <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="sr-only">Toggle Dropdown</span>
                 </button>
-              <div class="dropdown-menu">
+              <div class="dropdown-menu dropdown-menu-right">
 
                 <?php
 
@@ -212,7 +259,7 @@ if(!isset($_SESSION['username'])){
                 $projectID = $resultArray['id'];
 
                 ?>
-                <form method="POST"><input type="hidden" value="<?php echo $projectID; ?>" name="project-id"/><input class="dropdown-item <?php if($_SESSION['project'] == $projectID){ echo 'active'; } ?>" type="submit" value="<?php echo $projectName; ?>"></form>
+                <form method="POST"><input type="hidden" value="<?php echo $projectID; ?>" name="project-id"/><input class="dropdown-item <?php if($_SESSION['project'] == $projectID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $projectName; ?>"></form>
                 <?php } ?>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="project.php">Create New</a>
@@ -221,7 +268,51 @@ if(!isset($_SESSION['username'])){
             </div>
         <div class="card">
         <h3>Backlog Overview</h3>
+          <?php if($_SESSION['project'] == null){
+            echo "<p>No Project Selected</p>";
+          }
+          else { ?>
+          <p>Number of Goals : <?php
+            require('../php/connect.php');
 
+            $activeProject = $_SESSION['project'];
+
+            $query = "SELECT goals.id FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
+            $result = mysqli_query($link, $query);
+            if (!$result){
+              die('Error: ' . mysqli_error($link));
+            }
+            echo mysqli_num_rows($result);
+          ?>
+          </p>
+          <p>Number of Tasks : <?php
+            require('../php/connect.php');
+
+            $activeProject = $_SESSION['project'];
+
+            $query = "SELECT tasks.id FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal IN (SELECT goals.id FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'))";
+            $result = mysqli_query($link, $query);
+            if (!$result){
+              die('Error: ' . mysqli_error($link));
+            }
+            echo mysqli_num_rows($result);
+          ?>
+          </p>
+          <p>Total Value : <?php
+            require('../php/connect.php');
+
+            $activeProject = $_SESSION['project'];
+
+            $query = "SELECT SUM(value) FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
+            $result = mysqli_query($link, $query);
+            if (!$result){
+              die('Error: ' . mysqli_error($link));
+            }
+            list($valuesum) = mysqli_fetch_array($result);
+            echo $valuesum;
+          ?>
+          </p>
+          <?php } ?>
         </div>
         <div class="card">
         <h3>Create A Task</h3>
@@ -238,6 +329,27 @@ if(!isset($_SESSION['username'])){
 				      <textarea maxlength="450" type="text" class="form-control" id="task-desc" name="task-desc" placeholder="Enter the task's description"></textarea>
 				  </div>
 				  </div>
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label for="task-goal">Add to Goal</label>
+              <select class="form-control" id="task-goal" name="task-goal">
+              <?php
+              require('../php/connect.php');
+
+              $activeProject = $_SESSION['project'];
+
+              $query = "SELECT goals.id, goals.name FROM goals WHERE goals.project = '$activeProject'";
+              $result = mysqli_query($link, $query);
+              if (!$result){
+                die('Error: ' . mysqli_error($link));
+              }
+              while(list($goalID,$goalName) = mysqli_fetch_array($result)){
+                echo '<option value="' . $goalID . '">'. $goalName . "</option>";
+              }
+              ?>
+              </select>
+          </div>
+          </div>
 				  <button type="submit" class="btn btn-primary">Submit</button>
 				</form>
         </div>
@@ -285,6 +397,10 @@ if(!isset($_SESSION['username'])){
           <div class="head">
             <h4 style=" float:left;"><?php echo $goalName; ?></h4><h4 style="float:right;"><?php echo $goalValue; ?></h4>
           </div>
+          <form method="post">
+            <input type="hidden" value="<?php echo $goalID; ?>" name="goal-id" />
+            <input type="submit" class="btn btn-link" value="Move to Active">
+          </form>
             <?php
 
             require('../php/connect.php');

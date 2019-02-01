@@ -82,6 +82,7 @@
 .nav-link{
 	color:rgba(255,255,255,0.5);
 	padding-left:0.5rem !important;
+	transition:all 1s;
 }
 .nav-link:hover{
 	color:rgba(255,255,255,1);
@@ -120,6 +121,11 @@ footer{
 	border-bottom: 4px solid #d65b35;
 	width:100%;
 	min-height: 2.5rem;
+}
 .active{
 	background-color:#282828 !important;
+}
+.active-dropdown{
+	background-color:#d65b35 !important;
+	color:white !important;
 }
