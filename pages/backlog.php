@@ -338,7 +338,7 @@ if(!isset($_SESSION['username'])){
 
               $activeProject = $_SESSION['project'];
 
-              $query = "SELECT goals.id, goals.name FROM goals WHERE goals.project = '$activeProject'";
+              $query = "SELECT goals.id, goals.name FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
               $result = mysqli_query($link, $query);
               if (!$result){
                 die('Error: ' . mysqli_error($link));

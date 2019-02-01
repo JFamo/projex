@@ -95,6 +95,23 @@ if(isset($_POST['task-id'])){
   $fmsg = "Completed Task!";
 }
 
+if(isset($_POST['taskuser-id'])){
+
+  $taskid = $_POST['taskuser-id'];
+  $username = $_SESSION['id'];
+
+  require('../php/connect.php');
+  $query = "INSERT INTO user_task_mapping (user, task) VALUES ('$username', '$taskid') ON DUPLICATE KEY UPDATE user=VALUES(user)";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  mysqli_close($link);
+
+  $fmsg = "Assigned Yourself to Task";
+
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -307,10 +324,29 @@ if(!isset($_SESSION['username'])){
 
           ?>
           <div class="card">
-            <h4><?php echo $taskName; ?></h4>
+            <h4><?php echo $taskName;
+              echo " (";
+
+              $query = "SELECT users.firstname, users.lastname FROM users WHERE users.id IN (SELECT user FROM user_task_mapping WHERE task='$taskID')";
+              $result3 = mysqli_query($link, $query);
+              if (!$result3){
+                die('Error: ' . mysqli_error($link));
+              }
+              list($userfirst, $userlast) = mysqli_fetch_array($result3);
+
+              echo $userfirst;
+              echo " ";
+              echo $userlast;
+              echo ")";
+
+             ?></h4>
             <hr>
             <p><?php echo $taskDesc; ?></p>
             <br>
+            <form method="post">
+              <input type="hidden" value="<?php echo $taskID; ?>" name="taskuser-id" />
+              <input type="submit" class="btn btn-link" value="Claim this Task">
+            </form>
             <form method="post">
               <input type="hidden" value="<?php echo $taskID; ?>" name="task-id" />
               <input type="submit" class="btn btn-link" value="Complete">
