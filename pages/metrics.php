@@ -154,58 +154,92 @@ if(!isset($_SESSION['username'])){
 	            <?php if(isset($fmsg)){ echo "<div class='card'><p>" . $fmsg . "</p></div>"; } ?>
 	            <h1>Metrics</h1>  
 	          </div>
-	        <div class="col-12">
-	        	<div class="dropdown">
-	              <div class="btn-group">
-	                <button type="button" class="btn btn-secondary"><?php 
-	                  require('../php/connect.php');
-	                  $project = $_SESSION['project'];
-	                  $query = "SELECT name FROM projects WHERE id='$project'";
-	                  $result = mysqli_query($link, $query);
-	                  if (!$result){
-	                    die('Error: ' . mysqli_error($link));
-	                  }
-	                  list($name) = mysqli_fetch_array($result);
-	                  if($_SESSION['project'] == null || $_SESSION['workspace'] == null){
-	                    echo "Select a Project";
-	                  }
-	                  else{
-	                    echo $name;
-	                  }
-	                ?></button>
-	                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-	                  <span class="sr-only">Toggle Dropdown</span>
-	                </button>
-	              <div class="dropdown-menu dropdown-menu-right">
-
-	                <?php
-
-	                require('../php/connect.php');
-
-	                $username = $_SESSION['username'];
-	                $workspace = $_SESSION['workspace'];
-	                $query = "SELECT projects.name, projects.id FROM ((user_project_mapping INNER JOIN projects ON projects.id = user_project_mapping.project) INNER JOIN users ON user_project_mapping.user = users.id) WHERE users.username = '$username' AND projects.workspace = '$workspace'";
-	                $result = mysqli_query($link, $query);
-	                if (!$result){
-	                  die('Error: ' . mysqli_error($link));
-	                }
-	                while($resultArray = mysqli_fetch_array($result)){
-	                $projectName = $resultArray['name'];
-	                $projectID = $resultArray['id'];
-
-	                ?>
-	                <form method="POST"><input type="hidden" value="<?php echo $projectID; ?>" name="project-id"/><input class="dropdown-item <?php if($_SESSION['project'] == $projectID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $projectName; ?>"></form>
-	                <?php } ?>
-	                <div class="dropdown-divider"></div>
-	                <a class="dropdown-item" href="project.php">Create New</a>
-	              </div>
-	            </div>
-	          </div>
-	        </div>
 			<div class="col-sm-12">
-			<canvas id="chartjs-0" class="chartjs" width="883" height="441" style="display: block; height: 294px; width: 589px;"></canvas>
+			<center><h3>Burndown</h3><small>Compares target value to be completed with actual value completed</small></center>
+			<canvas id="chartjs-1" class="chartjs" width="883" height="441" style="display: block; height: 294px; width: 589px;"></canvas>
 				<script>
-				new Chart(document.getElementById("chartjs-0"),{"type":"line","data":{"labels":["January","February","March","April","May","June","July"],"datasets":[{"label":"My First Dataset","data":[65,59,80,81,56,55,40],"fill":false,"borderColor":"rgb(75, 192, 192)","lineTension":0.1}]},"options":{}});
+				new Chart(document.getElementById("chartjs-1"),{"type":"bar","data":{"labels":
+					[
+						<?php
+		                require('../php/connect.php');
+		                $username = $_SESSION['username'];
+		                $workspace = $_SESSION['workspace'];
+		                $query = "SELECT projects.name, projects.id FROM ((user_project_mapping INNER JOIN projects ON projects.id = user_project_mapping.project) INNER JOIN users ON user_project_mapping.user = users.id) WHERE users.username = '$username' AND projects.workspace = '$workspace'";
+		                $result = mysqli_query($link, $query);
+		                if (!$result){
+		                  die('Error: ' . mysqli_error($link));
+		                }
+		                while($resultArray = mysqli_fetch_array($result)){
+		                	$projectName = $resultArray['name'];
+		                	echo '"' . $projectName . '", ';
+		            	}
+		                ?>
+					"All"],
+					"datasets":[
+					{"label":"Target","data":[
+						<?php
+			            require('../php/connect.php');
+			            $username = $_SESSION['username'];
+		                $workspace = $_SESSION['workspace'];
+		                $query = "SELECT projects.id FROM ((user_project_mapping INNER JOIN projects ON projects.id = user_project_mapping.project) INNER JOIN users ON user_project_mapping.user = users.id) WHERE users.username = '$username' AND projects.workspace = '$workspace'";
+		                $result = mysqli_query($link, $query);
+		                if (!$result){
+		                  die('Error: ' . mysqli_error($link));
+		                }
+		                while($resultArray = mysqli_fetch_array($result)){
+		                	$activeProject = $resultArray['id'];
+
+				            $query = "SELECT SUM(value) FROM goals WHERE goals.project = '$activeProject'";
+				            $result2 = mysqli_query($link, $query);
+				            if (!$result2){
+				              die('Error: ' . mysqli_error($link));
+				            }
+				            list($valuesum) = mysqli_fetch_array($result2);
+				            echo $valuesum . ", ";
+
+				        }
+				        $query = "SELECT SUM(value) FROM goals";
+				            $result2 = mysqli_query($link, $query);
+				            if (!$result2){
+				              die('Error: ' . mysqli_error($link));
+				            }
+				            list($valuesum) = mysqli_fetch_array($result2);
+				            echo $valuesum;
+			          ?>
+					],"fill":false,"backgroundColor":["rgba(255, 0, 0, 0.2)","rgba(255, 0, 0, 0.2)","rgba(255, 0, 0, 0.2)","rgba(255, 0, 0, 0.2)","rgba(255, 0, 0, 0.2)","rgba(255, 0, 0, 0.2)","rgba(255, 0, 0, 0.2)","rgba(255, 0, 0, 0.2)","rgba(255, 0, 0, 0.2)","rgba(255, 0, 0, 0.2)","rgba(255, 0, 0, 0.2)","rgba(255, 0, 0, 0.2)","rgba(255, 0, 0, 0.2)"],"borderColor":["rgb(255, 0, 0)","rgb(255, 0, 0)","rgb(255, 0, 0)","rgb(255, 0, 0)","rgb(255, 0, 0)","rgb(255, 0, 0)","rgb(255, 0, 0)","rgb(255, 0, 0)","rgb(255, 0, 0)","rgb(255, 0, 0)","rgb(255, 0, 0)","rgb(255, 0, 0)","rgb(255, 0, 0)"],"borderWidth":1},
+					{"label":"Complete","data":[
+						<?php
+			            require('../php/connect.php');
+			            $username = $_SESSION['username'];
+		                $workspace = $_SESSION['workspace'];
+		                $query = "SELECT projects.id FROM ((user_project_mapping INNER JOIN projects ON projects.id = user_project_mapping.project) INNER JOIN users ON user_project_mapping.user = users.id) WHERE users.username = '$username' AND projects.workspace = '$workspace'";
+		                $result = mysqli_query($link, $query);
+		                if (!$result){
+		                  die('Error: ' . mysqli_error($link));
+		                }
+		                while($resultArray = mysqli_fetch_array($result)){
+		                	$activeProject = $resultArray['id'];
+
+				            $query = "SELECT IFNULL(SUM(value),0) FROM goals WHERE goals.project = '$activeProject' AND goals.status='complete'";
+				            $result2 = mysqli_query($link, $query);
+				            if (!$result2){
+				              die('Error: ' . mysqli_error($link));
+				            }
+				            list($valuesum) = mysqli_fetch_array($result2);
+				            echo $valuesum . ", ";
+
+				        }
+				        $query = "SELECT SUM(value) FROM goals WHERE goals.status='complete'";
+				            $result2 = mysqli_query($link, $query);
+				            if (!$result2){
+				              die('Error: ' . mysqli_error($link));
+				            }
+				            list($valuesum) = mysqli_fetch_array($result2);
+				            echo $valuesum;
+			          ?>
+					],"fill":false,"backgroundColor":["rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)"],"borderColor":["rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)"],"borderWidth":1}
+					]},
+					"options":{"scales":{"yAxes":[{"ticks":{"beginAtZero":true}}]}}});
 				</script>
 				
 			</div>
