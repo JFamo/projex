@@ -231,6 +231,7 @@ if(!isset($_SESSION['username'])){
 				    <a class="nav-link" href="metrics.php">Metrics</a>
 				    <a class="nav-link" href="backlog.php">Backlog</a>
 				    <a class="nav-link" href="active.php">Active</a>
+				    <a class="nav-link" href="complete.php">Complete</a>
 				    <a class="nav-link" href="docs.php">Docs</a>
 				    <a class="nav-link" href="messages.php">Messages</a>
 				    <hr class="sidenavHR">
