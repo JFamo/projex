@@ -86,6 +86,26 @@ if(isset($_POST['goal-name'])){
 
 }
 
+if(isset($_POST['goal-id'])){
+
+  $goalid = $_POST['goal-id'];
+
+  require('../php/connect.php');
+  $query = "UPDATE goals SET status='active' WHERE id='$goalid'";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  $query = "UPDATE tasks SET status='active' WHERE id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalid')";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  mysqli_close($link);
+
+  $fmsg = "Moved Goal to Active!";
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -372,6 +392,10 @@ if(!isset($_SESSION['username'])){
           <div class="head">
             <h4 style=" float:left;"><?php echo $goalName; ?></h4><h4 style="float:right;"><?php echo $goalValue; ?></h4>
           </div>
+          <form method="post">
+            <input type="hidden" value="<?php echo $goalID; ?>" name="goal-id" />
+            <input type="submit" class="btn btn-link" value="Move to Active">
+          </form>
             <?php
 
             require('../php/connect.php');
