@@ -201,7 +201,7 @@ if(!isset($_SESSION['username'])){
                 <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="sr-only">Toggle Dropdown</span>
                 </button>
-              <div class="dropdown-menu">
+              <div class="dropdown-menu dropdown-menu-right">
 
                 <?php
 
