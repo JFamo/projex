@@ -15,6 +15,20 @@ function validate($data){
 
 session_start();
 
+//Handle Changing Workspaces
+if(isset($_POST['workspace-id'])){
+
+  $newworkspace = $_POST['workspace-id'];
+  //~~JOSH~~
+  //Need checking that the user really has this workspace here
+  //Prevents client-side editing of workspace value to access those of other orgs
+  //@Tom
+  
+  $_SESSION['workspace'] = $newworkspace;
+  $_SESSION['project'] = null;
+
+}
+
 //Handle Organization Name Editing
 if(isset($_POST['edit-name'])){
 
