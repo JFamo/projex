@@ -13,6 +13,17 @@ function validate($data){
   	return $data;
 }
 
+function fullnameFromID($userid){
+	require('../php/connect.php');
+	$query = "SELECT users.firstname, users.lastname FROM users WHERE id='$userid'";
+  	$result3 = mysqli_query($link, $query);
+  	if (!$result3){
+    	die('Error: ' . mysqli_error($link));
+  	}
+  	list($userfirst, $userlast) = mysqli_fetch_array($result3);
+  	return $userfirst . " " . $userlast;
+}
+
 session_start();
 
 //Handle Changing Workspaces
@@ -240,6 +251,177 @@ if(!isset($_SESSION['username'])){
 					],"fill":false,"backgroundColor":["rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)","rgba(0, 0, 255, 0.2)"],"borderColor":["rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)","rgb(0, 0, 255)"],"borderWidth":1}
 					]},
 					"options":{"scales":{"yAxes":[{"ticks":{"beginAtZero":true}}]}}});
+				</script>
+			<center><h3>Status Breakdown</h3><small>Shows value point distribution by status</small>
+<div class="dropdown">
+              <div class="btn-group">
+                <button type="button" class="btn btn-secondary"><?php 
+                  require('../php/connect.php');
+                  $project = $_SESSION['project'];
+                  $query = "SELECT name FROM projects WHERE id='$project'";
+                  $result = mysqli_query($link, $query);
+                  if (!$result){
+                    die('Error: ' . mysqli_error($link));
+                  }
+                  list($name) = mysqli_fetch_array($result);
+                  if($_SESSION['project'] == null || $_SESSION['workspace'] == null){
+                    echo "Select a Project";
+                  }
+                  else{
+                    echo $name;
+                  }
+                ?></button>
+                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+              <div class="dropdown-menu dropdown-menu-right">
+
+                <?php
+
+                require('../php/connect.php');
+
+                $username = $_SESSION['username'];
+                $workspace = $_SESSION['workspace'];
+                $query = "SELECT projects.name, projects.id FROM ((user_project_mapping INNER JOIN projects ON projects.id = user_project_mapping.project) INNER JOIN users ON user_project_mapping.user = users.id) WHERE users.username = '$username' AND projects.workspace = '$workspace'";
+                $result = mysqli_query($link, $query);
+                if (!$result){
+                  die('Error: ' . mysqli_error($link));
+                }
+                while($resultArray = mysqli_fetch_array($result)){
+                $projectName = $resultArray['name'];
+                $projectID = $resultArray['id'];
+
+                ?>
+                <form method="POST"><input type="hidden" value="<?php echo $projectID; ?>" name="project-id"/><input class="dropdown-item <?php if($_SESSION['project'] == $projectID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $projectName; ?>"></form>
+                <?php } ?>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="project.php">Create New</a>
+              </div>
+            </div>
+            </div>
+			</center>
+			<canvas id="chartjs-4" class="chartjs" width="883" height="441" style="display: block; height: 294px; width: 589px;"></canvas>
+				<script>
+				new Chart(document.getElementById("chartjs-4"),{"type":"doughnut","data":{"labels":["Backlog","Active","Complete"],"datasets":[{"label":"Breakdown Values","data":[
+					<?php
+					require('../php/connect.php');
+					$activeProject = $_SESSION['project'];
+					$query = "SELECT IFNULL(SUM(value),0) FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
+				            $result = mysqli_query($link, $query);
+				            if (!$result){
+				              die('Error: ' . mysqli_error($link));
+				            }
+				            list($valuesum) = mysqli_fetch_array($result);
+				            echo $valuesum . ", ";
+				    $query = "SELECT IFNULL(SUM(value),0) FROM goals WHERE goals.project = '$activeProject' AND goals.status='active'";
+				            $result = mysqli_query($link, $query);
+				            if (!$result){
+				              die('Error: ' . mysqli_error($link));
+				            }
+				            list($valuesum) = mysqli_fetch_array($result);
+				            echo $valuesum . ", ";
+				    $query = "SELECT IFNULL(SUM(value),0) FROM goals WHERE goals.project = '$activeProject' AND goals.status='complete'";
+				            $result = mysqli_query($link, $query);
+				            if (!$result){
+				              die('Error: ' . mysqli_error($link));
+				            }
+				            list($valuesum) = mysqli_fetch_array($result);
+				            echo $valuesum . ", ";
+					?>
+					],"backgroundColor":["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"]}]}});
+				</script>
+
+
+				<center><h3>Contribution Breakdown</h3><small>Shows value point distribution by user</small>
+<div class="dropdown">
+              <div class="btn-group">
+                <button type="button" class="btn btn-secondary"><?php 
+                  require('../php/connect.php');
+                  $project = $_SESSION['project'];
+                  $query = "SELECT name FROM projects WHERE id='$project'";
+                  $result = mysqli_query($link, $query);
+                  if (!$result){
+                    die('Error: ' . mysqli_error($link));
+                  }
+                  list($name) = mysqli_fetch_array($result);
+                  if($_SESSION['project'] == null || $_SESSION['workspace'] == null){
+                    echo "Select a Project";
+                  }
+                  else{
+                    echo $name;
+                  }
+                ?></button>
+                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+              <div class="dropdown-menu dropdown-menu-right">
+
+                <?php
+
+                require('../php/connect.php');
+
+                $username = $_SESSION['username'];
+                $workspace = $_SESSION['workspace'];
+                $query = "SELECT projects.name, projects.id FROM ((user_project_mapping INNER JOIN projects ON projects.id = user_project_mapping.project) INNER JOIN users ON user_project_mapping.user = users.id) WHERE users.username = '$username' AND projects.workspace = '$workspace'";
+                $result = mysqli_query($link, $query);
+                if (!$result){
+                  die('Error: ' . mysqli_error($link));
+                }
+                while($resultArray = mysqli_fetch_array($result)){
+                $projectName = $resultArray['name'];
+                $projectID = $resultArray['id'];
+
+                ?>
+                <form method="POST"><input type="hidden" value="<?php echo $projectID; ?>" name="project-id"/><input class="dropdown-item <?php if($_SESSION['project'] == $projectID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $projectName; ?>"></form>
+                <?php } ?>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="project.php">Create New</a>
+              </div>
+            </div>
+            </div>
+			</center>
+			<canvas id="chartjs-5" class="chartjs" width="883" height="441" style="display: block; height: 294px; width: 589px;"></canvas>
+				<script>
+				new Chart(document.getElementById("chartjs-5"),{"type":"doughnut","data":{"labels":[
+					<?php
+						//Give each user as a label
+						require('../php/connect.php');
+						$activeProject = $_SESSION['project'];
+						$query = "SELECT IFNULL(SUM(value),0) FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
+				        $result = mysqli_query($link, $query);
+				        if (!$result){
+				            die('Error: ' . mysqli_error($link));
+				        }
+				        list($valuesum) = mysqli_fetch_array($result);
+				        echo $valuesum . ", ";
+					?>
+					],"datasets":[{"label":"Breakdown Values","data":[
+					<?php
+					require('../php/connect.php');
+					$activeProject = $_SESSION['project'];
+					$query = "SELECT IFNULL(SUM(value),0) FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
+				            $result = mysqli_query($link, $query);
+				            if (!$result){
+				              die('Error: ' . mysqli_error($link));
+				            }
+				            list($valuesum) = mysqli_fetch_array($result);
+				            echo $valuesum . ", ";
+				    $query = "SELECT IFNULL(SUM(value),0) FROM goals WHERE goals.project = '$activeProject' AND goals.status='active'";
+				            $result = mysqli_query($link, $query);
+				            if (!$result){
+				              die('Error: ' . mysqli_error($link));
+				            }
+				            list($valuesum) = mysqli_fetch_array($result);
+				            echo $valuesum . ", ";
+				    $query = "SELECT IFNULL(SUM(value),0) FROM goals WHERE goals.project = '$activeProject' AND goals.status='complete'";
+				            $result = mysqli_query($link, $query);
+				            if (!$result){
+				              die('Error: ' . mysqli_error($link));
+				            }
+				            list($valuesum) = mysqli_fetch_array($result);
+				            echo $valuesum . ", ";
+					?>
+					],"backgroundColor":["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"]}]}});
 				</script>
 				
 			</div>
