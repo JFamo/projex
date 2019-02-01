@@ -141,79 +141,112 @@ if(!isset($_SESSION['username'])){
 			<div class="row">
 				<div class="col-md-8">
 					<h1>Welcome, <?php echo $_SESSION['firstname']; ?></h1>
-					<p>Here's what your teams have been up to in the past week:</p>
-					<table class="table">
-						<thead class="thead-dark"><tr>
-							<th class="bg-red" style="border-bottom:0px;" scope="col">Project</th>
-							<th class="bg-red" style="border-bottom:0px;" scope="col">Member</th>
-							<th class="bg-red" style="border-bottom:0px;" scope="col">Activity</th>
-							<th class="bg-red" style="border-bottom:0px;" scope="col">Date</th>
-						</tr></thead>
-						<tbody>
-						<tr>
-							<td>TSA Software Dev</td>
-							<td>Jim Marshall</td>
-							<td>Closed Issue TS-1233</td>
-							<td>12/29/2018</td>
-						</tr>
-						<tr>
-							<td>TSA Software Dev</td>
-							<td>Barry Sanders</td>
-							<td>Created Task TS-86</td>
-							<td>12/29/2018</td>
-						</tr>
-						<tr>
-							<td>TSA Software Dev</td>
-							<td>Lawrence Taylor</td>
-							<td>Completed Task TS-329</td>
-							<td>12/29/2018</td>
-						</tr>
-						</tbody>
-					</table>
-					<p>Here's what's assigned to you:</p>
-					<table class="table">
-						<thead class="thead-dark"><tr>
-							<th class="bg-yellow" style="border-bottom:0px;" scope="col">Project</th>
-							<th class="bg-yellow" style="border-bottom:0px;" scope="col">Task</th>
-							<th class="bg-yellow" style="border-bottom:0px;" scope="col">Deadline</th>
-						</tr></thead>
-						<tbody>
-						<tr>
-							<td>TSA Software Dev</td>
-							<td>Jim Marshall</td>
-							<td>Closed Issue TS-1233</td>
-						</tr>
-						<tr>
-							<td>TSA Software Dev</td>
-							<td>Barry Sanders</td>
-							<td>Created Task TS-86</td>
-						</tr>
-						<tr>
-							<td>TSA Software Dev</td>
-							<td>Lawrence Taylor</td>
-							<td>Completed Task TS-329</td>
-						</tr>
-						</tbody>
-					</table>
-					<a href="account.php">Manage My Account</a><br>
+					<p>Here are some useful links to effectively navigate <b class="color-primary">Projex</b></p>
+					<div class="card">
+						<p>Projex is a comprehensive suite of tools designed to provide project-management utility to all areas of industry. It is based on the principles of Agile software development and implements artifacts of many popular project management frameworks. For detailed help using Projex, refer to the documentation linked below.</p>
+						<br>
+						<a href="http://agilemanifesto.org/">The Agile Manifesto</a>
+						<a href="#">More About Projex</a>
+					</div>
+					<div class="card">
+					<h5>You are a member of organization <b><?php 
+						require('../php/connect.php');
+						$myid = $_SESSION['id'];
+						$query = "SELECT name FROM organizations WHERE id IN (SELECT organization FROM user_organization_mapping WHERE user='$myid')";
+					        $result2 = mysqli_query($link, $query);
+					        if (!$result2){
+					            die('Error: ' . mysqli_error($link));
+					        }
+					        while(list($taskname) = mysqli_fetch_array($result2)){
+					        	echo $taskname;
+					        }
+					?></b></h5>
+					<p>Your organization has 
+						<?php 
+						require('../php/connect.php');
+						$myid = $_SESSION['id'];
+						$query = "SELECT * FROM user_organization_mapping WHERE organization IN (SELECT organization FROM user_organization_mapping WHERE user='$myid')";
+					        $result2 = mysqli_query($link, $query);
+					        if (!$result2){
+					            die('Error: ' . mysqli_error($link));
+					        }
+					        echo mysqli_num_rows($result2);
+					?>
+					members</p>
+					<p>Your organization's join code is  
+						<?php 
+						require('../php/connect.php');
+						$myid = $_SESSION['id'];
+						$query = "SELECT code FROM organizations WHERE id IN (SELECT organization FROM user_organization_mapping WHERE user='$myid')";
+					        $result2 = mysqli_query($link, $query);
+					        if (!$result2){
+					            die('Error: ' . mysqli_error($link));
+					        }
+					       	list($orgcode) = mysqli_fetch_array($result2);
+					       	echo $orgcode;
+					?></p>
+					<br>
 					<a href="organization.php">Manage My Organization</a>
+					</div>
+					<div class="card">
+					<h5>Your username is <b><?php echo $_SESSION['username']; ?></b></h5>
+					<p>Your full name is <?php echo $_SESSION['firstname'] . " " . $_SESSION['lastname']; ?></p>
+					<br>
+					<a href="account.php">Manage My Account</a>
+					</div>
 				</div>
 				<div class="col-md-4">
 					<div class="card">
-						<p>This is an example of a <b>card</b>. It's pretty neat, isn't it?</p>
+						<h4>My Tasks</h4>
+						<a href="active.php">Active Tasks</a>
+						<hr>
+						<?php
+						require('../php/connect.php');
+						$myid = $_SESSION['id'];
+						$query = "SELECT name FROM tasks WHERE id IN (SELECT task FROM user_task_mapping WHERE user='$myid')";
+					        $result2 = mysqli_query($link, $query);
+					        if (!$result2){
+					            die('Error: ' . mysqli_error($link));
+					        }
+					        while(list($taskname) = mysqli_fetch_array($result2)){
+					        	echo "<p>" . $taskname . "</p>";
+					        }
+
+					    ?>
 					</div>
 					<div class="card">
-						<p>When cards are built to be dynamic and <b>responsive</b>, they can do all sorts of neat things.</p>
+						<h4>My Workspaces</h4>
+						<hr>
+						<?php
+						require('../php/connect.php');
+						$myid = $_SESSION['id'];
+						$query = "SELECT name FROM workspaces WHERE id IN (SELECT workspace FROM user_workspace_mapping WHERE user='$myid')";
+					        $result2 = mysqli_query($link, $query);
+					        if (!$result2){
+					            die('Error: ' . mysqli_error($link));
+					        }
+					        while(list($taskname) = mysqli_fetch_array($result2)){
+					        	echo "<p>" . $taskname . "</p>";
+					        }
+
+					    ?>
 					</div>
 					<div class="card">
-						<div class="row">
-							<div class="col-4">
-								<img src="https://pixel.nymag.com/imgs/daily/intelligencer/2018/08/24/24-donald-trump-2.w700.h700.jpg" alt="Trump" />
-							</div>
-							<div class="col-8">
-								<p>I could even built a card so well that it can hold an <b>image</b>.</p>
-							</div>
-						</div>
+						<h4>My Projects</h4>
+						<hr>
+						<?php
+						require('../php/connect.php');
+						$myid = $_SESSION['id'];
+						$query = "SELECT name FROM projects WHERE id IN (SELECT project FROM user_project_mapping WHERE user='$myid')";
+					        $result2 = mysqli_query($link, $query);
+					        if (!$result2){
+					            die('Error: ' . mysqli_error($link));
+					        }
+					        while(list($taskname) = mysqli_fetch_array($result2)){
+					        	echo "<p>" . $taskname . "</p>";
+					        }
+
+					    ?>
 					</div>
 				</div>
 			</div>
