@@ -268,6 +268,10 @@ if(!isset($_SESSION['username'])){
             </div>
         <div class="card">
         <h3>Backlog Overview</h3>
+          <?php if($_SESSION['project'] == null){
+            echo "<p>No Project Selected</p>";
+          }
+          else { ?>
           <p>Number of Goals : <?php
             require('../php/connect.php');
 
@@ -308,6 +312,7 @@ if(!isset($_SESSION['username'])){
             echo $valuesum;
           ?>
           </p>
+          <?php } ?>
         </div>
         <div class="card">
         <h3>Create A Task</h3>

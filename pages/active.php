@@ -155,6 +155,10 @@ if(!isset($_SESSION['username'])){
       <div id="pageBody">
         <div class="row">
           <div class="col-12">
+            <?php if(isset($fmsg)){ echo "<div class='card'><p>" . $fmsg . "</p></div>"; } ?>
+            <h1>Backlog</h1>  
+          </div>
+          <div class="col-12">
             <div class="dropdown">
               <div class="btn-group">
                 <button type="button" class="btn btn-secondary"><?php 
