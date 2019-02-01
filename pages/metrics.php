@@ -29,6 +29,19 @@ if(isset($_POST['workspace-id'])){
 
 }
 
+//Handle Changing Projects
+if(isset($_POST['project-id'])){
+
+  $newproject = $_POST['project-id'];
+  //~~JOSH~~
+  //Need checking that the user really has this project here
+  //Prevents client-side editing of project value to access those of other orgs
+  //@Tom
+  
+  $_SESSION['project'] = $newproject;
+
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -122,8 +135,8 @@ if(!isset($_SESSION['username'])){
             </div>
             </div>
 			        <hr class="sidenavHR">
-			        <a class="nav-link active" href="main.php">Dashboard</a>
-				    <a class="nav-link" href="metrics.php">Metrics</a>
+			        <a class="nav-link" href="main.php">Dashboard</a>
+				    <a class="nav-link active" href="metrics.php">Metrics</a>
 				    <a class="nav-link" href="backlog.php">Backlog</a>
 				    <a class="nav-link" href="active.php">Active</a>
 				    <a class="nav-link" href="docs.php">Docs</a>
@@ -137,69 +150,75 @@ if(!isset($_SESSION['username'])){
 			</div>
 			<div id="pageBody">
 			<div class="row">
-			<div class="col-sm-8">
-			<canvas id="veloChart" class="dashchart"></canvas>
+			<div class="col-12">
+	            <?php if(isset($fmsg)){ echo "<div class='card'><p>" . $fmsg . "</p></div>"; } ?>
+	            <h1>Metrics</h1>  
+	          </div>
+	        <div class="col-12">
+	        	<div class="dropdown">
+	              <div class="btn-group">
+	                <button type="button" class="btn btn-secondary"><?php 
+	                  require('../php/connect.php');
+	                  $project = $_SESSION['project'];
+	                  $query = "SELECT name FROM projects WHERE id='$project'";
+	                  $result = mysqli_query($link, $query);
+	                  if (!$result){
+	                    die('Error: ' . mysqli_error($link));
+	                  }
+	                  list($name) = mysqli_fetch_array($result);
+	                  if($_SESSION['project'] == null || $_SESSION['workspace'] == null){
+	                    echo "Select a Project";
+	                  }
+	                  else{
+	                    echo $name;
+	                  }
+	                ?></button>
+	                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                  <span class="sr-only">Toggle Dropdown</span>
+	                </button>
+	              <div class="dropdown-menu dropdown-menu-right">
+
+	                <?php
+
+	                require('../php/connect.php');
+
+	                $username = $_SESSION['username'];
+	                $workspace = $_SESSION['workspace'];
+	                $query = "SELECT projects.name, projects.id FROM ((user_project_mapping INNER JOIN projects ON projects.id = user_project_mapping.project) INNER JOIN users ON user_project_mapping.user = users.id) WHERE users.username = '$username' AND projects.workspace = '$workspace'";
+	                $result = mysqli_query($link, $query);
+	                if (!$result){
+	                  die('Error: ' . mysqli_error($link));
+	                }
+	                while($resultArray = mysqli_fetch_array($result)){
+	                $projectName = $resultArray['name'];
+	                $projectID = $resultArray['id'];
+
+	                ?>
+	                <form method="POST"><input type="hidden" value="<?php echo $projectID; ?>" name="project-id"/><input class="dropdown-item <?php if($_SESSION['project'] == $projectID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $projectName; ?>"></form>
+	                <?php } ?>
+	                <div class="dropdown-divider"></div>
+	                <a class="dropdown-item" href="project.php">Create New</a>
+	              </div>
+	            </div>
+	          </div>
+	        </div>
+			<div class="col-sm-12">
+			<canvas id="chartjs-0" class="chartjs" width="883" height="441" style="display: block; height: 294px; width: 589px;"></canvas>
 				<script>
-				var ctx = document.getElementById("veloChart");
-				var veloChart = new Chart(ctx, {
-				    type: 'bar',
-				    data: {
-				        labels: ["Sprint 1", "Sprint 2", "Sprint 3"],
-				        datasets: [{
-				            label: 'Commitment',
-				            data: [12, 19, 3],
-				            backgroundColor: [
-				                'rgba(216, 17, 89, 0.8)',
-				                'rgba(216, 17, 89, 0.8)',
-				                'rgba(216, 17, 89, 0.8)',
-				            ],
-				        },
-				        {
-				            label: 'Delivered',
-				            data: [10, 15, 8],
-				            backgroundColor: [
-				                'rgba(4, 150, 255, 0.8)',
-				                'rgba(4, 150, 255, 0.8)',
-				                'rgba(4, 150, 255, 0.8)',
-				            ],
-				        }]
-				    },
-				    options: {
-				    	layout: {
-				            padding: {
-				                left: 50,
-				                right: 0,
-				                top: 0,
-				                bottom: 0
-				            }
-				        },
-				    	title: {
-				    		display: true,
-            				text: 'Velocity Chart'
-				    	},
-				        scales: {
-				            yAxes: [{
-				                ticks: {
-				                    beginAtZero:true
-				                }
-				            }]
-				        }
-				    }
-				});
+				new Chart(document.getElementById("chartjs-0"),{"type":"line","data":{"labels":["January","February","March","April","May","June","July"],"datasets":[{"label":"My First Dataset","data":[65,59,80,81,56,55,40],"fill":false,"borderColor":"rgb(75, 192, 192)","lineTension":0.1}]},"options":{}});
 				</script>
 				
 			</div>
 		</div>
 	</div>
-	<div>
+	<footer class="bg-grey color-white pb_top">
+		<center><p>
+			Team 2004-901, 2019, All Rights Reserved
+		</p></center>
+	</footer>
+	</div>
+	</div>
 </body>
-
-<footer class="text-white bg-primary py-3 h5"> 
-	<center><p class="bodyTextType2">
-		Team 2004-901 2018
-	</p></center>
-</footer>
-
 
 <script src="../js/scripts.js" type="text/javascript"></script>
 
