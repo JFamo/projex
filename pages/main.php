@@ -76,7 +76,7 @@ if(!isset($_SESSION['username'])){
 				<nav style="width:100%;" class="navbar navbar-dark">
 				  <div class="container" style="padding-left:0px;">
 				  <ul class="nav navbar-nav align-top">
-				   <a class="navbar-brand icon" href="#"><img src="../imgs/workspacePlaceholder.png" alt="icon" width="60" height="60">Projex</a>
+				   <a class="navbar-brand icon" href="#">Projex</a>
 				   <div class="dropdown">
               <div class="btn-group dropright">
                 <button type="button" class="btn btn-secondary"><?php 
@@ -146,7 +146,7 @@ if(!isset($_SESSION['username'])){
 						<p>Projex is a comprehensive suite of tools designed to provide project-management utility to all areas of industry. It is based on the principles of Agile software development and implements artifacts of many popular project management frameworks. For detailed help using Projex, refer to the documentation linked below.</p>
 						<br>
 						<a href="http://agilemanifesto.org/">The Agile Manifesto</a>
-						<a href="#">More About Projex</a>
+						<a href="https://docs.google.com/document/d/1vdFH4dgrqknKu6kxIWKcHmMTsSEV-UKAA3TqIFIV_KA/edit?usp=sharing">More About Projex</a>
 					</div>
 					<div class="card">
 					<h5>You are a member of organization <b><?php 

@@ -153,7 +153,7 @@ if(!isset($_SESSION['username'])){
         <nav style="width:100%;" class="navbar navbar-dark">
           <div class="container" style="padding-left:0px;">
           <ul class="nav navbar-nav align-top">
-           <a class="navbar-brand icon" href="#"><img src="../imgs/workspacePlaceholder.png" alt="icon" width="60" height="60">Projex</a>
+           <a class="navbar-brand icon" href="#">Projex</a>
            <div class="dropdown">
               <div class="btn-group dropright">
                 <button type="button" class="btn btn-secondary"><?php 
