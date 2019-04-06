@@ -70,7 +70,7 @@ if(isset($_POST['task-id'])){
   $rating = $_POST['rating-value'];
 
   require('../php/connect.php');
-  $query = "UPDATE task_ratings SET rating = '$rating' WHERE task = '$taskID'";
+  $query = "INSERT INTO task_ratings (task, rating) VALUES ('$taskID', '$rating') ON DUPLICATE KEY UPDATE rating='$rating'";
   $result = mysqli_query($link,$query);
   if (!$result){
       die('Error: ' . mysqli_error($link));
