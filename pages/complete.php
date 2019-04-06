@@ -138,6 +138,24 @@ if(!isset($_SESSION['username'])){
           <div class="container" style="padding-left:0px;">
           <ul class="nav navbar-nav align-top">
            <a class="navbar-brand icon" href="#">Projex</a>
+           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#workspaceModal">
+            <?php 
+              require('../php/connect.php');
+              $workspace = $_SESSION['workspace'];
+              $query = "SELECT name FROM workspaces WHERE id='$workspace'";
+              $result = mysqli_query($link, $query);
+              if (!$result){
+                die('Error: ' . mysqli_error($link));
+              }
+              list($name) = mysqli_fetch_array($result);
+              if($_SESSION['workspace'] == null || $_SESSION['workspace'] == null){
+                echo "Select a Workspace";
+              }
+              else{
+                echo $name;
+              }
+            ?>
+          </button>
            <div class="dropdown">
               <div class="btn-group dropright">
                 <button type="button" class="btn btn-secondary"><?php 
@@ -364,6 +382,28 @@ if(!isset($_SESSION['username'])){
       </footer>
     </div>
   </div>
+
+  <!-- Workspace Selector Modal -->
+  <div class="modal fade" id="workspaceModal" tabindex="-1" role="dialog" aria-labelledby="workspaceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="workspaceModalLabel">Workspaces</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 <script src="../js/scripts.js" type="text/javascript"></script>
