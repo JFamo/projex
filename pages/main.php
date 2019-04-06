@@ -258,6 +258,47 @@ if(!isset($_SESSION['username'])){
 		</footer>
 		</div>
 	</div>
+
+	<!-- Workspace Selector Modal -->
+  <div class="modal fade" id="workspaceModal" tabindex="-1" role="dialog" aria-labelledby="workspaceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="workspaceModalLabel">Workspaces</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        
+          <?php
+          require('../php/connect.php');
+
+          $username = $_SESSION['username'];
+          $query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
+          $result = mysqli_query($link, $query);
+          if (!$result){
+            die('Error: ' . mysqli_error($link));
+          }
+          while($resultArray = mysqli_fetch_array($result)){
+          $workspaceName = $resultArray['name'];
+          $workspaceID = $resultArray['id'];
+
+          ?>
+          <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item <?php if($_SESSION['workspace'] == $workspaceID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $workspaceName; ?>"></form>
+          <?php } ?>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="workspace.php">Create New</a>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+	
 </body>
 
 <script src="../js/scripts.js" type="text/javascript"></script>
