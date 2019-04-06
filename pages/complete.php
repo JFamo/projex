@@ -325,9 +325,20 @@ if(!isset($_SESSION['username'])){
               echo $firstname . " " . $lastname;
             ?> on <?php echo $taskDate; ?></small>
             
+            <?php
+              //Grab and save this task's rating
+              require('../php/connect.php');
+              $query = "SELECT rating FROM task_ratings WHERE task = '$taskID'";
+              $result4 = mysqli_query($link, $query);
+              if (!$result4){
+                die('Error: ' . mysqli_error($link));
+              }
+              list($thisRating) = mysqli_fetch_array($result4);
+            ?>
+
             <form method="post">
               <input type="hidden" value="<?php echo $taskID; ?>" name="task-id" />
-              <input type="number" value="" name="rating-value"/>
+              <input type="number" value="<?php echo $thisRating; ?>" name="rating-value"/>
               <input type="submit" class="btn btn-link" value="Update Rating">
             </form>
 
