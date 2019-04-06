@@ -193,7 +193,7 @@ if(!isset($_SESSION['username'])){
           <?php if(isset($fmsg)){ echo "<div class='card'><p>" . $fmsg . "</p></div>"; } ?>
       		<h1>Backlog</h1>	
       	</div>
-        <div class="col-sm-6">
+        <div class="col-md-6">
           <div class="dropdown">
               <div class="btn-group">
                 <button type="button" class="btn btn-secondary"><?php 
@@ -349,8 +349,10 @@ if(!isset($_SESSION['username'])){
 				</form>
         </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-md-6">
           <?php
+
+            //Iterate Goals
 
             require('../php/connect.php');
 
@@ -370,12 +372,13 @@ if(!isset($_SESSION['username'])){
           ?>
           <div class="head">
             <h4 style=" float:left;"><?php echo $goalName; ?></h4><h4 style="float:right;"><?php echo $goalValue; ?></h4>
-          </div>
           <form method="post">
             <input type="hidden" value="<?php echo $goalID; ?>" name="goal-id" />
             <input type="submit" class="btn btn-link" value="Move to Active">
           </form>
             <?php
+
+            //Iterate Tasks
 
             require('../php/connect.php');
 
@@ -414,6 +417,7 @@ if(!isset($_SESSION['username'])){
           <?php
           }
           ?>
+          </div>
           <?php
           }
           ?>
