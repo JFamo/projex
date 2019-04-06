@@ -124,6 +124,7 @@ if(!isset($_SESSION['username'])){
 		
 	<!-- Bootstrap, cause it's pretty hecking neat. Plus we have it locally, cause we're cool -->
 	<link rel="stylesheet" href="../bootstrap-4.1.0/css/bootstrap.min.css">
+    <script src="../js/jquery.min.js"></script>
     <script src="../js/popper.min.js"></script>
     <script src="../bootstrap-4.1.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
@@ -477,7 +478,7 @@ if(!isset($_SESSION['username'])){
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" id="taskModalBody">
         
           <?php
 
@@ -522,8 +523,7 @@ if(!isset($_SESSION['username'])){
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-secondary" id="closeTaskModalButton">Close</button>
         </div>
       </div>
     </div>
@@ -538,8 +538,8 @@ if(!isset($_SESSION['username'])){
     ?>
 
     <script> 
-    $("#taskModal").load("../php/taskModal.php"); 
-    
+    $("#taskModalBody").load("../php/taskModal.php"); 
+    document.getElementById('closeTaskModalButton').onclick = function(){ $("#taskModal").modal('hide'); };
     </script>
 
     <?php
