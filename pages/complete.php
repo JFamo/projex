@@ -42,6 +42,7 @@ if(isset($_POST['project-id'])){
 
 }
 
+//Moving goals to active
 if(isset($_POST['goal-id'])){
 
   $goalid = $_POST['goal-id'];
@@ -57,10 +58,34 @@ if(isset($_POST['goal-id'])){
   if (!$result){
       die('Error: ' . mysqli_error($link));
   }
+  $query = "DELETE FROM task_ratings WHERE task IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalid')";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
   mysqli_close($link);
 
   $fmsg = "Moved Goal to Active!";
 }
+
+//Updating Ratings
+if(isset($_POST['task-id'])){
+
+  $taskID = $_POST['task-id'];
+  $rating = $_POST['rating-value'];
+
+  require('../php/connect.php');
+  $query = "INSERT INTO task_ratings (task, rating) VALUES ('$taskID', '$rating') ON DUPLICATE KEY UPDATE rating='$rating'";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+
+  mysqli_close($link);
+
+  $fmsg = "Rating Updated!";
+
+}    
 
 if(!isset($_SESSION['username'])){
 
@@ -304,6 +329,24 @@ if(!isset($_SESSION['username'])){
               list($firstname, $lastname) = mysqli_fetch_array($result3);
               echo $firstname . " " . $lastname;
             ?> on <?php echo $taskDate; ?></small>
+            
+            <?php
+              //Grab and save this task's rating
+              require('../php/connect.php');
+              $query = "SELECT rating FROM task_ratings WHERE task = '$taskID'";
+              $result4 = mysqli_query($link, $query);
+              if (!$result4){
+                die('Error: ' . mysqli_error($link));
+              }
+              list($thisRating) = mysqli_fetch_array($result4);
+            ?>
+
+            <form method="post">
+              <input type="hidden" value="<?php echo $taskID; ?>" name="task-id" />
+              <input type="number" value="<?php echo $thisRating; ?>" name="rating-value"/>
+              <input type="submit" class="btn btn-link" value="Update Rating">
+            </form>
+
           </div>
           <?php
           }

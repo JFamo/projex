@@ -62,6 +62,7 @@ if(isset($_POST['goal-id'])){
   $fmsg = "Moved Goal to Backlog!";
 }
 
+//Completion
 if(isset($_POST['task-id'])){
 
   $taskid = $_POST['task-id'];
