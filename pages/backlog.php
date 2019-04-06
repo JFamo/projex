@@ -15,6 +15,9 @@ function validate($data){
 
 session_start();
 
+//This will save our currently active task
+$_SESSION['task'] = null;
+
 //Handle Changing Projects
 if(isset($_POST['project-id'])){
 
@@ -42,6 +45,7 @@ if(isset($_POST['workspace-id'])){
 
 }
 
+//Create a Task
 if(isset($_POST['task-name'])){
 
   $taskname = validate($_POST['task-name']);
@@ -67,6 +71,7 @@ if(isset($_POST['task-name'])){
 
 }
 
+//Create a Goal
 if(isset($_POST['goal-name'])){
 
   $goalname = validate($_POST['goal-name']);
@@ -86,6 +91,7 @@ if(isset($_POST['goal-name'])){
 
 }
 
+//Move Goals to Active
 if(isset($_POST['goal-id'])){
 
   $goalid = $_POST['goal-id'];
@@ -104,6 +110,11 @@ if(isset($_POST['goal-id'])){
   mysqli_close($link);
 
   $fmsg = "Moved Goal to Active!";
+}
+
+if(isset($_POST['selected-task'])){
+  $_SESSION['task'] = $_POST['selected-task'];
+  $fmsg = "Selected task " . $_SESSION['task'];
 }
 
 if(!isset($_SESSION['username'])){
@@ -398,21 +409,12 @@ if(!isset($_SESSION['username'])){
             $taskDate = $taskArray['date'];
 
           ?>
-          <div class="card">
+          <form method="post" id="select-task-form-<?php echo $taskID;?>">
+            <input type="hidden" name="selected-task" value="<?php echo $taskID; ?>"/>
+          </form>
+          <div class="card activecard" style="cursor:pointer;" onclick="document.getElementById('select-task-form-<?php echo $taskID;?>').submit();">
             <h4><?php echo $taskName; ?></h4>
-            <hr>
-            <p><?php echo $taskDesc; ?></p>
-            <br>
-            <small>Created By : <?php
-              require('../php/connect.php');
-              $query = "SELECT firstname, lastname FROM users WHERE id = '$taskCreator'";
-              $result3 = mysqli_query($link, $query);
-              if (!$result3){
-                die('Error: ' . mysqli_error($link));
-              }
-              list($firstname, $lastname) = mysqli_fetch_array($result3);
-              echo $firstname . " " . $lastname;
-            ?> on <?php echo $taskDate; ?></small>
+            <small><?php echo $taskDesc; ?></small>
           </div>
           <?php
           }
@@ -432,7 +434,7 @@ if(!isset($_SESSION['username'])){
     </div>
     </div>
 
-    <!-- Workspace Selector Modal -->
+  <!-- Workspace Selector Modal -->
   <div class="modal fade" id="workspaceModal" tabindex="-1" role="dialog" aria-labelledby="workspaceModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -462,6 +464,68 @@ if(!isset($_SESSION['username'])){
           <?php } ?>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="workspace.php">Create New</a>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Modal -->
+  <div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="taskModalLabel">Task</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        
+          <?php
+
+            //Iterate Tasks
+
+            require('../php/connect.php');
+
+            $activeTask = $_SESSION['task'];
+
+            $query = "SELECT tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id = '$activeTask'";
+            $result2 = mysqli_query($link, $query);
+            if (!$result2){
+              die('Error: ' . mysqli_error($link));
+            }
+            while($taskArray = mysqli_fetch_array($result2)){
+            $taskName = $taskArray['name'];
+            $taskID = $taskArray['id'];
+            $taskDesc = $taskArray['description'];
+            $taskCreator = $taskArray['creator'];
+            $taskDate = $taskArray['date'];
+
+          ?>
+          <div class="card">
+            <h4><?php echo $taskName; ?></h4>
+            <hr>
+            <p><?php echo $taskDesc; ?></p>
+            <br>
+            <small>Created By : <?php
+              require('../php/connect.php');
+              $query = "SELECT firstname, lastname FROM users WHERE id = '$taskCreator'";
+              $result3 = mysqli_query($link, $query);
+              if (!$result3){
+                die('Error: ' . mysqli_error($link));
+              }
+              list($firstname, $lastname) = mysqli_fetch_array($result3);
+              echo $firstname . " " . $lastname;
+            ?> on <?php echo $taskDate; ?></small>
+          </div>
+          <?php
+          }
+          ?>
 
         </div>
         <div class="modal-footer">
