@@ -15,9 +15,6 @@ function validate($data){
 
 session_start();
 
-//This will save our currently active task
-$_SESSION['task'] = null;
-
 //Handle Changing Projects
 if(isset($_POST['project-id'])){
 
@@ -112,11 +109,6 @@ if(isset($_POST['goal-id'])){
   $fmsg = "Moved Goal to Active!";
 }
 
-if(isset($_POST['selected-task'])){
-  $_SESSION['task'] = $_POST['selected-task'];
-  $fmsg = "Selected task " . $_SESSION['task'];
-}
-
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -132,7 +124,6 @@ if(!isset($_SESSION['username'])){
 		
 	<!-- Bootstrap, cause it's pretty hecking neat. Plus we have it locally, cause we're cool -->
 	<link rel="stylesheet" href="../bootstrap-4.1.0/css/bootstrap.min.css">
-    <script src="../js/jquery.min.js"></script>
     <script src="../js/popper.min.js"></script>
     <script src="../bootstrap-4.1.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
@@ -396,7 +387,7 @@ if(!isset($_SESSION['username'])){
             $username = $_SESSION['username'];
             $activeProject = $_SESSION['project'];
 
-            $query = "SELECT tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') AND tasks.status='backlog'";
+            $query = "SELECT tasks.id, tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') AND tasks.status='backlog'";
             $result2 = mysqli_query($link, $query);
             if (!$result2){
               die('Error: ' . mysqli_error($link));
@@ -409,9 +400,11 @@ if(!isset($_SESSION['username'])){
             $taskDate = $taskArray['date'];
 
           ?>
+
           <form method="post" id="select-task-form-<?php echo $taskID;?>">
             <input type="hidden" name="selected-task" value="<?php echo $taskID; ?>"/>
           </form>
+
           <div class="card activecard" style="cursor:pointer;" onclick="document.getElementById('select-task-form-<?php echo $taskID;?>').submit();">
             <h4><?php echo $taskName; ?></h4>
             <small><?php echo $taskDesc; ?></small>
@@ -535,6 +528,23 @@ if(!isset($_SESSION['username'])){
       </div>
     </div>
   </div>
+
+  <?php
+  if(isset($_POST['selected-task'])){
+    
+    $_SESSION['task'] = $_POST['selected-task'];
+    $_POST['selected-task'] = null;
+    $fmsg = "Selected task " . $_SESSION['task'];
+    ?>
+
+    <script> 
+    $("#taskModal").load("../php/taskModal.php"); 
+    
+    </script>
+
+    <?php
+  }
+  ?>
 
 </body>
 
