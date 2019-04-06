@@ -154,53 +154,26 @@ if(!isset($_SESSION['username'])){
           <div class="container" style="padding-left:0px;">
           <ul class="nav navbar-nav align-top">
            <a class="navbar-brand icon" href="#">Projex</a>
-           <div class="dropdown">
-              <div class="btn-group dropright">
-                <button type="button" class="btn btn-secondary"><?php 
-                  require('../php/connect.php');
-                  $workspace = $_SESSION['workspace'];
-                  $query = "SELECT name FROM workspaces WHERE id='$workspace'";
-                  $result = mysqli_query($link, $query);
-                  if (!$result){
-                    die('Error: ' . mysqli_error($link));
-                  }
-                  list($name) = mysqli_fetch_array($result);
-                  if($_SESSION['workspace'] == null || $_SESSION['workspace'] == null){
-                    echo "Select a Workspace";
-                  }
-                  else{
-                    echo $name;
-                  }
-                ?></button>
-                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="sr-only">Toggle Dropdown</span>
-                </button>
-              <div class="dropdown-menu dropdown-menu-right">
-
-                <?php
-
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#workspaceModal">
+              <?php 
                 require('../php/connect.php');
-
-                $username = $_SESSION['username'];
-                $query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
+                $workspace = $_SESSION['workspace'];
+                $query = "SELECT name FROM workspaces WHERE id='$workspace'";
                 $result = mysqli_query($link, $query);
                 if (!$result){
                   die('Error: ' . mysqli_error($link));
                 }
-                while($resultArray = mysqli_fetch_array($result)){
-                $workspaceName = $resultArray['name'];
-                $workspaceID = $resultArray['id'];
-
-                ?>
-                <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item <?php if($_SESSION['workspace'] == $workspaceID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $workspaceName; ?>"></form>
-                <?php } ?>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="workspace.php">Create New</a>
-              </div>
-            </div>
-            </div>
-              <hr class="sidenavHR">
-              <a class="nav-link" href="main.php">Dashboard</a>
+                list($name) = mysqli_fetch_array($result);
+                if($_SESSION['workspace'] == null || $_SESSION['workspace'] == null){
+                  echo "Select a Workspace";
+                }
+                else{
+                  echo $name;
+                }
+              ?>
+            </button>
+            <hr class="sidenavHR">
+            <a class="nav-link" href="main.php">Dashboard</a>
             <a class="nav-link" href="metrics.php">Metrics</a>
             <a class="nav-link active" href="backlog.php">Backlog</a>
             <a class="nav-link" href="active.php">Active</a>
@@ -454,6 +427,47 @@ if(!isset($_SESSION['username'])){
     </footer>
     </div>
     </div>
+
+    <!-- Workspace Selector Modal -->
+  <div class="modal fade" id="workspaceModal" tabindex="-1" role="dialog" aria-labelledby="workspaceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="workspaceModalLabel">Workspaces</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        
+          <?php
+          require('../php/connect.php');
+
+          $username = $_SESSION['username'];
+          $query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
+          $result = mysqli_query($link, $query);
+          if (!$result){
+            die('Error: ' . mysqli_error($link));
+          }
+          while($resultArray = mysqli_fetch_array($result)){
+          $workspaceName = $resultArray['name'];
+          $workspaceID = $resultArray['id'];
+
+          ?>
+          <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item <?php if($_SESSION['workspace'] == $workspaceID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $workspaceName; ?>"></form>
+          <?php } ?>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="workspace.php">Create New</a>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 <script src="../js/scripts.js" type="text/javascript"></script>

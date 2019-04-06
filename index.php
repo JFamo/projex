@@ -314,7 +314,6 @@ if(isset($_SESSION['username'])){
 			</div>
 		</div>
 	</div>
-
 </body>
 
 <!--Less spooky stuff at the bottom-->
