@@ -323,29 +323,10 @@ if(!isset($_SESSION['username'])){
           </p>
           <?php } ?>
           <button class="btn btn-link" data-toggle="modal" data-target="#taskCreationModal">Create Task</button>
+          <br>
+          <button class="btn btn-link" data-toggle="modal" data-target="#goalCreationModal">Create Goal</button>
         </div>
-        
-        <div class="card">
-        <h3>Create A Goal</h3>
-				<form method="POST" class="pt-4">
-				  <div class="form-row">
-				    <div class="form-group col-md-12">
-				      <label for="goal-name">Goal Name</label>
-				      <input type="text" maxlength="90" class="form-control" id="goal-name" name="goal-name" placeholder="Enter a goal name">
-				    </div>
-				  </div>
-				  <div class="form-row">
-				    <div class="form-group col-md-12">
-				      <label for="goal-value">Goal Value</label>
-				      <br>
-              <small>An integer representing the team's relative weighted value of completing this goal.</small>
-              <br>
-              <input type="number" class="form-control" name="goal-value" id="goal-value" value="1" />
-				  </div>
-				  </div>
-				  <button type="submit" class="btn btn-primary">Submit</button>
-				</form>
-        </div>
+
           <?php
 
             //Iterate Goals
@@ -504,6 +485,43 @@ if(!isset($_SESSION['username'])){
                 }
                 ?>
                 </select>
+            </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Goal Creation Modal -->
+  <div class="modal fade" id="goalCreationModal" tabindex="-1" role="dialog" aria-labelledby="goalCreationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="goalCreationModalLabel">Create A Goal</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" class="pt-4">
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <label for="goal-name">Goal Name</label>
+                <input type="text" maxlength="90" class="form-control" id="goal-name" name="goal-name" placeholder="Enter a goal name">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <label for="goal-value">Goal Value</label>
+                <br>
+                <small>An integer representing the team's relative weighted value of completing this goal.</small>
+                <br>
+                <input type="number" class="form-control" name="goal-value" id="goal-value" value="1" />
             </div>
             </div>
         </div>
