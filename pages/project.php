@@ -31,7 +31,7 @@ if(isset($_POST['workspace-id'])){
 	if (!$result){
 		die('Error: ' . mysqli_error($link));
 	}
-	if($result){
+  if(mysqli_num_rows($result)>=1){
   		$_SESSION['workspace'] = $newworkspace;
   		$_SESSION['project'] = null;
 	}
