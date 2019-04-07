@@ -25,17 +25,15 @@ if(isset($_POST['project-id'])){
   //@Tom
   
   require('../php/connect.php');
-  $query="SELECT user FROM user_project_mapping WHERE project='$newproject'";
+  $userID = $_SESSION['id'];
+  $query="SELECT * FROM user_project_mapping WHERE project='$newproject' AND user='$userID'";
   $result = mysqli_query($link, $query);
   if (!$result){
     die('Error: ' . mysqli_error($link));
   }
-
-  list($users) = mysqli_fetch_array($result);
-  if($_SESSION['username']==$users){
-    die('Error: ' . 'User doesn\'t own workspace');
+  if($result){
+    $_SESSION['project'] = $newproject;
   }
-  $_SESSION['project'] = $newproject;
 
 }
 
@@ -48,18 +46,17 @@ if(isset($_POST['workspace-id'])){
   //Prevents client-side editing of workspace value to access those of other orgs
   //@Tom
 
-  $query="SELECT user FROM user_workspace_mapping WHERE workspace='$newworkspace'";
+  require('../php/connect.php');
+    $userID = $_SESSION['id'];
+  $query="SELECT * FROM user_workspace_mapping WHERE workspace='$newworkspace' AND user='$userID'";
   $result = mysqli_query($link, $query);
   if (!$result){
     die('Error: ' . mysqli_error($link));
   }
-  list($users) = mysqli_fetch_array($result);
-  if($_SESSION['username']==$users){
-    die('Error: ' . 'User doesn\'t own workspace');
+  if($result){
+      $_SESSION['workspace'] = $newworkspace;
+      $_SESSION['project'] = null;
   }
-
-  $_SESSION['workspace'] = $newworkspace;
-  $_SESSION['project'] = null;
 
 }
 
