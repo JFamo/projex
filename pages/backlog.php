@@ -275,8 +275,10 @@ if(!isset($_SESSION['username'])){
               </div>
             </div>
             </div>
-        <div class="card">
+        <div class="card" style="width:100%;">
         <h3>Backlog Overview</h3>
+          <div class="row">
+          <div class="col-md-6">
           <?php if($_SESSION['project'] == null){
             echo "<p>No Project Selected</p>";
           }
@@ -293,7 +295,7 @@ if(!isset($_SESSION['username'])){
             }
             echo mysqli_num_rows($result);
           ?>
-          </p>
+          </p><br>
           <p>Number of Tasks : <?php
             require('../php/connect.php');
 
@@ -307,7 +309,7 @@ if(!isset($_SESSION['username'])){
             echo mysqli_num_rows($result);
           ?>
           </p>
-          <p>Total Value : <?php
+          <br><p>Total Value : <?php
             require('../php/connect.php');
 
             $activeProject = $_SESSION['project'];
@@ -321,10 +323,14 @@ if(!isset($_SESSION['username'])){
             echo $valuesum;
           ?>
           </p>
-          <?php } ?>
+          </div>
+          <div class="col-md-6">
           <button class="btn btn-link" data-toggle="modal" data-target="#taskCreationModal">Create Task</button>
           <br>
           <button class="btn btn-link" data-toggle="modal" data-target="#goalCreationModal">Create Goal</button>
+          <?php } ?>
+          </div>
+          </div>
         </div>
 
           <?php
