@@ -24,8 +24,23 @@ if(isset($_POST['workspace-id'])){
   //Prevents client-side editing of workspace value to access those of other orgs
   //@Tom
   
+  $query="SELECT user FROM user_workspace_mapping WHERE workspace='$newworkspace'";
+  $result = mysqli_query($link, $query);
+  if (!$result){
+    die('Error: ' . mysqli_error($link));
+  }
+  list($users) = mysqli_fetch_array($result);
+  if($_SESSION['username']==$users){
+    die('Error: ' . 'User doesn\'t own workspace');
+  }
+
+
   $_SESSION['workspace'] = $newworkspace;
   $_SESSION['project'] = null;
+
+
+
+
 
 }
 
@@ -37,6 +52,13 @@ if(isset($_POST['project-id'])){
   //Need checking that the user really has this project here
   //Prevents client-side editing of project value to access those of other orgs
   //@Tom
+  $query="SELECT user FROM user_project_mapping WHERE project='$newproject'";
+  $result = mysqli_query($link, $query);
+  if (!$result){
+    die('Error: ' . mysqli_error($link));
+  }
+
+  list($users) = mysqli_fetch_array($result);
   
   $_SESSION['project'] = $newproject;
 
@@ -96,6 +118,17 @@ if(!isset($_SESSION['username'])){
 	<!-- Mobile metas -->
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <head>
+   <!-- Global site tag (gtag.js) - Google Analytics ~ Will go here-->
+   <link rel="stylesheet" href="../bootstrap-4.1.0/css/bootstrap.min.css">
+   <link href="https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i" rel="stylesheet">
+
+
+   <title>
+    ProjeX
+  </title>
+
 </head>
 
 <body>
@@ -119,17 +152,12 @@ if(!isset($_SESSION['username'])){
                   require('../php/connect.php');
                   $workspace = $_SESSION['workspace'];
                   $query = "SELECT name FROM workspaces WHERE id='$workspace'";
-                  $result = mysqli_query($link, $query);
-                  if (!$result){
-                    die('Error: ' . mysqli_error($link));
-                  }
                   list($name) = mysqli_fetch_array($result);
                   if($_SESSION['workspace'] == null || $_SESSION['workspace'] == null){
-                    echo "Select a Workspace";
                   }
                   else{
-                    echo $name;
                   }
+                else{
                 ?></button>
                 <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="sr-only">Toggle Dropdown</span>
@@ -147,14 +175,8 @@ if(!isset($_SESSION['username'])){
                   die('Error: ' . mysqli_error($link));
                 }
                 while($resultArray = mysqli_fetch_array($result)){
-                $workspaceName = $resultArray['name'];
-                $workspaceID = $resultArray['id'];
 
-                ?>
-                <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item <?php if($_SESSION['workspace'] == $workspaceID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $workspaceName; ?>"></form>
-                <?php } ?>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="workspace.php">Create New</a>
+                  $username = $_SESSION['username'];
               </div>
             </div>
             </div>
@@ -201,6 +223,21 @@ if(!isset($_SESSION['username'])){
                 <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="sr-only">Toggle Dropdown</span>
                 </button>
+          <?php if(isset($fmsg)){ echo "<div class='card'><p>" . $fmsg . "</p></div>"; } ?>
+          <h1>Complete</h1>  
+        </div>
+        <div class="col-12">
+          <div class="dropdown">
+            <div class="btn-group">
+              <button type="button" class="btn btn-secondary"><?php 
+              if (!$result){
+                echo "Select a Project";
+              }
+              else{
+                echo $name;
+              }
+              ?></button>
+              <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <div class="dropdown-menu dropdown-menu-right">
 
                 <?php
@@ -242,6 +279,11 @@ if(!isset($_SESSION['username'])){
               die('Error: ' . mysqli_error($link));
             }
             while($resultArray = mysqli_fetch_array($result)){
+          $result = mysqli_query($link, $query);
+          if (!$result){
+            die('Error: ' . mysqli_error($link));
+          }
+          while($resultArray = mysqli_fetch_array($result)){
             $goalName = $resultArray['name'];
             $goalID = $resultArray['id'];
             $goalValue = $resultArray['value'];
@@ -309,18 +351,31 @@ if(!isset($_SESSION['username'])){
           }
           ?>
           <?php
+
+                echo $userfirst;
+                echo $userlast;
+                echo ")";
+                <small>Created By : <?php
+                }
+                echo $firstname . " " . $lastname;
+                ?> on <?php echo $taskDate; ?></small>
+              </div>
+              <?php
+            }
+            ?>
+            <?php
           }
           ?>
-          </div>
         </div>
       </div>
-      <footer class="bg-grey color-white pb_top">
-        <center><p>
-          Team 2004-901, 2019, All Rights Reserved
-        </p></center>
-      </footer>
     </div>
+    <footer class="bg-grey color-white pb_top">
+      <center><p>
+        Team 2004-901, 2019, All Rights Reserved
+      </p></center>
+    </footer>
   </div>
+</div>
 </body>
 
 <script src="../js/scripts.js" type="text/javascript"></script>

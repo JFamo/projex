@@ -24,6 +24,16 @@ if(isset($_POST['workspace-id'])){
   //Prevents client-side editing of workspace value to access those of other orgs
   //@Tom
   
+  $query="SELECT user FROM user_workspace_mapping WHERE workspace='$newworkspace'";
+	$result = mysqli_query($link, $query);
+	if (!$result){
+		die('Error: ' . mysqli_error($link));
+	}
+	list($users) = mysqli_fetch_array($result);
+	if($_SESSION['username']==$users){
+		die('Error: ' . 'User doesn\'t own workspace');
+	}
+	
   $_SESSION['workspace'] = $newworkspace;
   $_SESSION['project'] = null;
 
