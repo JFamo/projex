@@ -24,7 +24,16 @@ if(isset($_POST['project-id'])){
   //Prevents client-side editing of project value to access those of other orgs
   //@Tom
   
-  $_SESSION['project'] = $newproject;
+  require('../php/connect.php');
+  $userID = $_SESSION['id'];
+  $query="SELECT * FROM user_project_mapping WHERE project='$newproject' AND user='$userID'";
+  $result = mysqli_query($link, $query);
+  if (!$result){
+    die('Error: ' . mysqli_error($link));
+  }
+  if(mysqli_num_rows($result)>=1){
+    $_SESSION['project'] = $newproject;
+  }
 
 }
 
@@ -36,12 +45,22 @@ if(isset($_POST['workspace-id'])){
   //Need checking that the user really has this workspace here
   //Prevents client-side editing of workspace value to access those of other orgs
   //@Tom
-  
-  $_SESSION['workspace'] = $newworkspace;
-  $_SESSION['project'] = null;
+
+  require('../php/connect.php');
+    $userID = $_SESSION['id'];
+  $query="SELECT * FROM user_workspace_mapping WHERE workspace='$newworkspace' AND user='$userID'";
+  $result = mysqli_query($link, $query);
+  if (!$result){
+    die('Error: ' . mysqli_error($link));
+  }
+  if(mysqli_num_rows($result)>=1){
+      $_SESSION['workspace'] = $newworkspace;
+      $_SESSION['project'] = null;
+  }
 
 }
 
+//Create a Task
 if(isset($_POST['task-name'])){
 
   $taskname = validate($_POST['task-name']);
@@ -67,6 +86,7 @@ if(isset($_POST['task-name'])){
 
 }
 
+//Create a Goal
 if(isset($_POST['goal-name'])){
 
   $goalname = validate($_POST['goal-name']);
@@ -86,6 +106,7 @@ if(isset($_POST['goal-name'])){
 
 }
 
+//Move Goals to Active
 if(isset($_POST['goal-id'])){
 
   $goalid = $_POST['goal-id'];
@@ -101,9 +122,48 @@ if(isset($_POST['goal-id'])){
   if (!$result){
       die('Error: ' . mysqli_error($link));
   }
+  $query = "UPDATE tasks SET changedate= now() WHERE id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalid')";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
   mysqli_close($link);
 
   $fmsg = "Moved Goal to Active!";
+}
+
+//Edit Task Name from Modal
+if(isset($_POST['edit-task-name'])){
+
+  $task = validate($_POST['edit-task-id']);
+  $newname = validate($_POST['edit-task-name']);
+
+  require('../php/connect.php');
+  $query = "UPDATE tasks SET name='$newname' WHERE id='$task'";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  mysqli_close($link);
+
+  $fmsg = "Updated Task Name!";
+}
+
+//Edit Task Desc from Modal
+if(isset($_POST['edit-task-desc'])){
+
+  $task = $_POST['edit-task-id'];
+  $newdesc = $_POST['edit-task-desc'];
+
+  require('../php/connect.php');
+  $query = "UPDATE tasks SET description='$newdesc' WHERE id='$task'";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  mysqli_close($link);
+
+  $fmsg = "Updated Task Description!";
 }
 
 if(!isset($_SESSION['username'])){
@@ -153,54 +213,27 @@ if(!isset($_SESSION['username'])){
         <nav style="width:100%;" class="navbar navbar-dark">
           <div class="container" style="padding-left:0px;">
           <ul class="nav navbar-nav align-top">
-           <a class="navbar-brand icon" href="#"><img src="../imgs/workspacePlaceholder.png" alt="icon" width="60" height="60">Projex</a>
-           <div class="dropdown">
-              <div class="btn-group dropright">
-                <button type="button" class="btn btn-secondary"><?php 
-                  require('../php/connect.php');
-                  $workspace = $_SESSION['workspace'];
-                  $query = "SELECT name FROM workspaces WHERE id='$workspace'";
-                  $result = mysqli_query($link, $query);
-                  if (!$result){
-                    die('Error: ' . mysqli_error($link));
-                  }
-                  list($name) = mysqli_fetch_array($result);
-                  if($_SESSION['workspace'] == null || $_SESSION['workspace'] == null){
-                    echo "Select a Workspace";
-                  }
-                  else{
-                    echo $name;
-                  }
-                ?></button>
-                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="sr-only">Toggle Dropdown</span>
-                </button>
-              <div class="dropdown-menu dropdown-menu-right">
-
-                <?php
-
+           <a class="navbar-brand icon" href="#">Projex</a>
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#workspaceModal">
+              <?php 
                 require('../php/connect.php');
-
-                $username = $_SESSION['username'];
-                $query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
+                $workspace = $_SESSION['workspace'];
+                $query = "SELECT name FROM workspaces WHERE id='$workspace'";
                 $result = mysqli_query($link, $query);
                 if (!$result){
                   die('Error: ' . mysqli_error($link));
                 }
-                while($resultArray = mysqli_fetch_array($result)){
-                $workspaceName = $resultArray['name'];
-                $workspaceID = $resultArray['id'];
-
-                ?>
-                <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item <?php if($_SESSION['workspace'] == $workspaceID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $workspaceName; ?>"></form>
-                <?php } ?>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="workspace.php">Create New</a>
-              </div>
-            </div>
-            </div>
-              <hr class="sidenavHR">
-              <a class="nav-link" href="main.php">Dashboard</a>
+                list($name) = mysqli_fetch_array($result);
+                if($_SESSION['workspace'] == null || $_SESSION['workspace'] == null){
+                  echo "Select a Workspace";
+                }
+                else{
+                  echo $name;
+                }
+              ?>
+            </button>
+            <hr class="sidenavHR">
+            <a class="nav-link" href="main.php">Dashboard</a>
             <a class="nav-link" href="metrics.php">Metrics</a>
             <a class="nav-link active" href="backlog.php">Backlog</a>
             <a class="nav-link" href="active.php">Active</a>
@@ -219,8 +252,6 @@ if(!isset($_SESSION['username'])){
       	<div class="col-12">
           <?php if(isset($fmsg)){ echo "<div class='card'><p>" . $fmsg . "</p></div>"; } ?>
       		<h1>Backlog</h1>	
-      	</div>
-        <div class="col-sm-6">
           <div class="dropdown">
               <div class="btn-group">
                 <button type="button" class="btn btn-secondary"><?php 
@@ -267,8 +298,10 @@ if(!isset($_SESSION['username'])){
               </div>
             </div>
             </div>
-        <div class="card">
+        <div class="card" style="width:100%;">
         <h3>Backlog Overview</h3>
+          <div class="row">
+          <div class="col-md-6">
           <?php if($_SESSION['project'] == null){
             echo "<p>No Project Selected</p>";
           }
@@ -285,7 +318,7 @@ if(!isset($_SESSION['username'])){
             }
             echo mysqli_num_rows($result);
           ?>
-          </p>
+          </p><br>
           <p>Number of Tasks : <?php
             require('../php/connect.php');
 
@@ -299,7 +332,7 @@ if(!isset($_SESSION['username'])){
             echo mysqli_num_rows($result);
           ?>
           </p>
-          <p>Total Value : <?php
+          <br><p>Total Value : <?php
             require('../php/connect.php');
 
             $activeProject = $_SESSION['project'];
@@ -313,71 +346,19 @@ if(!isset($_SESSION['username'])){
             echo $valuesum;
           ?>
           </p>
+          </div>
+          <div class="col-md-6">
+          <button class="btn btn-link" data-toggle="modal" data-target="#taskCreationModal">Create Task</button>
+          <br>
+          <button class="btn btn-link" data-toggle="modal" data-target="#goalCreationModal">Create Goal</button>
           <?php } ?>
-        </div>
-        <div class="card">
-        <h3>Create A Task</h3>
-        <form method="POST" class="">
-				  <div class="form-row">
-				    <div class="form-group col-md-12">
-				      <label for="task-name">Task Name</label>
-				      <input type="text" maxlength="90" class="form-control" id="task-name" name="task-name" placeholder="Enter a task name">
-				    </div>
-				  </div>
-				  <div class="form-row">
-				    <div class="form-group col-md-12">
-				      <label for="task-desc">Task Description</label>
-				      <textarea maxlength="450" type="text" class="form-control" id="task-desc" name="task-desc" placeholder="Enter the task's description"></textarea>
-				  </div>
-				  </div>
-          <div class="form-row">
-            <div class="form-group col-md-12">
-              <label for="task-goal">Add to Goal</label>
-              <select class="form-control" id="task-goal" name="task-goal">
-              <?php
-              require('../php/connect.php');
-
-              $activeProject = $_SESSION['project'];
-
-              $query = "SELECT goals.id, goals.name FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
-              $result = mysqli_query($link, $query);
-              if (!$result){
-                die('Error: ' . mysqli_error($link));
-              }
-              while(list($goalID,$goalName) = mysqli_fetch_array($result)){
-                echo '<option value="' . $goalID . '">'. $goalName . "</option>";
-              }
-              ?>
-              </select>
           </div>
           </div>
-				  <button type="submit" class="btn btn-primary">Submit</button>
-				</form>
         </div>
-        <div class="card">
-        <h3>Create A Goal</h3>
-				<form method="POST" class="pt-4">
-				  <div class="form-row">
-				    <div class="form-group col-md-12">
-				      <label for="goal-name">Goal Name</label>
-				      <input type="text" maxlength="90" class="form-control" id="goal-name" name="goal-name" placeholder="Enter a goal name">
-				    </div>
-				  </div>
-				  <div class="form-row">
-				    <div class="form-group col-md-12">
-				      <label for="goal-value">Goal Value</label>
-				      <br>
-              <small>An integer representing the team's relative weighted value of completing this goal.</small>
-              <br>
-              <input type="number" class="form-control" name="goal-value" id="goal-value" value="1" />
-				  </div>
-				  </div>
-				  <button type="submit" class="btn btn-primary">Submit</button>
-				</form>
-        </div>
-        </div>
-        <div class="col-sm-6">
+
           <?php
+
+            //Iterate Goals
 
             require('../php/connect.php');
 
@@ -397,19 +378,212 @@ if(!isset($_SESSION['username'])){
           ?>
           <div class="head">
             <h4 style=" float:left;"><?php echo $goalName; ?></h4><h4 style="float:right;"><?php echo $goalValue; ?></h4>
-          </div>
           <form method="post">
             <input type="hidden" value="<?php echo $goalID; ?>" name="goal-id" />
             <input type="submit" class="btn btn-link" value="Move to Active">
           </form>
             <?php
 
+            //Iterate Tasks
+
             require('../php/connect.php');
 
             $username = $_SESSION['username'];
             $activeProject = $_SESSION['project'];
 
-            $query = "SELECT tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') AND tasks.status='backlog'";
+            $query = "SELECT tasks.id, tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') AND tasks.status='backlog'";
+            $result2 = mysqli_query($link, $query);
+            if (!$result2){
+              die('Error: ' . mysqli_error($link));
+            }
+            while($taskArray = mysqli_fetch_array($result2)){
+            $taskName = $taskArray['name'];
+            $taskID = $taskArray['id'];
+            $taskDesc = $taskArray['description'];
+            $taskCreator = $taskArray['creator'];
+            $taskDate = $taskArray['date'];
+
+          ?>
+
+          <form method="post" id="select-task-form-<?php echo $taskID;?>">
+            <input type="hidden" name="selected-task" value="<?php echo $taskID; ?>"/>
+          </form>
+
+          <div class="card activecard" style="cursor:pointer;" onclick="document.getElementById('select-task-form-<?php echo $taskID;?>').submit();">
+            <h4><?php echo $taskName; ?></h4>
+            <small><?php echo $taskDesc; ?></small>
+          </div>
+          <?php
+          }
+          ?>
+          </div>
+          <?php
+          }
+          ?>
+        </div>
+        </div>
+    </div>
+    <footer class="bg-grey color-white pb_top">
+      <center><p>
+        Team 2004-901, 2019, All Rights Reserved
+      </p></center>
+    </footer>
+    </div>
+    </div>
+
+  <!-- Workspace Selector Modal -->
+  <div class="modal fade" id="workspaceModal" tabindex="-1" role="dialog" aria-labelledby="workspaceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="workspaceModalLabel">Workspaces</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        
+          <?php
+          require('../php/connect.php');
+
+          $username = $_SESSION['username'];
+          $query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
+          $result = mysqli_query($link, $query);
+          if (!$result){
+            die('Error: ' . mysqli_error($link));
+          }
+          while($resultArray = mysqli_fetch_array($result)){
+          $workspaceName = $resultArray['name'];
+          $workspaceID = $resultArray['id'];
+
+          ?>
+          <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item <?php if($_SESSION['workspace'] == $workspaceID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $workspaceName; ?>"></form>
+          <?php } ?>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="workspace.php">Create New</a>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Creation Modal -->
+  <div class="modal fade" id="taskCreationModal" tabindex="-1" role="dialog" aria-labelledby="taskCreationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="taskCreationModalLabel">Create A Task</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <form method="POST" class="">
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <label for="task-name">Task Name</label>
+                <input type="text" maxlength="90" class="form-control" id="task-name" name="task-name" placeholder="Enter a task name">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <label for="task-desc">Task Description</label>
+                <textarea maxlength="450" type="text" class="form-control" id="task-desc" name="task-desc" placeholder="Enter the task's description"></textarea>
+            </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <label for="task-goal">Add to Goal</label>
+                <select class="form-control" id="task-goal" name="task-goal">
+                <?php
+                require('../php/connect.php');
+
+                $activeProject = $_SESSION['project'];
+
+                $query = "SELECT goals.id, goals.name FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
+                $result = mysqli_query($link, $query);
+                if (!$result){
+                  die('Error: ' . mysqli_error($link));
+                }
+                while(list($goalID,$goalName) = mysqli_fetch_array($result)){
+                  echo '<option value="' . $goalID . '">'. $goalName . "</option>";
+                }
+                ?>
+                </select>
+            </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Goal Creation Modal -->
+  <div class="modal fade" id="goalCreationModal" tabindex="-1" role="dialog" aria-labelledby="goalCreationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="goalCreationModalLabel">Create A Goal</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" class="pt-4">
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <label for="goal-name">Goal Name</label>
+                <input type="text" maxlength="90" class="form-control" id="goal-name" name="goal-name" placeholder="Enter a goal name">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <label for="goal-value">Goal Value</label>
+                <br>
+                <small>An integer representing the team's relative weighted value of completing this goal.</small>
+                <br>
+                <input type="number" class="form-control" name="goal-value" id="goal-value" value="1" />
+            </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Modal -->
+  <div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="taskModalLabel">Task</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="taskModalBody">
+        
+          <?php
+
+            //Iterate Tasks
+
+            require('../php/connect.php');
+
+            $activeTask = $_SESSION['task'];
+
+            $query = "SELECT tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id = '$activeTask'";
             $result2 = mysqli_query($link, $query);
             if (!$result2){
               die('Error: ' . mysqli_error($link));
@@ -441,19 +615,32 @@ if(!isset($_SESSION['username'])){
           <?php
           }
           ?>
-          <?php
-          }
-          ?>
+
         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="closeTaskModalButton">Close</button>
         </div>
+      </div>
     </div>
-    <footer class="bg-grey color-white pb_top">
-      <center><p>
-        Team 2004-901, 2019, All Rights Reserved
-      </p></center>
-    </footer>
-    </div>
-    </div>
+  </div>
+
+  <?php
+  if(isset($_POST['selected-task'])){
+    
+    $_SESSION['task'] = $_POST['selected-task'];
+    $_POST['selected-task'] = null;
+    $fmsg = "Selected task " . $_SESSION['task'];
+    ?>
+
+    <script> 
+    $("#taskModalBody").load("../php/taskModal.php"); 
+    document.getElementById('closeTaskModalButton').onclick = function(){ $("#taskModal").modal('hide'); };
+    </script>
+
+    <?php
+  }
+  ?>
+
 </body>
 
 <script src="../js/scripts.js" type="text/javascript"></script>
