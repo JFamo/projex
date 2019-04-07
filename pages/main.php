@@ -25,6 +25,7 @@ if(isset($_POST['workspace-id'])){
   //@Tom
   
 	require('../php/connect.php');
+	$query="SELECT user FROM user_workspace_mapping WHERE workspace='$newworkspace'";
 	$result = mysqli_query($link, $query);
 	if (!$result){
 		die('Error: ' . mysqli_error($link));
