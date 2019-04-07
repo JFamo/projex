@@ -24,8 +24,17 @@ if(isset($_POST['workspace-id'])){
   //Prevents client-side editing of workspace value to access those of other orgs
   //@Tom
   
-  $_SESSION['workspace'] = $newworkspace;
-  $_SESSION['project'] = null;
+  require('../php/connect.php');
+    $userID = $_SESSION['id'];
+  $query="SELECT * FROM user_workspace_mapping WHERE workspace='$newworkspace' AND user='$userID'";
+  $result = mysqli_query($link, $query);
+  if (!$result){
+    die('Error: ' . mysqli_error($link));
+  }
+  if(mysqli_num_rows($result)>=1){
+      $_SESSION['workspace'] = $newworkspace;
+      $_SESSION['project'] = null;
+  }
 
 }
 
@@ -37,8 +46,16 @@ if(isset($_POST['project-id'])){
   //Need checking that the user really has this project here
   //Prevents client-side editing of project value to access those of other orgs
   //@Tom
-  
-  $_SESSION['project'] = $newproject;
+  require('../php/connect.php');
+  $userID = $_SESSION['id'];
+  $query="SELECT * FROM user_project_mapping WHERE project='$newproject' AND user='$userID'";
+  $result = mysqli_query($link, $query);
+  if (!$result){
+    die('Error: ' . mysqli_error($link));
+  }
+  if(mysqli_num_rows($result)>=1){
+    $_SESSION['project'] = $newproject;
+  }
 
 }
 

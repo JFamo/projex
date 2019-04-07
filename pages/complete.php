@@ -1,52 +1,57 @@
 <?php
-
 function validate($data){
-	$data = trim($data);
-  	$data = stripslashes($data);
-  	$data = htmlspecialchars($data);
-  	$data = str_replace('\\', '', $data);
-  	$data = str_replace('/', '', $data);
-  	$data = str_replace("'", '', $data);
-  	$data = str_replace(";", '', $data);
-  	$data = str_replace("(", '', $data);
-  	$data = str_replace(")", '', $data);
-  	return $data;
+  $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    $data = str_replace('\\', '', $data);
+    $data = str_replace('/', '', $data);
+    $data = str_replace("'", '', $data);
+    $data = str_replace(";", '', $data);
+    $data = str_replace("(", '', $data);
+    $data = str_replace(")", '', $data);
+    return $data;
 }
-
 session_start();
-
 //Handle Changing Workspaces
 if(isset($_POST['workspace-id'])){
-
   $newworkspace = $_POST['workspace-id'];
   //~~JOSH~~
   //Need checking that the user really has this workspace here
   //Prevents client-side editing of workspace value to access those of other orgs
   //@Tom
-  
-  $_SESSION['workspace'] = $newworkspace;
-  $_SESSION['project'] = null;
-
+  require('../php/connect.php');
+    $userID = $_SESSION['id'];
+  $query="SELECT * FROM user_workspace_mapping WHERE workspace='$newworkspace' AND user='$userID'";
+  $result = mysqli_query($link, $query);
+  if (!$result){
+    die('Error: ' . mysqli_error($link));
+  }
+  if($result){
+      $_SESSION['workspace'] = $newworkspace;
+      $_SESSION['project'] = null;
+  }
 }
-
 //Handle Changing Projects
 if(isset($_POST['project-id'])){
-
   $newproject = $_POST['project-id'];
   //~~JOSH~~
   //Need checking that the user really has this project here
   //Prevents client-side editing of project value to access those of other orgs
   //@Tom
-  
-  $_SESSION['project'] = $newproject;
-
+  require('../php/connect.php');
+  $userID = $_SESSION['id'];
+  $query="SELECT * FROM user_project_mapping WHERE project='$newproject' AND user='$userID'";
+  $result = mysqli_query($link, $query);
+  if (!$result){
+    die('Error: ' . mysqli_error($link));
+  }
+  if(mysqli_num_rows($result)>=1){
+    $_SESSION['project'] = $newproject;
+  }
 }
-
 //Moving goals to active
 if(isset($_POST['goal-id'])){
-
   $goalid = $_POST['goal-id'];
-
   require('../php/connect.php');
   $query = "UPDATE goals SET status='active' WHERE id='$goalid'";
   $result = mysqli_query($link,$query);
@@ -64,27 +69,20 @@ if(isset($_POST['goal-id'])){
       die('Error: ' . mysqli_error($link));
   }
   mysqli_close($link);
-
   $fmsg = "Moved Goal to Active!";
 }
-
 //Updating Ratings
 if(isset($_POST['task-id'])){
-
   $taskID = $_POST['task-id'];
   $rating = $_POST['rating-value'];
-
   require('../php/connect.php');
   $query = "INSERT INTO task_ratings (task, rating) VALUES ('$taskID', '$rating') ON DUPLICATE KEY UPDATE rating='$rating'";
   $result = mysqli_query($link,$query);
   if (!$result){
       die('Error: ' . mysqli_error($link));
   }
-
   mysqli_close($link);
-
   $fmsg = "Rating Updated!";
-
 }    
 
 //Edit Task Name from Modal
@@ -122,20 +120,17 @@ if(isset($_POST['edit-task-desc'])){
 }
 
 if(!isset($_SESSION['username'])){
-
-	header('Location: ../index.php');
-
+  header('Location: ../index.php');
 }else{
-
 ?>
 
 <!DOCTYPE html>
 
 <head>
-	<!-- Global site tag (gtag.js) - Google Analytics ~ Will go here-->
-		
-	<!-- Bootstrap, cause it's pretty hecking neat. Plus we have it locally, cause we're cool -->
-	<link rel="stylesheet" href="../bootstrap-4.1.0/css/bootstrap.min.css">
+  <!-- Global site tag (gtag.js) - Google Analytics ~ Will go here-->
+    
+  <!-- Bootstrap, cause it's pretty hecking neat. Plus we have it locally, cause we're cool -->
+  <link rel="stylesheet" href="../bootstrap-4.1.0/css/bootstrap.min.css">
     <script src="../js/jquery.min.js"></script>
     <script src="../js/popper.min.js"></script>
     <script src="../bootstrap-4.1.0/js/bootstrap.min.js"></script>
@@ -144,16 +139,16 @@ if(!isset($_SESSION['username'])){
 
     <!-- Google Fonts - Changes to come -->
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
-	
-	<title>
-		ProjeX
-	</title>
+  
+  <title>
+    ProjeX
+  </title>
 
-	<!-- Import our CSS -->
-	<link href="../css/main.css" rel="stylesheet" type="text/css" />
+  <!-- Import our CSS -->
+  <link href="../css/main.css" rel="stylesheet" type="text/css" />
 
-	<!-- Mobile metas -->
-	<meta charset="utf-8">
+  <!-- Mobile metas -->
+  <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 
@@ -236,9 +231,7 @@ if(!isset($_SESSION['username'])){
               <div class="dropdown-menu dropdown-menu-right">
 
                 <?php
-
                 require('../php/connect.php');
-
                 $username = $_SESSION['username'];
                 $workspace = $_SESSION['workspace'];
                 $query = "SELECT projects.name, projects.id FROM ((user_project_mapping INNER JOIN projects ON projects.id = user_project_mapping.project) INNER JOIN users ON user_project_mapping.user = users.id) WHERE users.username = '$username' AND projects.workspace = '$workspace'";
@@ -249,7 +242,6 @@ if(!isset($_SESSION['username'])){
                 while($resultArray = mysqli_fetch_array($result)){
                 $projectName = $resultArray['name'];
                 $projectID = $resultArray['id'];
-
                 ?>
                 <form method="POST"><input type="hidden" value="<?php echo $projectID; ?>" name="project-id"/><input class="dropdown-item <?php if($_SESSION['project'] == $projectID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $projectName; ?>"></form>
                 <?php } ?>
@@ -262,12 +254,9 @@ if(!isset($_SESSION['username'])){
           <hr>
           <br>
           <?php
-
             require('../php/connect.php');
-
             $username = $_SESSION['username'];
             $activeProject = $_SESSION['project'];
-
             $query = "SELECT goals.name, goals.id, goals.value FROM goals WHERE goals.project = '$activeProject' AND goals.status='complete'";
             $result = mysqli_query($link, $query);
             if (!$result){
@@ -277,7 +266,6 @@ if(!isset($_SESSION['username'])){
             $goalName = $resultArray['name'];
             $goalID = $resultArray['id'];
             $goalValue = $resultArray['value'];
-
           ?>
           <div class="head">
             <h4 style=" float:left;"><?php echo $goalName; ?></h4><h4 style="float:right;"><?php echo $goalValue; ?></h4>
@@ -286,12 +274,9 @@ if(!isset($_SESSION['username'])){
             <input type="submit" class="btn btn-link" value="Return to Active">
           </form>
             <?php
-
             require('../php/connect.php');
-
             $username = $_SESSION['username'];
             $activeProject = $_SESSION['project'];
-
             $query = "SELECT tasks.id, tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') AND tasks.status='complete'";
             $result2 = mysqli_query($link, $query);
             if (!$result2){
@@ -303,7 +288,6 @@ if(!isset($_SESSION['username'])){
             $taskDesc = $taskArray['description'];
             $taskCreator = $taskArray['creator'];
             $taskDate = $taskArray['date'];
-
           ?>
 
           <form method="post" id="select-task-form-<?php echo $taskID;?>">
@@ -313,19 +297,16 @@ if(!isset($_SESSION['username'])){
           <div class="card activecard" style="cursor:pointer;" onclick="document.getElementById('select-task-form-<?php echo $taskID;?>').submit();">
             <h4><?php echo $taskName;
               echo " (";
-
               $query = "SELECT users.firstname, users.lastname FROM users WHERE users.id IN (SELECT user FROM user_task_mapping WHERE task='$taskID')";
               $result3 = mysqli_query($link, $query);
               if (!$result3){
                 die('Error: ' . mysqli_error($link));
               }
               list($userfirst, $userlast) = mysqli_fetch_array($result3);
-
               echo $userfirst;
               echo " ";
               echo $userlast;
               echo ")";
-
              ?></h4>
             <hr>
             <p><?php echo $taskDesc; ?></p>
@@ -379,7 +360,6 @@ if(!isset($_SESSION['username'])){
         
           <?php
           require('../php/connect.php');
-
           $username = $_SESSION['username'];
           $query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
           $result = mysqli_query($link, $query);
@@ -389,7 +369,6 @@ if(!isset($_SESSION['username'])){
           while($resultArray = mysqli_fetch_array($result)){
           $workspaceName = $resultArray['name'];
           $workspaceID = $resultArray['id'];
-
           ?>
           <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item <?php if($_SESSION['workspace'] == $workspaceID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $workspaceName; ?>"></form>
           <?php } ?>
@@ -417,13 +396,9 @@ if(!isset($_SESSION['username'])){
         <div class="modal-body" id="taskModalBody">
         
           <?php
-
             //Iterate Tasks
-
             require('../php/connect.php');
-
             $activeTask = $_SESSION['task'];
-
             $query = "SELECT tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id = '$activeTask'";
             $result2 = mysqli_query($link, $query);
             if (!$result2){
@@ -435,7 +410,6 @@ if(!isset($_SESSION['username'])){
             $taskDesc = $taskArray['description'];
             $taskCreator = $taskArray['creator'];
             $taskDate = $taskArray['date'];
-
           ?>
           <div class="card">
             <h4><?php echo $taskName; ?></h4>
@@ -489,7 +463,5 @@ if(!isset($_SESSION['username'])){
 </html>
 
 <?php 
-
 }
-
 ?>
