@@ -63,6 +63,7 @@ if(isset($_POST['workspace-id'])){
 
 }
 
+//Create a Task
 if(isset($_POST['task-name'])){
 
   $taskname = validate($_POST['task-name']);
@@ -88,6 +89,7 @@ if(isset($_POST['task-name'])){
 
 }
 
+//Create a Goal
 if(isset($_POST['goal-name'])){
 
   $goalname = validate($_POST['goal-name']);
@@ -107,6 +109,7 @@ if(isset($_POST['goal-name'])){
 
 }
 
+//Move Goals to Active
 if(isset($_POST['goal-id'])){
 
   $goalid = $_POST['goal-id'];
@@ -125,6 +128,40 @@ if(isset($_POST['goal-id'])){
   mysqli_close($link);
 
   $fmsg = "Moved Goal to Active!";
+}
+
+//Edit Task Name from Modal
+if(isset($_POST['edit-task-name'])){
+
+  $task = validate($_POST['edit-task-id']);
+  $newname = validate($_POST['edit-task-name']);
+
+  require('../php/connect.php');
+  $query = "UPDATE tasks SET name='$newname' WHERE id='$task'";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  mysqli_close($link);
+
+  $fmsg = "Updated Task Name!";
+}
+
+//Edit Task Desc from Modal
+if(isset($_POST['edit-task-desc'])){
+
+  $task = $_POST['edit-task-id'];
+  $newdesc = $_POST['edit-task-desc'];
+
+  require('../php/connect.php');
+  $query = "UPDATE tasks SET description='$newdesc' WHERE id='$task'";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  mysqli_close($link);
+
+  $fmsg = "Updated Task Description!";
 }
 
 if(!isset($_SESSION['username'])){
@@ -174,54 +211,27 @@ if(!isset($_SESSION['username'])){
         <nav style="width:100%;" class="navbar navbar-dark">
           <div class="container" style="padding-left:0px;">
           <ul class="nav navbar-nav align-top">
-           <a class="navbar-brand icon" href="#"><img src="../imgs/workspacePlaceholder.png" alt="icon" width="60" height="60">Projex</a>
-           <div class="dropdown">
-              <div class="btn-group dropright">
-                <button type="button" class="btn btn-secondary"><?php 
-                  require('../php/connect.php');
-                  $workspace = $_SESSION['workspace'];
-                  $query = "SELECT name FROM workspaces WHERE id='$workspace'";
-                  $result = mysqli_query($link, $query);
-                  if (!$result){
-                    die('Error: ' . mysqli_error($link));
-                  }
-                  list($name) = mysqli_fetch_array($result);
-                  if($_SESSION['workspace'] == null || $_SESSION['workspace'] == null){
-                    echo "Select a Workspace";
-                  }
-                  else{
-                    echo $name;
-                  }
-                ?></button>
-                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="sr-only">Toggle Dropdown</span>
-                </button>
-              <div class="dropdown-menu dropdown-menu-right">
-
-                <?php
-
+           <a class="navbar-brand icon" href="#">Projex</a>
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#workspaceModal">
+              <?php 
                 require('../php/connect.php');
-
-                $username = $_SESSION['username'];
-                $query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
+                $workspace = $_SESSION['workspace'];
+                $query = "SELECT name FROM workspaces WHERE id='$workspace'";
                 $result = mysqli_query($link, $query);
                 if (!$result){
                   die('Error: ' . mysqli_error($link));
                 }
-                while($resultArray = mysqli_fetch_array($result)){
-                $workspaceName = $resultArray['name'];
-                $workspaceID = $resultArray['id'];
-
-                ?>
-                <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item <?php if($_SESSION['workspace'] == $workspaceID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $workspaceName; ?>"></form>
-                <?php } ?>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="workspace.php">Create New</a>
-              </div>
-            </div>
-            </div>
-              <hr class="sidenavHR">
-              <a class="nav-link" href="main.php">Dashboard</a>
+                list($name) = mysqli_fetch_array($result);
+                if($_SESSION['workspace'] == null || $_SESSION['workspace'] == null){
+                  echo "Select a Workspace";
+                }
+                else{
+                  echo $name;
+                }
+              ?>
+            </button>
+            <hr class="sidenavHR">
+            <a class="nav-link" href="main.php">Dashboard</a>
             <a class="nav-link" href="metrics.php">Metrics</a>
             <a class="nav-link active" href="backlog.php">Backlog</a>
             <a class="nav-link" href="active.php">Active</a>
@@ -241,7 +251,7 @@ if(!isset($_SESSION['username'])){
           <?php if(isset($fmsg)){ echo "<div class='card'><p>" . $fmsg . "</p></div>"; } ?>
       		<h1>Backlog</h1>	
       	</div>
-        <div class="col-sm-6">
+        <div class="col-md-6">
           <div class="dropdown">
               <div class="btn-group">
                 <button type="button" class="btn btn-secondary"><?php 
@@ -397,8 +407,10 @@ if(!isset($_SESSION['username'])){
 				</form>
         </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-md-6">
           <?php
+
+            //Iterate Goals
 
             require('../php/connect.php');
 
@@ -418,19 +430,120 @@ if(!isset($_SESSION['username'])){
           ?>
           <div class="head">
             <h4 style=" float:left;"><?php echo $goalName; ?></h4><h4 style="float:right;"><?php echo $goalValue; ?></h4>
-          </div>
           <form method="post">
             <input type="hidden" value="<?php echo $goalID; ?>" name="goal-id" />
             <input type="submit" class="btn btn-link" value="Move to Active">
           </form>
             <?php
 
+            //Iterate Tasks
+
             require('../php/connect.php');
 
             $username = $_SESSION['username'];
             $activeProject = $_SESSION['project'];
 
-            $query = "SELECT tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') AND tasks.status='backlog'";
+            $query = "SELECT tasks.id, tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') AND tasks.status='backlog'";
+            $result2 = mysqli_query($link, $query);
+            if (!$result2){
+              die('Error: ' . mysqli_error($link));
+            }
+            while($taskArray = mysqli_fetch_array($result2)){
+            $taskName = $taskArray['name'];
+            $taskID = $taskArray['id'];
+            $taskDesc = $taskArray['description'];
+            $taskCreator = $taskArray['creator'];
+            $taskDate = $taskArray['date'];
+
+          ?>
+
+          <form method="post" id="select-task-form-<?php echo $taskID;?>">
+            <input type="hidden" name="selected-task" value="<?php echo $taskID; ?>"/>
+          </form>
+
+          <div class="card activecard" style="cursor:pointer;" onclick="document.getElementById('select-task-form-<?php echo $taskID;?>').submit();">
+            <h4><?php echo $taskName; ?></h4>
+            <small><?php echo $taskDesc; ?></small>
+          </div>
+          <?php
+          }
+          ?>
+          </div>
+          <?php
+          }
+          ?>
+        </div>
+        </div>
+    </div>
+    <footer class="bg-grey color-white pb_top">
+      <center><p>
+        Team 2004-901, 2019, All Rights Reserved
+      </p></center>
+    </footer>
+    </div>
+    </div>
+
+  <!-- Workspace Selector Modal -->
+  <div class="modal fade" id="workspaceModal" tabindex="-1" role="dialog" aria-labelledby="workspaceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="workspaceModalLabel">Workspaces</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        
+          <?php
+          require('../php/connect.php');
+
+          $username = $_SESSION['username'];
+          $query = "SELECT workspaces.name, workspaces.id FROM ((user_workspace_mapping INNER JOIN workspaces ON workspaces.id = user_workspace_mapping.workspace) INNER JOIN users ON user_workspace_mapping.user = users.id) WHERE users.username = '$username'";
+          $result = mysqli_query($link, $query);
+          if (!$result){
+            die('Error: ' . mysqli_error($link));
+          }
+          while($resultArray = mysqli_fetch_array($result)){
+          $workspaceName = $resultArray['name'];
+          $workspaceID = $resultArray['id'];
+
+          ?>
+          <form method="POST"><input type="hidden" value="<?php echo $workspaceID; ?>" name="workspace-id"/><input class="dropdown-item <?php if($_SESSION['workspace'] == $workspaceID){ echo 'active-dropdown'; } ?>" type="submit" value="<?php echo $workspaceName; ?>"></form>
+          <?php } ?>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="workspace.php">Create New</a>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Modal -->
+  <div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="taskModalLabel">Task</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="taskModalBody">
+        
+          <?php
+
+            //Iterate Tasks
+
+            require('../php/connect.php');
+
+            $activeTask = $_SESSION['task'];
+
+            $query = "SELECT tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id = '$activeTask'";
             $result2 = mysqli_query($link, $query);
             if (!$result2){
               die('Error: ' . mysqli_error($link));
@@ -462,19 +575,32 @@ if(!isset($_SESSION['username'])){
           <?php
           }
           ?>
-          <?php
-          }
-          ?>
+
         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="closeTaskModalButton">Close</button>
         </div>
+      </div>
     </div>
-    <footer class="bg-grey color-white pb_top">
-      <center><p>
-        Team 2004-901, 2019, All Rights Reserved
-      </p></center>
-    </footer>
-    </div>
-    </div>
+  </div>
+
+  <?php
+  if(isset($_POST['selected-task'])){
+    
+    $_SESSION['task'] = $_POST['selected-task'];
+    $_POST['selected-task'] = null;
+    $fmsg = "Selected task " . $_SESSION['task'];
+    ?>
+
+    <script> 
+    $("#taskModalBody").load("../php/taskModal.php"); 
+    document.getElementById('closeTaskModalButton').onclick = function(){ $("#taskModal").modal('hide'); };
+    </script>
+
+    <?php
+  }
+  ?>
+
 </body>
 
 <script src="../js/scripts.js" type="text/javascript"></script>

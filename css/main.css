@@ -94,11 +94,11 @@ footer{
 .card{
 	margin: 1rem;
   	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  	border-radius:0.1rem;
+  	border-radius:0.2rem;
   	border-left: 5px solid #d65b35;
   	transition: all 0.2s;
   	overflow-x:hidden;
-  	padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+  	padding: 1.0rem 1.0rem 1.0rem 1.0rem;
 }
 .card p{
 	margin-bottom: 0;
@@ -112,13 +112,30 @@ footer{
 	object-fit:cover;
 	height:auto;
 }
+.activecard:hover{
+	margin: 1rem;
+  	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.32), 0 3px 6px rgba(0, 0, 0, 0.64);
+  	border-radius:0.2rem;
+  	border-left: 5px solid #d65b35;
+  	transition: all 0.2s;
+  	overflow-x:hidden;
+  	padding: 1.0rem 1.0rem 1.0rem 1.0rem;
+  	background-color: #f5f5f5;
+}
 .sidenavHR{
 	color:rgba(255,255,255,1);
 	width:100%;
 	border-top-color:rgba(255,255,255,1) !important;
 }
 .head{
-	border-bottom: 4px solid #d65b35;
+	margin: 1rem;
+  	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  	background-color:white;
+  	border-radius:0.2rem;
+  	border-left: 5px solid #007bff;
+  	transition: all 0.2s;
+  	overflow-x:hidden;
+  	padding: 1.0rem 1.0rem 1.0rem 1.0rem;
 	width:100%;
 	min-height: 2.5rem;
 }
