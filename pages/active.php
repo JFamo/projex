@@ -113,6 +113,40 @@ if(isset($_POST['taskuser-id'])){
 
 }
 
+//Edit Task Name from Modal
+if(isset($_POST['edit-task-name'])){
+
+  $task = validate($_POST['edit-task-id']);
+  $newname = validate($_POST['edit-task-name']);
+
+  require('../php/connect.php');
+  $query = "UPDATE tasks SET name='$newname' WHERE id='$task'";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  mysqli_close($link);
+
+  $fmsg = "Updated Task Name!";
+}
+
+//Edit Task Desc from Modal
+if(isset($_POST['edit-task-desc'])){
+
+  $task = $_POST['edit-task-id'];
+  $newdesc = $_POST['edit-task-desc'];
+
+  require('../php/connect.php');
+  $query = "UPDATE tasks SET description='$newdesc' WHERE id='$task'";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  mysqli_close($link);
+
+  $fmsg = "Updated Task Description!";
+}
+
 if(!isset($_SESSION['username'])){
 
 	header('Location: ../index.php');
@@ -273,7 +307,6 @@ if(!isset($_SESSION['username'])){
           ?>
           <div class="head">
             <h4 style=" float:left;"><?php echo $goalName; ?></h4><h4 style="float:right;"><?php echo $goalValue; ?></h4>
-          </div>
           <form method="post">
             <input type="hidden" value="<?php echo $goalID; ?>" name="goal-id" />
             <input type="submit" class="btn btn-link" value="Move to Backlog">
@@ -317,30 +350,38 @@ if(!isset($_SESSION['username'])){
              ?></h4>
             <hr>
             <p><?php echo $taskDesc; ?></p>
-            <br>
-            <form method="post">
-              <input type="hidden" value="<?php echo $taskID; ?>" name="taskuser-id" />
-              <input type="submit" class="btn btn-link" value="Claim this Task">
-            </form>
-            <form method="post">
-              <input type="hidden" value="<?php echo $taskID; ?>" name="task-id" />
-              <input type="submit" class="btn btn-link" value="Complete">
-            </form>
-            <br>
-            <small>Created By : <?php
-              require('../php/connect.php');
-              $query = "SELECT firstname, lastname FROM users WHERE id = '$taskCreator'";
-              $result3 = mysqli_query($link, $query);
-              if (!$result3){
-                die('Error: ' . mysqli_error($link));
-              }
-              list($firstname, $lastname) = mysqli_fetch_array($result3);
-              echo $firstname . " " . $lastname;
-            ?> on <?php echo $taskDate; ?></small>
+
+            <div class="row">
+              <div class="col-md-4">
+                <center>
+                <form method="post">
+                  <input type="hidden" value="<?php echo $taskID; ?>" name="taskuser-id" />
+                  <input type="submit" class="btn btn-link" value="Claim this Task">
+                </form>
+                </center>
+              </div>
+              <div class="col-md-4">
+                <center>
+                <form method="post">
+                  <input type="hidden" value="<?php echo $taskID; ?>" name="task-id" />
+                  <input type="submit" class="btn btn-link" value="Complete">
+                </form>
+                </center>
+              </div>
+              <div class="col-md-4">
+                <center>
+                <form method="post">
+                  <input type="hidden" value="<?php echo $taskID; ?>" name="selected-task" />
+                  <input type="submit" class="btn btn-link" value="Edit">
+                </form>
+                </center>
+              </div>
+            </div>
           </div>
           <?php
           }
           ?>
+          </div>
           <?php
           }
           ?>
@@ -394,6 +435,84 @@ if(!isset($_SESSION['username'])){
       </div>
     </div>
   </div>
+
+  <!-- Task Modal -->
+  <div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="taskModalLabel">Task</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="taskModalBody">
+        
+          <?php
+
+            //Iterate Tasks
+
+            require('../php/connect.php');
+
+            $activeTask = $_SESSION['task'];
+
+            $query = "SELECT tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id = '$activeTask'";
+            $result2 = mysqli_query($link, $query);
+            if (!$result2){
+              die('Error: ' . mysqli_error($link));
+            }
+            while($taskArray = mysqli_fetch_array($result2)){
+            $taskName = $taskArray['name'];
+            $taskID = $taskArray['id'];
+            $taskDesc = $taskArray['description'];
+            $taskCreator = $taskArray['creator'];
+            $taskDate = $taskArray['date'];
+
+          ?>
+          <div class="card">
+            <h4><?php echo $taskName; ?></h4>
+            <hr>
+            <p><?php echo $taskDesc; ?></p>
+            <br>
+            <small>Created By : <?php
+              require('../php/connect.php');
+              $query = "SELECT firstname, lastname FROM users WHERE id = '$taskCreator'";
+              $result3 = mysqli_query($link, $query);
+              if (!$result3){
+                die('Error: ' . mysqli_error($link));
+              }
+              list($firstname, $lastname) = mysqli_fetch_array($result3);
+              echo $firstname . " " . $lastname;
+            ?> on <?php echo $taskDate; ?></small>
+          </div>
+          <?php
+          }
+          ?>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="closeTaskModalButton">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <?php
+  if(isset($_POST['selected-task'])){
+    
+    $_SESSION['task'] = $_POST['selected-task'];
+    $_POST['selected-task'] = null;
+    $fmsg = "Selected task " . $_SESSION['task'];
+    ?>
+
+    <script> 
+    $("#taskModalBody").load("../php/taskModal.php"); 
+    document.getElementById('closeTaskModalButton').onclick = function(){ $("#taskModal").modal('hide'); };
+    </script>
+
+    <?php
+  }
+  ?>
 
 </body>
 

@@ -140,7 +140,7 @@ if(isset($_POST['edit-task-desc'])){
   }
   mysqli_close($link);
 
-  $fmsg = "Updated Task Name!";
+  $fmsg = "Updated Task Description!";
 }
 
 if(!isset($_SESSION['username'])){
