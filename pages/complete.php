@@ -58,6 +58,11 @@ if(isset($_POST['goal-id'])){
   if (!$result){
       die('Error: ' . mysqli_error($link));
   }
+  $query = "UPDATE tasks SET changedate= now() WHERE id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalid')";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
   $query = "DELETE FROM task_ratings WHERE task IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalid')";
   $result = mysqli_query($link,$query);
   if (!$result){

@@ -8,7 +8,7 @@ $task = $_SESSION['task'];
 
     require('connect.php');
 
-    $query = "SELECT tasks.name, tasks.description, tasks.creator, tasks.date, tasks.status FROM tasks WHERE tasks.id = '$task'";
+    $query = "SELECT tasks.name, tasks.description, tasks.creator, tasks.date, tasks.status, tasks.changedate FROM tasks WHERE tasks.id = '$task'";
     $result = mysqli_query($link, $query);
     if (!$result){
       die('Error: ' . mysqli_error($link));
@@ -19,6 +19,7 @@ $task = $_SESSION['task'];
     $taskStatus = $taskArray['status'];
     $taskCreator = $taskArray['creator'];
     $taskDate = $taskArray['date'];
+    $taskChangeDate = $taskArray['changedate'];
 
 //Create out output variable
 $out = "";
@@ -40,7 +41,8 @@ $out = $out . "<small>Created By : ";
 
 $out = $out . $firstname . " " . $lastname;
 $out = $out . " on ";
-$out = $out . $taskDate ."</small><br><br>";
+$out = $out . $taskDate ."</small><br>";
+$out = $out . "<small>Last Change : " . $taskChangeDate ."</small><br><br>"; 
 
 //Edit variables
 $out = $out . "<h4>Manage</h4><hr>";
