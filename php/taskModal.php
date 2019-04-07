@@ -43,8 +43,8 @@ $out = $out . $taskDate ."</small><br><br>";
 
 //Edit variables
 $out = $out . "<h4>Manage</h4><hr>";
-$out = $out . "<form method='post'>Edit Name<br><input type='text' name='edit-task-name' value='" . $taskName . "'/><br><input type='submit' class='btn btn-primary' value='Change'/></form>";
-$out = $out . "<form method='post'>Edit Description<br><textarea maxlength='450' type='text' class='form-control' name='edit-task-desc' placeholder='Enter a task description'></textarea><input type='submit' class='btn btn-primary' value='Change'/></form>";
+$out = $out . "<form method='post'><input type='hidden' name='edit-task-id' value='" . $task . "'/>Edit Name<br><input type='text' name='edit-task-name' value='" . $taskName . "'/><br><input type='submit' class='btn btn-primary' value='Change'/></form>";
+$out = $out . "<form method='post'><input type='hidden' name='edit-task-id' value='" . $task . "'/>Edit Description<br><textarea maxlength='450' type='text' class='form-control' name='edit-task-desc' placeholder='Enter a task description'></textarea><input type='submit' class='btn btn-primary' value='Change'/></form>";
 
 //Finally, show the modal
 $out = $out . "<script>$('#taskModal').modal('show');</script>";
