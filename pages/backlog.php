@@ -229,8 +229,6 @@ if(!isset($_SESSION['username'])){
       	<div class="col-12">
           <?php if(isset($fmsg)){ echo "<div class='card'><p>" . $fmsg . "</p></div>"; } ?>
       		<h1>Backlog</h1>	
-      	</div>
-        <div class="col-md-6">
           <div class="dropdown">
               <div class="btn-group">
                 <button type="button" class="btn btn-secondary"><?php 
@@ -324,46 +322,9 @@ if(!isset($_SESSION['username'])){
           ?>
           </p>
           <?php } ?>
+          <button class="btn btn-link" data-toggle="modal" data-target="#taskCreationModal">Create Task</button>
         </div>
-        <div class="card">
-        <h3>Create A Task</h3>
-        <form method="POST" class="">
-				  <div class="form-row">
-				    <div class="form-group col-md-12">
-				      <label for="task-name">Task Name</label>
-				      <input type="text" maxlength="90" class="form-control" id="task-name" name="task-name" placeholder="Enter a task name">
-				    </div>
-				  </div>
-				  <div class="form-row">
-				    <div class="form-group col-md-12">
-				      <label for="task-desc">Task Description</label>
-				      <textarea maxlength="450" type="text" class="form-control" id="task-desc" name="task-desc" placeholder="Enter the task's description"></textarea>
-				  </div>
-				  </div>
-          <div class="form-row">
-            <div class="form-group col-md-12">
-              <label for="task-goal">Add to Goal</label>
-              <select class="form-control" id="task-goal" name="task-goal">
-              <?php
-              require('../php/connect.php');
-
-              $activeProject = $_SESSION['project'];
-
-              $query = "SELECT goals.id, goals.name FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
-              $result = mysqli_query($link, $query);
-              if (!$result){
-                die('Error: ' . mysqli_error($link));
-              }
-              while(list($goalID,$goalName) = mysqli_fetch_array($result)){
-                echo '<option value="' . $goalID . '">'. $goalName . "</option>";
-              }
-              ?>
-              </select>
-          </div>
-          </div>
-				  <button type="submit" class="btn btn-primary">Submit</button>
-				</form>
-        </div>
+        
         <div class="card">
         <h3>Create A Goal</h3>
 				<form method="POST" class="pt-4">
@@ -385,8 +346,6 @@ if(!isset($_SESSION['username'])){
 				  <button type="submit" class="btn btn-primary">Submit</button>
 				</form>
         </div>
-        </div>
-        <div class="col-md-6">
           <?php
 
             //Iterate Goals
@@ -496,7 +455,63 @@ if(!isset($_SESSION['username'])){
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Creation Modal -->
+  <div class="modal fade" id="taskCreationModal" tabindex="-1" role="dialog" aria-labelledby="taskCreationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="taskCreationModalLabel">Create A Task</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <form method="POST" class="">
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <label for="task-name">Task Name</label>
+                <input type="text" maxlength="90" class="form-control" id="task-name" name="task-name" placeholder="Enter a task name">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <label for="task-desc">Task Description</label>
+                <textarea maxlength="450" type="text" class="form-control" id="task-desc" name="task-desc" placeholder="Enter the task's description"></textarea>
+            </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <label for="task-goal">Add to Goal</label>
+                <select class="form-control" id="task-goal" name="task-goal">
+                <?php
+                require('../php/connect.php');
+
+                $activeProject = $_SESSION['project'];
+
+                $query = "SELECT goals.id, goals.name FROM goals WHERE goals.project = '$activeProject' AND goals.status='backlog'";
+                $result = mysqli_query($link, $query);
+                if (!$result){
+                  die('Error: ' . mysqli_error($link));
+                }
+                while(list($goalID,$goalName) = mysqli_fetch_array($result)){
+                  echo '<option value="' . $goalID . '">'. $goalName . "</option>";
+                }
+                ?>
+                </select>
+            </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
