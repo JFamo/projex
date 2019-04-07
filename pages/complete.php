@@ -84,6 +84,41 @@ if(isset($_POST['task-id'])){
   mysqli_close($link);
   $fmsg = "Rating Updated!";
 }    
+
+//Edit Task Name from Modal
+if(isset($_POST['edit-task-name'])){
+
+  $task = validate($_POST['edit-task-id']);
+  $newname = validate($_POST['edit-task-name']);
+
+  require('../php/connect.php');
+  $query = "UPDATE tasks SET name='$newname' WHERE id='$task'";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  mysqli_close($link);
+
+  $fmsg = "Updated Task Name!";
+}
+
+//Edit Task Desc from Modal
+if(isset($_POST['edit-task-desc'])){
+
+  $task = $_POST['edit-task-id'];
+  $newdesc = $_POST['edit-task-desc'];
+
+  require('../php/connect.php');
+  $query = "UPDATE tasks SET description='$newdesc' WHERE id='$task'";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  mysqli_close($link);
+
+  $fmsg = "Updated Task Description!";
+}
+
 if(!isset($_SESSION['username'])){
   header('Location: ../index.php');
 }else{
@@ -285,13 +320,12 @@ if(!isset($_SESSION['username'])){
                 die('Error: ' . mysqli_error($link));
               }
               list($thisRating) = mysqli_fetch_array($result4);
+              if($thisRating == null){
+                $thisRating = 0;
+              }
             ?>
 
-            <form method="post">
-              Rating: <input type="hidden" value="<?php echo $taskID; ?>" name="task-id" />
-              <input type="number" value="<?php echo $thisRating; ?>" name="rating-value"/>
-              <input type="submit" class="btn btn-link" value="Update">
-            </form>
+            <p>Completion Rating : <b><?php echo $thisRating; ?></b></p>
 
           </div>
           <?php
@@ -344,7 +378,6 @@ if(!isset($_SESSION['username'])){
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
         </div>
       </div>
     </div>
