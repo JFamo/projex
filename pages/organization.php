@@ -24,6 +24,7 @@ if(isset($_POST['workspace-id'])){
   //Prevents client-side editing of workspace value to access those of other orgs
   //@Tom
   
+	require('../php/connect.php');
   $query="SELECT user FROM user_workspace_mapping WHERE workspace='$newworkspace'";
     $result = mysqli_query($link, $query);
     if (!$result){
