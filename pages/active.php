@@ -96,6 +96,22 @@ if(isset($_POST['task-id'])){
   $fmsg = "Completed Task!";
 }
 
+//Incompletion
+if(isset($_POST['task-id-incomplete'])){
+
+  $taskid = $_POST['task-id-incomplete'];
+
+  require('../php/connect.php');
+  $query = "UPDATE tasks SET status='active' WHERE id='$taskid'";
+  $result = mysqli_query($link,$query);
+  if (!$result){
+      die('Error: ' . mysqli_error($link));
+  }
+  mysqli_close($link);
+
+  $fmsg = "Redacted Task Completion!";
+}
+
 if(isset($_POST['taskuser-id'])){
 
   $taskid = $_POST['taskuser-id'];
@@ -318,7 +334,7 @@ if(!isset($_SESSION['username'])){
             $username = $_SESSION['username'];
             $activeProject = $_SESSION['project'];
 
-            $query = "SELECT tasks.id, tasks.name, tasks.description, tasks.creator, tasks.date FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') AND tasks.status='active'";
+            $query = "SELECT tasks.id, tasks.name, tasks.description, tasks.creator, tasks.date, tasks.status FROM tasks WHERE tasks.id IN (SELECT task FROM goal_task_mapping WHERE goal = '$goalID') ORDER BY status ASC";
             $result2 = mysqli_query($link, $query);
             if (!$result2){
               die('Error: ' . mysqli_error($link));
@@ -326,13 +342,21 @@ if(!isset($_SESSION['username'])){
             while($taskArray = mysqli_fetch_array($result2)){
             $taskName = $taskArray['name'];
             $taskID = $taskArray['id'];
+            $taskStatus = $taskArray['status'];
             $taskDesc = $taskArray['description'];
             $taskCreator = $taskArray['creator'];
             $taskDate = $taskArray['date'];
 
           ?>
           <div class="card">
-            <h4><?php echo $taskName;
+            <h4><?php 
+
+              //If we are complete, insert checkmark
+              if($taskStatus == "complete"){
+                echo "<img src='../imgs/check.png' style='width:20px; height:20px;'/>";
+              }
+
+              echo $taskName;
               echo " (";
 
               $query = "SELECT users.firstname, users.lastname FROM users WHERE users.id IN (SELECT user FROM user_task_mapping WHERE task='$taskID')";
@@ -362,10 +386,23 @@ if(!isset($_SESSION['username'])){
               </div>
               <div class="col-md-4">
                 <center>
+                <?php
+                  if($taskStatus == "active"){
+                ?>
                 <form method="post">
                   <input type="hidden" value="<?php echo $taskID; ?>" name="task-id" />
                   <input type="submit" class="btn btn-link" value="Complete">
                 </form>
+                <?php
+                  }else{
+                ?>
+                <form method="post">
+                  <input type="hidden" value="<?php echo $taskID; ?>" name="task-id-incomplete" />
+                  <input type="submit" class="btn btn-link" value="Redact">
+                </form>
+                <?php
+                  }
+                ?>
                 </center>
               </div>
               <div class="col-md-4">
