@@ -1,5 +1,5 @@
 # ProjeX
-by Team 2004-901, 2018-19, All Rights Reserved
+by Team 2004-902, 2018-19, All Rights Reserved
 
 ## What is it?
 ProjeX is a custom web-based project management suite designed to effectively apply Agile principles to all areas of industry.
