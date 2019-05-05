@@ -158,8 +158,6 @@ if(!isset($_SESSION['username'])){
 				    <a class="nav-link" href="backlog.php">Backlog</a>
 				    <a class="nav-link" href="active.php">Active</a>
 				    <a class="nav-link" href="complete.php">Complete</a>
-				    <a class="nav-link" href="docs.php">Docs</a>
-				    <a class="nav-link" href="messages.php">Messages</a>
 				    <hr class="sidenavHR">
 				    <a class="nav-link" href="account.php">My Account</a>
 				    <a class="nav-link" href="organization.php">My Organization</a>
@@ -242,7 +240,7 @@ else{
 	</div>
 	<footer class="bg-grey color-white pb_top">
 			<center><p>
-				Team 2004-901, 2019, All Rights Reserved
+				Team 2004-902, 2019, All Rights Reserved
 			</p></center>
 		</footer>
 	</div>
@@ -288,14 +286,6 @@ else{
   </div>
 
 </body>
-
-<!--Main has no footer
-<footer class="text-white bg-primary py-3 h5"> 
-	<center><p class="bodyTextType2">
-		Team 2004-901 2018
-	</p></center>
-</footer>
--->
 
 <script src="../js/scripts.js" type="text/javascript"></script>
 

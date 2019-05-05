@@ -319,7 +319,7 @@ if(isset($_SESSION['username'])){
 <!--Less spooky stuff at the bottom-->
 <footer class="text-white bg-primary py-3 h5"> 
 	<center><p class="bodyTextType2">
-		Team 2004-901 2018
+		Team 2004-902 2019
 	</p></center>
 </footer>
 
